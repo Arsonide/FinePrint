@@ -10,56 +10,65 @@ using KSPAchievements;
 
 namespace FinePrint.Contracts.Parameters
 {
-    public class FacilityLabParameter : ContractParameter
-    {
-        public FacilityLabParameter()
-        {
+	public class FacilityLabParameter : ContractParameter
+	{
+		public FacilityLabParameter()
+		{
 
-        }
+		}
 
-        protected override string GetHashString()
-        {
-            return (this.Root.MissionSeed.ToString() + this.Root.DateAccepted.ToString() + this.ID);
-        }
+		protected override string GetHashString()
+		{
+			return (this.Root.MissionSeed.ToString() + this.Root.DateAccepted.ToString() + this.ID);
+		}
 
-        protected override string GetTitle()
-        {
-            return "Have a research lab at the facility";
-        }
+		protected override string GetTitle()
+		{
+			return "Have a research lab at the facility";
+		}
 
-        protected override void OnRegister()
-        {
-            this.DisableOnStateChange = false;
-        }
+		protected override void OnRegister()
+		{
+			this.DisableOnStateChange = false;
+		}
 
-        protected override void OnUpdate()
-        {
-            if (this.Root.ContractState == Contract.State.Active)
-            {
-                if (HighLogic.LoadedSceneIsFlight)
-                {
-                    if (FlightGlobals.ready)
-                    {
-                        if (hasALab(FlightGlobals.ActiveVessel))
-                            base.SetComplete();
-                        else
-                            base.SetIncomplete();
-                    }
-                }
-            }
-        }
+		protected override void OnUpdate()
+		{
+			if (this.Root.ContractState == Contract.State.Active)
+			{
+				if (HighLogic.LoadedSceneIsFlight)
+				{
+					if (FlightGlobals.ready)
+					{
+						bool lab = (hasALab(FlightGlobals.ActiveVessel));
 
-        private bool hasALab(Vessel v)
-        {
-            bool lab = false;
+						if (this.State == ParameterState.Incomplete)
+						{
+							if (lab)
+								base.SetComplete();
+						}
 
-            foreach (ModuleScienceLab antenna in v.FindPartModulesImplementing<ModuleScienceLab>())
-            {
-                lab = true;
-                break;
-            }
+						if (this.State == ParameterState.Complete)
+						{
+							if (!lab)
+								base.SetIncomplete();
+						}
+					}
+				}
+			}
+		}
 
-            return lab;
-        }
-    }
+		private bool hasALab(Vessel v)
+		{
+			bool lab = false;
+
+			foreach (ModuleScienceLab antenna in v.FindPartModulesImplementing<ModuleScienceLab>())
+			{
+				lab = true;
+				break;
+			}
+
+			return lab;
+		}
+	}
 }

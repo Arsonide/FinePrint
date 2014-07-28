@@ -10,59 +10,68 @@ using KSPAchievements;
 
 namespace FinePrint.Contracts.Parameters
 {
-    public class MobileBaseParameter : ContractParameter
-    {
-        public MobileBaseParameter()
-        {
+	public class MobileBaseParameter : ContractParameter
+	{
+		public MobileBaseParameter()
+		{
 
-        }
+		}
 
-        protected override string GetHashString()
-        {
-            return (this.Root.MissionSeed.ToString() + this.Root.DateAccepted.ToString() + this.ID);
-        }
+		protected override string GetHashString()
+		{
+			return (this.Root.MissionSeed.ToString() + this.Root.DateAccepted.ToString() + this.ID);
+		}
 
-        protected override string GetTitle()
-        {
-            return "The ground base must be mobile";
-        }
+		protected override string GetTitle()
+		{
+			return "The ground base must be mobile";
+		}
 
-        protected override void OnRegister()
-        {
-            this.DisableOnStateChange = false;
-        }
+		protected override void OnRegister()
+		{
+			this.DisableOnStateChange = false;
+		}
 
-        protected override void OnUpdate()
-        {
-            if (this.Root.ContractState == Contract.State.Active)
-            {
-                if (HighLogic.LoadedSceneIsFlight)
-                {
-                    if (FlightGlobals.ready)
-                    {
-                        if (hasWheelsOnGround(FlightGlobals.ActiveVessel))
-                            base.SetComplete();
-                        else
-                            base.SetIncomplete();
-                    }
-                }
-            }
-        }
+		protected override void OnUpdate()
+		{
+			if (this.Root.ContractState == Contract.State.Active)
+			{
+				if (HighLogic.LoadedSceneIsFlight)
+				{
+					if (FlightGlobals.ready)
+					{
+						bool grounded = (hasWheelsOnGround(FlightGlobals.ActiveVessel));
 
-        private bool hasWheelsOnGround(Vessel v)
-        {
-            bool ground = false;
+						if (this.State == ParameterState.Incomplete)
+						{
+							if (grounded)
+								base.SetComplete();
+						}
 
-            foreach (ModuleWheel wheel in v.FindPartModulesImplementing<ModuleWheel>())
-            {
-                if (wheel.hasMotor && wheel.part.GroundContact)
-                {
-                    ground = true;
-                    break;
-                }
-            }
+						if (this.State == ParameterState.Complete)
+						{
+							if (!grounded)
+								base.SetIncomplete();
+						}
+					}
+				}
+			}
+		}
 
-            return ground;
-        }
-    }
+		private bool hasWheelsOnGround(Vessel v)
+		{
+			bool ground = false;
+
+			foreach (ModuleWheel wheel in v.FindPartModulesImplementing<ModuleWheel>())
+			{
+				if (wheel.hasMotor && wheel.part.GroundContact)
+				{
+					ground = true;
+					break;
+				}
+			}
+
+			return ground;
+		}
+	}
 }

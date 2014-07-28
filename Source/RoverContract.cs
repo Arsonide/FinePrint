@@ -97,10 +97,10 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-            return "Chart source of data anomaly near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + " with a rover.";
+			return "Chart source of data anomaly near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + " with a rover.";
 		}
 
-        protected override string GetDescription()
+		protected override string GetDescription()
 		{
 			//those 3 strings appear to do nothing
 			return TextGen.GenerateBackStories(Agent.Name, Agent.GetMindsetString(), "driving a rover", "joyriding", "surface travel", new System.Random().Next());
@@ -108,12 +108,12 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
-            return "We've noticed an interesting anomaly in the general area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ". It's a wide area, so you will need a rover to find it.";
+			return "We've noticed an interesting anomaly in the general area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ". It's a wide area, so you will need a rover to find it.";
 		}
 
 		protected override string MessageCompleted()
 		{
-            return "You have successfully found the source of the data anomaly in " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ".";
+			return "You have successfully found the source of the data anomaly in " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ".";
 		}
 
 		protected override void OnLoad(ConfigNode node)
@@ -137,13 +137,7 @@ namespace FinePrint.Contracts
 			if (AreWheelsUnlocked() == false)
 				return false;
 
-			const double chanceToSpawn = 1.0;
-			System.Random generator = new System.Random();
-
-			if (generator.NextDouble() <= chanceToSpawn)
-				return true;
-			else
-				return false;
+            return true;
 		}
 
 		protected static bool AreWheelsUnlocked()

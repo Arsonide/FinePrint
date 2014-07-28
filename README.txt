@@ -12,7 +12,7 @@ around the surface of a planet searching for things.
 
 For more information, or to submit bug reports, submit feature suggestions,
 or track changes, please go to the official forum thread for Fine Print:
-  http://thethreadgoeshere
+  http://tinyurl.com/fine-print-thread
 
 -- REQUIREMENTS --
 
@@ -63,7 +63,7 @@ Kerbal Space Program version 0.24.2
 * Do not hesitate to report bugs, feature suggestions, or balance change 
   suggestions. I will listen.
 
-* The official thread is located at: http://thethreadgoeshere
+* The official thread is located at: http://tinyurl.com/fine-print-thread
 
 -- FAQ --
 
@@ -84,9 +84,11 @@ A: Modders cannot take donations, so you'll just have to tell me "thanks" on
 
 Q: I am experiencing something crazy with your mod, where do I tell you?
 
-A: On the official thread! http://thethreadgoeshere
+A: On the official thread! http://tinyurl.com/fine-print-thread
 
 -- ATTRIBUTION --
+
+Fine Print Copyright (C) 2014 by Arsonide (Brian Provan)
 
 This program comes with ABSOLUTELY NO WARRANTY!
 This is free software, and you are welcome to redistribute it
@@ -94,15 +96,15 @@ under certain conditions, as outlined in the full content of
 the GNU General Public License (GNU GPL), version 3, revision
 date 29 June 2007.
 
-This mod uses art from icons8.com
-
 As there is no explicit API for Kerbal Space Program, I learned by studying the 
 work of others. For this reason I have chosen the GNU GPLv3, and I have a list 
 of people to thank, basically comprising a lot of people on IRC willing to deal 
 with my questions, as well as others for their great mods I learned from:
 
+* Frontier
 * regex
 * NathanKell
 * r4m0n
 * Sarbian
 * Cilph
+* Xaiier
