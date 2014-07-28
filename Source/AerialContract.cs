@@ -181,8 +181,6 @@ namespace FinePrint.Contracts
 				return true;
 			if (Util.haveTechnology("deltaWing"))
 				return true;
-			if (Util.haveTechnology("noseCone"))
-				return true;
 			if (Util.haveTechnology("noseConeAdapter"))
 				return true;
 			if (Util.haveTechnology("rocketNoseCone"))
@@ -196,10 +194,6 @@ namespace FinePrint.Contracts
 			if (Util.haveTechnology("tailfin"))
 				return true;
 			if (Util.haveTechnology("wingConnector"))
-				return true;
-			if (Util.haveTechnology("winglet"))
-				return true;
-			if (Util.haveTechnology("R8winglet"))
 				return true;
 			if (Util.haveTechnology("winglet3"))
 				return true;
