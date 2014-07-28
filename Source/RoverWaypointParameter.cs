@@ -90,7 +90,7 @@ namespace FinePrint.Contracts.Parameters
 			Util.LoadNode(node, "RoverWaypointParameter", "centerLongitude", ref centerLongitude, 0.0);
 			Util.LoadNode(node, "RoverWaypointParameter", "range", ref range, double.PositiveInfinity);
 
-			if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active)
+            if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
 			{
 				wp.celestialName = targetBody.GetName();
 				wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);

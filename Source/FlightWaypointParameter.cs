@@ -79,7 +79,7 @@ namespace FinePrint.Contracts.Parameters
 			Util.LoadNode(node, "FlightWaypointParameter", "maxAltitude", ref maxAltitude, double.PositiveInfinity);
 			Util.LoadNode(node, "FlightWaypointParameter", "waypointID", ref waypointID, 0);
 
-			if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active)
+			if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
 			{
 				wp.celestialName = targetBody.GetName();
 				wp.RandomizePosition(true);
