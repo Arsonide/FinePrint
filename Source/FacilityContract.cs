@@ -21,6 +21,12 @@ namespace FinePrint.Contracts
 
 		protected override bool Generate()
 		{
+            if (AreFacilitiesUnlocked() == false)
+                return false;
+
+            if (ContractSystem.Instance.GetCurrentContracts<FacilityContract>().Count() >= 2)
+                return false;
+
 			System.Random generator = new System.Random(this.MissionSeed);
 			//I'll use this to determine how "difficult" the mission is, and adjust the pricing at the end.
 			float difficultyFactor = 0.0f;
@@ -287,9 +293,6 @@ namespace FinePrint.Contracts
 
 		public override bool MeetRequirements()
 		{
-			if (AreFacilitiesUnlocked() == false)
-				return false;
-
             return true;
 		}
 

@@ -14,7 +14,7 @@ namespace FinePrint.Contracts.Parameters
 	{
 		private bool hasAntenna;
 		private bool hasPowerGenerator;
-		private bool hasOpenDockingPort;
+        private bool hasDockingPort;
 		private string typeString;
 
 		public FacilitySystemsParameter()
@@ -22,7 +22,7 @@ namespace FinePrint.Contracts.Parameters
 			this.typeString = "potato";
 			this.hasAntenna = false;
 			this.hasPowerGenerator = false;
-			this.hasOpenDockingPort = false;
+            this.hasDockingPort = false;
 		}
 
 		public FacilitySystemsParameter(string typeString)
@@ -30,7 +30,7 @@ namespace FinePrint.Contracts.Parameters
 			this.typeString = typeString;
 			this.hasAntenna = false;
 			this.hasPowerGenerator = false;
-			this.hasOpenDockingPort = false;
+            this.hasDockingPort = false;
 		}
 
 		protected override string GetHashString()
@@ -48,14 +48,14 @@ namespace FinePrint.Contracts.Parameters
 			this.DisableOnStateChange = false;
 			hasAntenna = false;
 			hasPowerGenerator = false;
-			hasOpenDockingPort = false;
+            hasDockingPort = false;
 		}
 
 		protected override void OnSave(ConfigNode node)
 		{
 			node.AddValue("hasAntenna", hasAntenna);
 			node.AddValue("hasPowerGenerator", hasPowerGenerator);
-			node.AddValue("hasOpenDockingPort", hasOpenDockingPort);
+            node.AddValue("hasDockingPort", hasDockingPort);
 			node.AddValue("typeString", typeString);
 		}
 
@@ -63,7 +63,7 @@ namespace FinePrint.Contracts.Parameters
 		{
 			Util.LoadNode(node, "FacilitySystemsParameter", "hasAntenna", ref hasAntenna, false);
 			Util.LoadNode(node, "FacilitySystemsParameter", "hasPowerGenerator", ref hasPowerGenerator, false);
-			Util.LoadNode(node, "FacilitySystemsParameter", "hasOpenDockingPort", ref hasOpenDockingPort, false);
+            Util.LoadNode(node, "FacilitySystemsParameter", "hasDockingPort", ref hasDockingPort, false);
 			Util.LoadNode(node, "FacilitySystemsParameter", "typeString", ref typeString, "potato");
 		}
 
@@ -77,13 +77,13 @@ namespace FinePrint.Contracts.Parameters
 					{
 						bool facility = (isStationValid(FlightGlobals.ActiveVessel));
 
-						if (this.State == ParameterState.Incomplete)
+                        if (base.State == ParameterState.Incomplete)
 						{
 							if (facility)
 								base.SetComplete();
 						}
 
-						if (this.State == ParameterState.Complete)
+                        if (base.State == ParameterState.Complete)
 						{
 							if (!facility)
 								base.SetIncomplete();
@@ -95,41 +95,20 @@ namespace FinePrint.Contracts.Parameters
 
 		private bool isStationValid(Vessel v)
 		{
-			if (!v.IsControllable)
+            if (v == null)
+                return false;
+
+            if (!v.IsControllable)
 				return false;
 
-			if (v.launchTime < this.Root.DateAccepted)
+            if (v.launchTime < this.Root.DateAccepted)
 				return false;
 
-			hasAntenna = false;
-			hasPowerGenerator = false;
-			hasOpenDockingPort = false;
+            hasAntenna = Util.shipHasModuleList(new List<string> { "ModuleDataTransmitter", "ModuleLimitedDataTransmitter", "ModuleRTDataTransmitter", "ModuleRTAntenna" });
+            hasPowerGenerator = Util.shipHasModuleList(new List<string> { "ModuleGenerator", "ModuleDeployableSolarPanel", "FNGenerator", "FNAntimatterReactor", "FNNuclearReactor", "FNFusionReactor", "KolonyConverter" });
+            hasDockingPort = Util.shipHasModuleList(new List<string> { "ModuleDockingNode" });
 
-			foreach (ModuleDataTransmitter antenna in v.FindPartModulesImplementing<ModuleDataTransmitter>())
-			{
-				hasAntenna = true;
-				break;
-			}
-
-			foreach (ModuleGenerator generator in v.FindPartModulesImplementing<ModuleGenerator>())
-			{
-				hasPowerGenerator = true;
-				break;
-			}
-
-			foreach (ModuleDeployableSolarPanel solarPanel in v.FindPartModulesImplementing<ModuleDeployableSolarPanel>())
-			{
-				hasPowerGenerator = true;
-				break;
-			}
-
-			foreach (ModuleDockingNode dockNode in v.FindPartModulesImplementing<ModuleDockingNode>())
-			{
-				if (dockNode.state == "Ready")
-					hasOpenDockingPort = true;
-			}
-
-			if (hasPowerGenerator && hasAntenna && hasOpenDockingPort)
+            if (hasPowerGenerator && hasAntenna && hasDockingPort)
 				return true;
 			else
 				return false;

@@ -19,6 +19,9 @@ namespace FinePrint.Contracts.Parameters
 		private int waypointID;
 		private bool submittedWaypoint;
 		private bool outerWarning;
+        private double range;
+        private double centerLatitude;
+        private double centerLongitude;
 
 		// Game freaks out without a default constructor. I never use it.
 		public FlightWaypointParameter()
@@ -26,12 +29,15 @@ namespace FinePrint.Contracts.Parameters
 			targetBody = Planetarium.fetch.Home;
 			minAltitude = 0.0;
 			maxAltitude = 10000.0;
+            centerLatitude = 0.0;
+            centerLongitude = 0.0;
+            range = 10000.0;
 			wp = new Waypoint();
 			submittedWaypoint = false;
 			outerWarning = false;
 		}
 
-		public FlightWaypointParameter(int waypointID, CelestialBody targetBody, double minAltitude, double maxAltitude)
+        public FlightWaypointParameter(int waypointID, CelestialBody targetBody, double minAltitude, double maxAltitude, double centerLatitude, double centerLongitude, double range)
 		{
 			this.targetBody = targetBody;
 			this.waypointID = waypointID;
@@ -40,6 +46,9 @@ namespace FinePrint.Contracts.Parameters
 			wp = new Waypoint();
 			submittedWaypoint = false;
 			outerWarning = false;
+            this.range = range;
+            this.centerLatitude = centerLatitude;
+            this.centerLongitude = centerLongitude;
 		}
 
 		protected override string GetHashString()
@@ -70,6 +79,9 @@ namespace FinePrint.Contracts.Parameters
 			node.AddValue("maxAltitude", maxAltitude);
 			node.AddValue("waypointID", waypointID);
 			node.AddValue("targetBody", bodyID);
+            node.AddValue("centerLatitude", centerLatitude);
+            node.AddValue("centerLongitude", centerLongitude);
+            node.AddValue("range", range);
 		}
 
 		protected override void OnLoad(ConfigNode node)
@@ -78,11 +90,14 @@ namespace FinePrint.Contracts.Parameters
 			Util.LoadNode(node, "FlightWaypointParameter", "minAltitude", ref minAltitude, 0.0);
 			Util.LoadNode(node, "FlightWaypointParameter", "maxAltitude", ref maxAltitude, double.PositiveInfinity);
 			Util.LoadNode(node, "FlightWaypointParameter", "waypointID", ref waypointID, 0);
+            Util.LoadNode(node, "FlightWaypointParameter", "centerLatitude", ref centerLatitude, 0.0);
+            Util.LoadNode(node, "FlightWaypointParameter", "centerLongitude", ref centerLongitude, 0.0);
+            Util.LoadNode(node, "FlightWaypointParameter", "range", ref range, double.PositiveInfinity);
 
 			if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
 			{
 				wp.celestialName = targetBody.GetName();
-				wp.RandomizePosition(true);
+                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
 				wp.seed = Root.MissionSeed;
 				wp.id = waypointID;
 				wp.setName();

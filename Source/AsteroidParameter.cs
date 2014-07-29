@@ -13,6 +13,8 @@ namespace FinePrint.Contracts.Parameters
 	public class AsteroidParameter : ContractParameter
 	{
 		private bool forStation;
+        OrbitRenderer orbRender;
+        OrbitDriver orbDriver;
 
 		public AsteroidParameter()
 		{

@@ -101,13 +101,13 @@ namespace FinePrint.Contracts.Parameters
 					{
 						bool isInLocationAndSituation = (FlightGlobals.ActiveVessel.situation == targetSituation && FlightGlobals.ActiveVessel.mainBody == targetBody);
 
-						if (this.State == ParameterState.Incomplete)
+                        if (this.State == ParameterState.Incomplete)
 						{
 							if (isInLocationAndSituation)
 								base.SetComplete();
 						}
 
-						if (this.State == ParameterState.Complete)
+                        if (this.State == ParameterState.Complete)
 						{
 							if (!isInLocationAndSituation)
 								base.SetIncomplete();

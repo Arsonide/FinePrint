@@ -12,6 +12,8 @@ namespace FinePrint
 		private static Texture2D mTexRover;
 		private List<Waypoint> waypoints;
 		private GUIStyle hoverStyle;
+        static private NavWaypoint navWaypoint;
+        static private Waypoint trackWP;
 
 		public WaypointManager()
 		{
@@ -120,6 +122,15 @@ namespace FinePrint
 
 		public void OnPreCull()
 		{
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (navIsActive())
+                {
+                    if (trackWP == null)
+                        navWaypoint.Deactivate();
+                }
+            }
+
 			if (MapView.MapIsEnabled)
 			{
 				foreach (Waypoint wp in waypoints)
@@ -197,6 +208,13 @@ namespace FinePrint
 							tooltipString = wp.siteName;
 
 						showingTooltip = true;
+
+                        if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
+                        {
+                            ScreenMessages.PostScreenMessage("Navigation set to " + wp.siteName + ".", 2.5f, ScreenMessageStyle.LOWER_CENTER);
+                            setupNavPoint(wp);
+                            activateNavPoint();
+                        }
 					}
 				}
 
@@ -204,6 +222,75 @@ namespace FinePrint
 					GUI.Label(new Rect((float)(tooltipPosition.x) + 16, (float)(Screen.height - tooltipPosition.y) + 5f, 50, 20), tooltipString, hoverStyle);
 			}
 		}
+
+        static public void setupNavPoint(Waypoint wp)
+        {
+            if ( HighLogic.LoadedSceneIsFlight )
+            {
+                if (navWaypoint == null)
+                    navWaypoint = (GameObject.FindObjectOfType(typeof(NavWaypoint)) as NavWaypoint);
+
+                if (navWaypoint != null)
+                {
+                    CelestialBody body = Planetarium.fetch.Home;
+
+					    foreach (CelestialBody cb in FlightGlobals.Bodies)
+					    {
+						    if (cb.GetName() == wp.celestialName)
+							    body = cb;
+					    }
+
+                        HSBColor brighterRandom = HSBColor.FromColor(RandomColor(wp.seed));
+                        brighterRandom.b = 1.0f;
+                        navWaypoint.SetupNavWaypoint(body, wp.latitude, wp.longitude, wp.altitude, wp.textureName, brighterRandom.ToColor());
+                        trackWP = wp;
+                }
+            }
+        }
+
+        static public void activateNavPoint()
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (navWaypoint == null)
+                    navWaypoint = (GameObject.FindObjectOfType(typeof(NavWaypoint)) as NavWaypoint);
+
+                if (navWaypoint != null)
+                {
+                    navWaypoint.Activate();
+                }
+            }
+        }
+
+        static public void deactivateNavPoint()
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (navWaypoint == null)
+                    navWaypoint = (GameObject.FindObjectOfType(typeof(NavWaypoint)) as NavWaypoint);
+
+                if (navWaypoint != null)
+                {
+                    navWaypoint.Deactivate();
+                }
+            }
+        }
+
+        static public bool navIsActive()
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (navWaypoint == null)
+                    navWaypoint = (GameObject.FindObjectOfType(typeof(NavWaypoint)) as NavWaypoint);
+
+                if (navWaypoint != null)
+                {
+                    return navWaypoint.isActive();
+                }
+            }
+
+            return false;
+        }
 
 		public List<Waypoint> WaypointsNearVessel(float distance)
 		{

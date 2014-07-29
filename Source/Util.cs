@@ -13,8 +13,192 @@ using FinePrint.Contracts.Parameters;
 namespace FinePrint
 {
 	class Util
-	{
-		public static bool haveTechnology(string tech)
+    {
+        #region Vessel Loops
+
+        public static bool shipHasPartName(string partName)
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        foreach (Part part in v.Parts)
+                        {
+                            if (part.partName == partName)
+                                return true;
+                        }
+                    }
+                    else
+                        Debug.LogWarning("Fine Print: Attempted to check for ship modules on a nonexistent ship.");
+                }
+                else
+                    Debug.LogWarning("Fine Print: Attempted to check for ship modules before flight scene was ready.");
+            }
+            else
+                Debug.LogWarning("Fine Print: Attempted to check for ship modules outside of flight scene.");
+
+            return false;
+        }
+
+        public static bool shipHasPartClass(string partClass)
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        foreach (Part part in v.Parts)
+                        {
+                            if (part.ClassName == partClass)
+                                return true;
+                        }
+                    }
+                    else
+                        Debug.LogWarning("Fine Print: Attempted to check for ship modules on a nonexistent ship.");
+                }
+                else
+                    Debug.LogWarning("Fine Print: Attempted to check for ship modules before flight scene was ready.");
+            }
+            else
+                Debug.LogWarning("Fine Print: Attempted to check for ship modules outside of flight scene.");
+
+            return false;
+        }
+
+        public static bool hasWheelsOnGround()
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        foreach (Part part in v.Parts)
+                        {
+                            if (part.GroundContact)
+                            {
+                                foreach (PartModule module in part.Modules)
+                                {
+                                    List<string> moduleList = new List<string>() { "ModuleWheel", "ModuleLandingGear", "FSWheel" };
+
+                                    foreach (string checkModule in moduleList)
+                                    {
+                                        if (module.moduleName == checkModule || module.ClassName == checkModule)
+                                            return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool shipHasModuleList(List<string> moduleList)
+        {
+            //This checks a list of modules, prevents us from having to loop over the vessel multiple times.
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        foreach (Part part in v.Parts)
+                        {
+                            foreach (PartModule module in part.Modules)
+                            {
+                                //We must go deeper.
+                                foreach (string checkModule in moduleList)
+                                {
+                                    if (module.moduleName == checkModule || module.ClassName == checkModule )
+                                        return true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                        Debug.LogWarning("Fine Print: Attempted to check for ship modules on a nonexistent ship.");
+                }
+                else
+                    Debug.LogWarning("Fine Print: Attempted to check for ship modules before flight scene was ready.");
+            }
+            else
+                Debug.LogWarning("Fine Print: Attempted to check for ship modules outside of flight scene.");
+
+            return false;
+        }
+
+        public static bool shipHasModuleClass(string moduleClass)
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        foreach (Part part in v.Parts)
+                        {
+                            foreach (PartModule module in part.Modules)
+                            {
+                                if (module.ClassName == moduleClass)
+                                    return true;
+                            }
+                        }
+                    }
+                    else
+                        Debug.LogWarning("Fine Print: Attempted to check for ship modules on a nonexistent ship.");
+                }
+                else
+                    Debug.LogWarning("Fine Print: Attempted to check for ship modules before flight scene was ready.");
+            }
+            else
+                Debug.LogWarning("Fine Print: Attempted to check for ship modules outside of flight scene.");
+
+            return false;
+        }
+
+        public static bool shipHasModule<T>() where T : class
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                if (FlightGlobals.ready)
+                {
+                    Vessel v = FlightGlobals.ActiveVessel;
+
+                    if (v != null)
+                    {
+                        return (v.FindPartModulesImplementing<T>().Count() > 0);
+                    }
+                    else
+                        Debug.LogWarning("Fine Print: Attempted to check for ship modules on a nonexistent ship.");
+                }
+                else
+                    Debug.LogWarning("Fine Print: Attempted to check for ship modules before flight scene was ready.");
+            }
+            else
+                Debug.LogWarning("Fine Print: Attempted to check for ship modules outside of flight scene.");
+
+            return false;
+        }
+
+        #endregion
+
+        public static bool haveTechnology(string tech)
 		{
 			tech.Replace('_', '.');
 			AvailablePart ap = PartLoader.getPartInfoByName(tech);
@@ -190,7 +374,8 @@ namespace FinePrint
 			return greekMap[x];
 		}
 
-		// LoadNode does a variety of things. It fixes broken saves, for one. It keeps consistency and helps me root out bugs, for two.
+        #region LoadNode Overloads
+        // LoadNode does a variety of things. It fixes broken saves, for one. It keeps consistency and helps me root out bugs, for two.
 		// It could be implemented as a template, but then I'd need to do a bunch of reflection, so instead I have a lot of overloads.
 
 		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref double value, double defaultValue)
@@ -338,6 +523,7 @@ namespace FinePrint
 
 				situation = defaultSituation;
 			}
-		}
-	}
+        }
+        #endregion
+    }
 }

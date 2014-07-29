@@ -18,6 +18,12 @@ namespace FinePrint.Contracts
 
 		protected override bool Generate()
 		{
+            if (Util.haveTechnology("GrapplingDevice") == false)
+                return false;
+
+            if (ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count() >= 2)
+                return false;
+
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
 				targetBody = Planetarium.fetch.Home;
@@ -176,9 +182,6 @@ namespace FinePrint.Contracts
 
 		public override bool MeetRequirements()
 		{
-			if (Util.haveTechnology("GrapplingDevice") == false)
-				return false;
-
             return true;
 		}
 

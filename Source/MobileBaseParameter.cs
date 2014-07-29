@@ -40,7 +40,7 @@ namespace FinePrint.Contracts.Parameters
 				{
 					if (FlightGlobals.ready)
 					{
-						bool grounded = (hasWheelsOnGround(FlightGlobals.ActiveVessel));
+						bool grounded = (Util.hasWheelsOnGround());
 
 						if (this.State == ParameterState.Incomplete)
 						{
@@ -56,22 +56,6 @@ namespace FinePrint.Contracts.Parameters
 					}
 				}
 			}
-		}
-
-		private bool hasWheelsOnGround(Vessel v)
-		{
-			bool ground = false;
-
-			foreach (ModuleWheel wheel in v.FindPartModulesImplementing<ModuleWheel>())
-			{
-				if (wheel.hasMotor && wheel.part.GroundContact)
-				{
-					ground = true;
-					break;
-				}
-			}
-
-			return ground;
 		}
 	}
 }

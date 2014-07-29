@@ -17,9 +17,17 @@ namespace FinePrint.Contracts
 		CelestialBody targetBody = null;
 		double minAltitude = 0.0;
 		double maxAltitude = 2000.0;
+        double centerLatitude = 0.0;
+        double centerLongitude = 0.0;
 
 		protected override bool Generate()
 		{
+            if (AreWingsUnlocked() == false)
+                return false;
+
+            if (ContractSystem.Instance.GetCurrentContracts<AerialContract>().Count() >= 4)
+                return false;
+            double range = 10000.0;
 			System.Random generator = new System.Random(this.MissionSeed);
 			int additionalWaypoints = 0;
 			List<CelestialBody> allBodies = GetBodies_Reached(true, false);
@@ -81,25 +89,30 @@ namespace FinePrint.Contracts
 			{
 				waypointCount = 1;
 				waypointCount += additionalWaypoints;
+                range = 100000.0;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Significant)
 			{
 				waypointCount = 2;
 				waypointCount += additionalWaypoints;
+                range = 300000.0;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
 				waypointCount = 3;
 				waypointCount += additionalWaypoints;
+                range = 500000.0;
 			}
+
+            WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true);
 
 			for (int x = 0; x < waypointCount; x++)
 			{
 				ContractParameter newParameter;
-				newParameter = this.AddParameter(new FlightWaypointParameter(x, targetBody, minAltitude, maxAltitude), null);
-				newParameter.SetFunds(5000.0f, targetBody);
-				newParameter.SetReputation(10.0f, targetBody);
-				newParameter.SetScience(10.0f, targetBody);
+				newParameter = this.AddParameter(new FlightWaypointParameter(x, targetBody, minAltitude, maxAltitude, centerLatitude, centerLongitude, range), null);
+				newParameter.SetFunds(3750.0f, targetBody);
+				newParameter.SetReputation(7.5f, targetBody);
+				newParameter.SetScience(7.5f, targetBody);
 			}
 
 			base.AddKeywords(new string[] { "surveyflight" });
@@ -151,6 +164,8 @@ namespace FinePrint.Contracts
 			Util.LoadNode(node, "AerialContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
 			Util.LoadNode(node, "AerialContract", "minAltitude", ref minAltitude, 0.0);
 			Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, double.PositiveInfinity);
+            Util.LoadNode(node, "AerialContract", "centerLatitude", ref centerLatitude, 0.0);
+            Util.LoadNode(node, "AerialContract", "centerLongitude", ref centerLongitude, 0.0);
 		}
 
 		protected override void OnSave(ConfigNode node)
@@ -159,13 +174,12 @@ namespace FinePrint.Contracts
 			node.AddValue("targetBody", bodyID);
 			node.AddValue("minAltitude", minAltitude);
 			node.AddValue("maxAltitude", maxAltitude);
+            node.AddValue("centerLatitude", centerLatitude);
+            node.AddValue("centerLongitude", centerLongitude);
 		}
 
 		public override bool MeetRequirements()
 		{
-			if (AreWingsUnlocked() == false)
-				return false;
-
             return true;
 		}
 

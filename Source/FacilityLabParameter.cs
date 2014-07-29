@@ -40,7 +40,7 @@ namespace FinePrint.Contracts.Parameters
 				{
 					if (FlightGlobals.ready)
 					{
-						bool lab = (hasALab(FlightGlobals.ActiveVessel));
+                        bool lab = (Util.shipHasModule<ModuleScienceLab>());
 
 						if (this.State == ParameterState.Incomplete)
 						{
@@ -56,19 +56,6 @@ namespace FinePrint.Contracts.Parameters
 					}
 				}
 			}
-		}
-
-		private bool hasALab(Vessel v)
-		{
-			bool lab = false;
-
-			foreach (ModuleScienceLab antenna in v.FindPartModulesImplementing<ModuleScienceLab>())
-			{
-				lab = true;
-				break;
-			}
-
-			return lab;
 		}
 	}
 }

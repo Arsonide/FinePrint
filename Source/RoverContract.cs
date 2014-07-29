@@ -20,6 +20,12 @@ namespace FinePrint.Contracts
 
 		protected override bool Generate()
 		{
+            if (AreWheelsUnlocked() == false)
+                return false;
+
+            if (ContractSystem.Instance.GetCurrentContracts<RoverContract>().Count() >= 4)
+                return false;
+
 			System.Random generator = new System.Random(this.MissionSeed);
 			double range = 10000.0;
 			List<CelestialBody> bodies = GetBodies_Reached(true, false);
@@ -41,18 +47,18 @@ namespace FinePrint.Contracts
 
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
-				waypointCount = 3 + generator.Next(0, 3);
-				range = 10000.0;
+				waypointCount = 3;
+				range = 3333.3;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Significant)
 			{
-				waypointCount = 10 + UnityEngine.Random.Range(1, 6);
-				range = 20000.0;
+				waypointCount = 6;
+				range = 6666.6;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
-				waypointCount = 20 + UnityEngine.Random.Range(1, 6);
-				range = 30000.0;
+				waypointCount = 9;
+				range = 9999.9;
 			}
 
 			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false);
@@ -67,9 +73,9 @@ namespace FinePrint.Contracts
 				else
 					newParameter = this.AddParameter(new RoverWaypointParameter(x, targetBody, centerLatitude, centerLongitude, range, false), null);
 
-				newParameter.SetFunds(2500.0f, targetBody);
-				newParameter.SetReputation(5.0f, targetBody);
-				newParameter.SetScience(5.0f, targetBody);
+				newParameter.SetFunds(5000.0f, targetBody);
+				newParameter.SetReputation(10.0f, targetBody);
+                newParameter.SetScience(10.0f, targetBody);
 			}
 
 			base.AddKeywords(new string[] { "roversearch" });
@@ -134,9 +140,6 @@ namespace FinePrint.Contracts
 		//for testing purposes
 		public override bool MeetRequirements()
 		{
-			if (AreWheelsUnlocked() == false)
-				return false;
-
             return true;
 		}
 

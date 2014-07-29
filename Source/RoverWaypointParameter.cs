@@ -27,7 +27,7 @@ namespace FinePrint.Contracts.Parameters
 		{
 			targetBody = Planetarium.fetch.Home;
 			centerLatitude = 0.0;
-			centerLongitude = 10000.0;
+			centerLongitude = 0.0;
 			range = 10000.0;
 			wp = new Waypoint();
 			submittedWaypoint = false;
@@ -136,7 +136,7 @@ namespace FinePrint.Contracts.Parameters
 
 								if (distanceToWP < 5000)
 								{
-									if (hasWheelsOnGround(v))
+									if (Util.hasWheelsOnGround())
 									{
 										if (isSecret)
 										{
@@ -174,22 +174,6 @@ namespace FinePrint.Contracts.Parameters
 					}
 				}
 			}
-		}
-
-		private bool hasWheelsOnGround(Vessel v)
-		{
-			bool ground = false;
-
-			foreach (ModuleWheel wheel in v.FindPartModulesImplementing<ModuleWheel>())
-			{
-				if (wheel.hasMotor && wheel.part.GroundContact)
-				{
-					ground = true;
-					break;
-				}
-			}
-
-			return ground;
 		}
 	}
 }
