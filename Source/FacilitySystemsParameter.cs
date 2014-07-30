@@ -40,8 +40,13 @@ namespace FinePrint.Contracts.Parameters
 
 		protected override string GetTitle()
 		{
-			return "Build a new " + typeString + " that has power generation, an antenna, and a free docking port";
+			return "Build a " + typeString + " that has power, an antenna, and a docking port";
 		}
+
+        protected override string GetNotes()
+        {
+            return "Please note that this must be a new station built for the agency after the contract is accepted.";
+        }
 
 		protected override void OnRegister()
 		{
@@ -105,7 +110,7 @@ namespace FinePrint.Contracts.Parameters
 				return false;
 
             hasAntenna = Util.shipHasModuleList(new List<string> { "ModuleDataTransmitter", "ModuleLimitedDataTransmitter", "ModuleRTDataTransmitter", "ModuleRTAntenna" });
-            hasPowerGenerator = Util.shipHasModuleList(new List<string> { "ModuleGenerator", "ModuleDeployableSolarPanel", "FNGenerator", "FNAntimatterReactor", "FNNuclearReactor", "FNFusionReactor", "KolonyConverter" });
+            hasPowerGenerator = Util.shipHasModuleList(new List<string> { "ModuleGenerator", "ModuleDeployableSolarPanel", "FNGenerator", "FNAntimatterReactor", "FNNuclearReactor", "FNFusionReactor", "KolonyConverter", "FissionGenerator", "ModuleCurvedSolarPanel" });
             hasDockingPort = Util.shipHasModuleList(new List<string> { "ModuleDockingNode" });
 
             if (hasPowerGenerator && hasAntenna && hasDockingPort)

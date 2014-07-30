@@ -25,8 +25,12 @@ namespace FinePrint.Contracts
             if (AreWingsUnlocked() == false)
                 return false;
 
-            if (ContractSystem.Instance.GetCurrentContracts<AerialContract>().Count() >= 4)
+            int totalContracts = ContractSystem.Instance.GetCurrentContracts<AerialContract>().Count();
+            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<AerialContract>().Count();
+            int totalcount = totalContracts - TotalFinished;
+            if (totalcount >= 2)
                 return false;
+
             double range = 10000.0;
 			System.Random generator = new System.Random(this.MissionSeed);
 			int additionalWaypoints = 0;

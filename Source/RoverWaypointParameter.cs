@@ -151,6 +151,7 @@ namespace FinePrint.Contracts.Parameters
 													if (parameter.State != ParameterState.Complete)
 													{
 														parameter.wp.isExplored = true;
+                                                        WaypointManager.deactivateNavPoint(wp);
 														WaypointManager.RemoveWaypoint(parameter.wp);
 														parameter.submittedWaypoint = false;
 													}
@@ -163,6 +164,7 @@ namespace FinePrint.Contracts.Parameters
 										{
 											ScreenMessages.PostScreenMessage(Util.generateRoverFailString(Root.MissionSeed, waypointID), 5.0f, ScreenMessageStyle.UPPER_LEFT);
 											wp.isExplored = true;
+                                            WaypointManager.deactivateNavPoint(wp);
 											WaypointManager.RemoveWaypoint(wp);
 											submittedWaypoint = false;
 											base.SetComplete();

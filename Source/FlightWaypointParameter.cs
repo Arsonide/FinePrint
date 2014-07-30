@@ -143,6 +143,7 @@ namespace FinePrint.Contracts.Parameters
 									{
 										ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.siteName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
 										wp.isExplored = true;
+                                        WaypointManager.deactivateNavPoint();
 										WaypointManager.RemoveWaypoint(wp);
 										submittedWaypoint = false;
 										base.SetComplete();

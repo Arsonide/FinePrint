@@ -1,4 +1,4 @@
-Fine Print v0.5a
+Fine Print v0.51a
 
 -- SUMMARY --
 
@@ -108,3 +108,4 @@ with my questions, as well as others for their great mods I learned from:
 * Sarbian
 * Cilph
 * Xaiier
+* taniwha

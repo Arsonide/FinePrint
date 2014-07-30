@@ -21,7 +21,10 @@ namespace FinePrint.Contracts
             if (Util.haveTechnology("GrapplingDevice") == false)
                 return false;
 
-            if (ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count() >= 2)
+            int totalContracts = ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count();
+            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<ARMContract>().Count();
+            int totalcount = totalContracts - TotalFinished;
+            if (totalcount >= 2)
                 return false;
 
 			if (this.prestige == Contract.ContractPrestige.Trivial)

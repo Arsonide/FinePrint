@@ -23,7 +23,10 @@ namespace FinePrint.Contracts
             if (AreWheelsUnlocked() == false)
                 return false;
 
-            if (ContractSystem.Instance.GetCurrentContracts<RoverContract>().Count() >= 4)
+            int totalContracts = ContractSystem.Instance.GetCurrentContracts<RoverContract>().Count();
+            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<RoverContract>().Count();
+            int totalcount = totalContracts - TotalFinished;
+            if (totalcount >= 2)
                 return false;
 
 			System.Random generator = new System.Random(this.MissionSeed);
@@ -48,17 +51,17 @@ namespace FinePrint.Contracts
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
 				waypointCount = 3;
-				range = 3333.3;
+				range = 2000;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Significant)
 			{
-				waypointCount = 6;
-				range = 6666.6;
+				waypointCount = 5;
+				range = 4000;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
-				waypointCount = 9;
-				range = 9999.9;
+				waypointCount = 7;
+				range = 6000;
 			}
 
 			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false);

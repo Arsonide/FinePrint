@@ -28,7 +28,7 @@ namespace FinePrint
                     {
                         foreach (Part part in v.Parts)
                         {
-                            if (part.partName == partName)
+                            if (part.name == partName)
                                 return true;
                         }
                     }

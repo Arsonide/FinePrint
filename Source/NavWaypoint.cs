@@ -13,10 +13,10 @@ public class NavWaypoint : MonoBehaviour
     private Color color;
     private string texture;
     private CelestialBody targetBody;
-    private double latitude;
-    private double longitude;
+    public double latitude;
+    public double longitude;
     private double height;
-    private double altitude;
+    public double altitude;
     private bool waypointOn;
 
     private static Texture2D mTexDefault;
@@ -156,7 +156,7 @@ public class NavWaypoint : MonoBehaviour
         indicator.SetActive(false);
 
         SetupNavWaypoint(Planetarium.fetch.Home, 0.0, -74.5, 1.0, "plane", new Color(0.0f, 1.0f, 0.0f));
-        Activate();
+        Deactivate();
 	}
 
     public void LateUpdate()

@@ -24,13 +24,17 @@ namespace FinePrint.Contracts
             if (AreFacilitiesUnlocked() == false)
                 return false;
 
-            if (ContractSystem.Instance.GetCurrentContracts<FacilityContract>().Count() >= 2)
+            int totalContracts = ContractSystem.Instance.GetCurrentContracts<FacilityContract>().Count();
+            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<FacilityContract>().Count();
+            int totalcount = totalContracts - TotalFinished;
+            if (totalcount >= 2)
                 return false;
 
 			System.Random generator = new System.Random(this.MissionSeed);
 			//I'll use this to determine how "difficult" the mission is, and adjust the pricing at the end.
 			float difficultyFactor = 0.0f;
 			float scienceFactor = 1.0f;
+            float repFactor = 1.0f;
 			onLand = (generator.Next(0, 2) == 1);
 
 			if (onLand)
@@ -69,6 +73,16 @@ namespace FinePrint.Contracts
 				this.AddParameter(new CrewCapacityParameter(5), null);
 				difficultyFactor = 5.0f / 4.0f;
 				capacity = 5;
+
+                if (Util.haveTechnology("cupola"))
+                {
+                    if (generator.Next(0, 100) > 80)
+                    {
+                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        difficultyFactor += 1.0f;
+                        repFactor = 2.0f;
+                    }
+                }
 
 				if (Util.haveTechnology("Large.Crewed.Lab"))
 				{
@@ -113,6 +127,16 @@ namespace FinePrint.Contracts
 				difficultyFactor = contractCapacity / 4.0f;
 				capacity = contractCapacity;
 
+                if (Util.haveTechnology("cupola"))
+                {
+                    if (generator.Next(0, 100) > 60)
+                    {
+                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        difficultyFactor += 1.0f;
+                        repFactor = 3.0f;
+                    }
+                }
+
 				if (Util.haveTechnology("Large.Crewed.Lab"))
 				{
 					if (generator.Next(0, 100) > 60)
@@ -122,6 +146,24 @@ namespace FinePrint.Contracts
 						scienceFactor = 3.0f;
 					}
 				}
+
+                if (Util.haveTechnology("GrapplingDevice") && !onLand)
+                {
+                    if (generator.Next(0, 100) > 90)
+                    {
+                        this.AddParameter(new AsteroidParameter(true), null);
+                        difficultyFactor += 2.0f;
+                    }
+                }
+
+                if (AreWheelsUnlocked() && onLand)
+                {
+                    if (generator.Next(0, 100) > 90)
+                    {
+                        this.AddParameter(new MobileBaseParameter(), null);
+                        difficultyFactor += 2.0f;
+                    }
+                }
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
@@ -168,6 +210,16 @@ namespace FinePrint.Contracts
 				difficultyFactor = contractCapacity / 4.0f;
 				capacity = contractCapacity;
 
+                if (Util.haveTechnology("cupola"))
+                {
+                    if (generator.Next(0, 100) > 60)
+                    {
+                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        difficultyFactor += 1.0f;
+                        repFactor = 4.0f;
+                    }
+                }
+
 				if (Util.haveTechnology("Large.Crewed.Lab"))
 				{
 					if (generator.Next(0, 100) > 60)
@@ -180,7 +232,7 @@ namespace FinePrint.Contracts
 
 				if (Util.haveTechnology("GrapplingDevice") && !onLand)
 				{
-					if (generator.Next(0, 100) > 80)
+					if (generator.Next(0, 100) > 70)
 					{
 						this.AddParameter(new AsteroidParameter(true), null);
 						difficultyFactor += 2.0f;
@@ -189,7 +241,7 @@ namespace FinePrint.Contracts
 
 				if (AreWheelsUnlocked() && onLand)
 				{
-					if (generator.Next(0, 100) > 80)
+					if (generator.Next(0, 100) > 70)
 					{
 						this.AddParameter(new MobileBaseParameter(), null);
 						difficultyFactor += 2.0f;
@@ -205,7 +257,7 @@ namespace FinePrint.Contracts
 			base.SetExpiry();
 			base.SetDeadlineYears(5.0f * difficultyFactor, targetBody);
 			base.SetFunds(8000f * difficultyFactor, 35000f * difficultyFactor, this.targetBody);
-			base.SetReputation(100f * difficultyFactor, 50f * difficultyFactor, this.targetBody);
+			base.SetReputation(repFactor + (100f * difficultyFactor), 50f * difficultyFactor, this.targetBody);
 			base.SetScience(scienceFactor + (1f * difficultyFactor), this.targetBody);
 			return true;
 		}

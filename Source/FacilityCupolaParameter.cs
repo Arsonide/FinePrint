@@ -24,7 +24,7 @@ namespace FinePrint.Contracts.Parameters
 
         protected override string GetTitle()
         {
-            return "Have a research lab at the facility";
+            return "Have a viewing cupola at the facility";
         }
 
         protected override void OnRegister()
@@ -40,17 +40,17 @@ namespace FinePrint.Contracts.Parameters
                 {
                     if (FlightGlobals.ready)
                     {
-                        bool lab = (Util.shipHasModule<ModuleScienceLab>());
+                        bool cupola = (Util.shipHasPartName("cupola"));
 
                         if (this.State == ParameterState.Incomplete)
                         {
-                            if (lab)
+                            if (cupola)
                                 base.SetComplete();
                         }
 
                         if (this.State == ParameterState.Complete)
                         {
-                            if (!lab)
+                            if (!cupola)
                                 base.SetIncomplete();
                         }
                     }

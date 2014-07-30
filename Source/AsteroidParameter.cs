@@ -13,17 +13,21 @@ namespace FinePrint.Contracts.Parameters
 	public class AsteroidParameter : ContractParameter
 	{
 		private bool forStation;
-        OrbitRenderer orbRender;
-        OrbitDriver orbDriver;
+        private int roidSeed;
+        private bool asteroidTowed;
 
 		public AsteroidParameter()
 		{
 			this.forStation = false;
+            this.asteroidTowed = false;
+            this.roidSeed = 0;
 		}
 
 		public AsteroidParameter(bool forStation)
 		{
 			this.forStation = forStation;
+            this.asteroidTowed = false;
+            this.roidSeed = 0;
 		}
 
 		protected override string GetHashString()
@@ -34,29 +38,88 @@ namespace FinePrint.Contracts.Parameters
 		protected override string GetTitle()
 		{
 			if (forStation)
-				return "Build the facility into an asteroid";
+				return "Build the facility into a newly discovered asteroid";
 			else
-				return "Have an asteroid in tow";
-		}
-
-		protected override string GetNotes()
-		{
-			return "The agency wants this to be a new discovery, you will have to track and retrieve the asteroid after you receive the contract.";
+				return "Have a newly discovered asteroid in tow";
 		}
 
 		protected override void OnRegister()
 		{
-			this.DisableOnStateChange = false;
-		}
+            this.DisableOnStateChange = false;
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onPartCouple.Add(OnDock);
+                GameEvents.onFlightReady.Add(OnFlight);
+            }
+        }
+
+        protected override void OnUnregister()
+        {
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onPartCouple.Remove(OnDock);
+                GameEvents.onFlightReady.Remove(OnFlight);
+
+            }
+        }
+
+        private void OnFlight()
+        {
+            bool findSameRoid = false;
+
+            List<ModuleAsteroid> asteroids = FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleAsteroid>();
+
+            if (asteroids.Count() > 0)
+            {
+                foreach (ModuleAsteroid asteroid in asteroids)
+                {
+                    if (asteroid.seed == roidSeed)
+                        findSameRoid = true;
+                }
+            }
+
+            asteroidTowed = findSameRoid;
+        }
+
+        private void OnDock(GameEvents.FromToAction<Part, Part> action)
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                List<ModuleAsteroid> asteroids = action.from.vessel.FindPartModulesImplementing<ModuleAsteroid>();
+
+                if (asteroids.Count() > 0)
+                {
+                    foreach (ModuleAsteroid asteroid in asteroids)
+                    {
+                        if (asteroid.seed == roidSeed)
+                            asteroidTowed = true;
+                    }
+
+                    if (FlightGlobals.ActiveVessel.mainBody == Planetarium.fetch.Sun)
+                    {
+                        foreach (ModuleAsteroid asteroid in asteroids)
+                        {
+                            roidSeed = asteroid.seed;
+                            asteroidTowed = true;
+                        }
+                    }
+                }
+            }
+        }
 
 		protected override void OnSave(ConfigNode node)
 		{
 			node.AddValue("forStation", forStation);
+            node.AddValue("roidSeed", roidSeed);
+            node.AddValue("asteroidTowed", asteroidTowed);
 		}
 
 		protected override void OnLoad(ConfigNode node)
 		{
 			Util.LoadNode(node, "AsteroidParameter", "forStation", ref forStation, false);
+            Util.LoadNode(node, "AsteroidParameter", "roidSeed", ref roidSeed, 0);
+            Util.LoadNode(node, "AsteroidParameter", "asteroidTowed", ref asteroidTowed, false);
 		}
 
 		protected override void OnUpdate()
@@ -67,17 +130,17 @@ namespace FinePrint.Contracts.Parameters
 				{
 					if (FlightGlobals.ready)
 					{
-						bool roids = hasARoid(FlightGlobals.ActiveVessel);
+                        checkSameRoid(FlightGlobals.ActiveVessel);
 
 						if (this.State == ParameterState.Incomplete)
 						{
-							if (roids)
+                            if (asteroidTowed)
 								base.SetComplete();
 						}
 
 						if (this.State == ParameterState.Complete)
 						{
-							if (!roids)
+                            if (!asteroidTowed)
 								base.SetIncomplete();
 						}
 					}
@@ -85,20 +148,21 @@ namespace FinePrint.Contracts.Parameters
 			}
 		}
 
-		private bool hasARoid(Vessel v)
-		{
-			bool roid = false;
+        private void checkSameRoid(Vessel v)
+        {
+            if (asteroidTowed == false)
+                return;
 
-			foreach (ModuleAsteroid asteroid in v.FindPartModulesImplementing<ModuleAsteroid>())
-			{
-				if (asteroid.vessel.DiscoveryInfo.lastObservedTime >= Root.DateAccepted)
-				{
-					roid = true;
-					break;
-				}
-			}
+            asteroidTowed = false;
 
-			return roid;
-		}
+            foreach (ModuleAsteroid asteroid in v.FindPartModulesImplementing<ModuleAsteroid>())
+            {
+                if (asteroid.seed == roidSeed)
+                {
+                    asteroidTowed = true;
+                    break;
+                }
+            }
+        }
 	}
 }
