@@ -1,9 +1,9 @@
-Fine Print v0.51a
+Fine Print v0.53a
 
 -- SUMMARY --
 
-Fine Print (formerly Extra Contracts) is a mod that more than doubles
-the original number of contracts with in Kerbal Space Program v0.24.
+Fine Print is a mod that more than doubles the original number of contracts
+within Kerbal Space Program v0.24.
 
 New contract types include contracts to build space stations, contracts
 to build planetary bases, contracts to retrieve asteroids, contracts 

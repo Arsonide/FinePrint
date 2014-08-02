@@ -25,10 +25,18 @@ namespace FinePrint.Contracts
             if (AreWingsUnlocked() == false)
                 return false;
 
-            int totalContracts = ContractSystem.Instance.GetCurrentContracts<AerialContract>().Count();
-            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<AerialContract>().Count();
-            int totalcount = totalContracts - TotalFinished;
-            if (totalcount >= 2)
+            //Allow four contracts in pocket but only two on the board at a time.
+            int offeredContracts = 0;
+            int activeContracts = 0;
+            foreach (AerialContract contract in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
+            {
+                if (contract.ContractState == Contract.State.Offered)
+                    offeredContracts++;
+                else if (contract.ContractState == Contract.State.Active)
+                    activeContracts++;
+            }
+
+            if (offeredContracts >= 2 || activeContracts >= 4)
                 return false;
 
             double range = 10000.0;
@@ -99,13 +107,13 @@ namespace FinePrint.Contracts
 			{
 				waypointCount = 2;
 				waypointCount += additionalWaypoints;
-                range = 300000.0;
+                range = 200000.0;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
 				waypointCount = 3;
 				waypointCount += additionalWaypoints;
-                range = 500000.0;
+                range = 300000.0;
 			}
 
             WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true);
@@ -167,7 +175,7 @@ namespace FinePrint.Contracts
 		{
 			Util.LoadNode(node, "AerialContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
 			Util.LoadNode(node, "AerialContract", "minAltitude", ref minAltitude, 0.0);
-			Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, double.PositiveInfinity);
+            Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, 10000);
             Util.LoadNode(node, "AerialContract", "centerLatitude", ref centerLatitude, 0.0);
             Util.LoadNode(node, "AerialContract", "centerLongitude", ref centerLongitude, 0.0);
 		}

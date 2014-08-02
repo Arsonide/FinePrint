@@ -122,7 +122,7 @@ namespace FinePrint
 
         public void OnPreCull()
         {
-            if (HighLogic.LoadedSceneIsFlight)
+            if (HighLogic.LoadedSceneIsFlight || HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
                 if (navIsActive())
                 {
@@ -209,19 +209,23 @@ namespace FinePrint
 
                         showingTooltip = true;
 
-                        if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
+                        if (HighLogic.LoadedSceneIsFlight)
                         {
-                            linkNavPoint();
-                            if (navWaypoint.latitude == wp.latitude && navWaypoint.longitude == wp.longitude && navWaypoint.altitude == wp.altitude)
+                            if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
                             {
-                                ScreenMessages.PostScreenMessage("Navigation set to " + tooltipString + ".", 2.5f, ScreenMessageStyle.LOWER_CENTER);
-                                deactivateNavPoint();
-                            }
-                            else
-                            {
-                                ScreenMessages.PostScreenMessage("Navigation waypoint deactivated.", 2.5f, ScreenMessageStyle.LOWER_CENTER);
-                                setupNavPoint(wp);
-                                activateNavPoint();
+                                linkNavPoint();
+                                if (navWaypoint.latitude == wp.latitude && navWaypoint.longitude == wp.longitude && navWaypoint.altitude == wp.altitude)
+                                {
+                                    ScreenMessages.PostScreenMessage("Navigation waypoint deactivated.", 2.5f, ScreenMessageStyle.LOWER_CENTER);
+                                    clearNavPoint();
+                                    deactivateNavPoint();
+                                }
+                                else
+                                {
+                                    ScreenMessages.PostScreenMessage("Navigation set to " + tooltipString + ".", 2.5f, ScreenMessageStyle.LOWER_CENTER);
+                                    setupNavPoint(wp);
+                                    activateNavPoint();
+                                }
                             }
                         }
                     }
@@ -262,6 +266,18 @@ namespace FinePrint
                     navWaypoint.SetupNavWaypoint(body, wp.latitude, wp.longitude, wp.altitude, wp.textureName, brighterRandom.ToColor());
                     trackWP = wp;
                 }
+            }
+        }
+
+        static public void clearNavPoint()
+        {
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                linkNavPoint();
+
+                //Set navpoint to values that cannot possibly exist, to allow for multiple clicks in the map to toggle.
+                if (navWaypoint != null)
+                    navWaypoint.SetupNavWaypoint(Planetarium.fetch.Sun, 500.0, 500.0, 0.0, "default", new Color(0,0,0));
             }
         }
 
@@ -401,13 +417,15 @@ namespace FinePrint
 
             if (myPlanet != null)
             {
-                if (myPlanet.ocean)
+                if (myPlanet.ocean && !waterAllowed)
                 {
                     if (myPlanet.pqsController != null)
                     {
                         while (true)
                         {
-                            latitude = UnityEngine.Random.value * 180 - 90;
+                            double rand = UnityEngine.Random.value;
+                            rand = 1.0 - (rand * 2);
+                            latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                             longitude = UnityEngine.Random.value * 360 - 180;
                             Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
                             double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
@@ -421,7 +439,9 @@ namespace FinePrint
                 }
                 else
                 {
-                    latitude = UnityEngine.Random.value * 180 - 90;
+                    double rand = UnityEngine.Random.value;
+                    rand = 1.0 - (rand * 2);
+                    latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                     longitude = UnityEngine.Random.value * 360 - 180;
                 }
             }

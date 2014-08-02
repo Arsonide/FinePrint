@@ -13,21 +13,22 @@ namespace FinePrint.Contracts.Parameters
 	public class AsteroidParameter : ContractParameter
 	{
 		private bool forStation;
-        private int roidSeed;
-        private bool asteroidTowed;
+        private List<int> asteroidSeeds;
+        private string asteroidClass;
+        private int successCounter;
 
 		public AsteroidParameter()
 		{
 			this.forStation = false;
-            this.asteroidTowed = false;
-            this.roidSeed = 0;
+            this.successCounter = 0;
+            this.asteroidClass = "A";
 		}
 
-		public AsteroidParameter(bool forStation)
+		public AsteroidParameter(string size, bool forStation)
 		{
 			this.forStation = forStation;
-            this.asteroidTowed = false;
-            this.roidSeed = 0;
+            this.successCounter = 0;
+            this.asteroidClass = size.ToUpper();
 		}
 
 		protected override string GetHashString()
@@ -38,9 +39,9 @@ namespace FinePrint.Contracts.Parameters
 		protected override string GetTitle()
 		{
 			if (forStation)
-				return "Build the facility into a newly discovered asteroid";
+				return "Build the facility into a newly discovered Class " + asteroidClass + " asteroid";
 			else
-				return "Have a newly discovered asteroid in tow";
+				return "Have a newly discovered Class " + asteroidClass + " asteroid in tow";
 		}
 
 		protected override void OnRegister()
@@ -50,7 +51,8 @@ namespace FinePrint.Contracts.Parameters
             if (Root.ContractState == Contract.State.Active)
             {
                 GameEvents.onPartCouple.Add(OnDock);
-                GameEvents.onFlightReady.Add(OnFlight);
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
             }
         }
 
@@ -59,49 +61,57 @@ namespace FinePrint.Contracts.Parameters
             if (Root.ContractState == Contract.State.Active)
             {
                 GameEvents.onPartCouple.Remove(OnDock);
-                GameEvents.onFlightReady.Remove(OnFlight);
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
 
             }
         }
 
-        private void OnFlight()
+        private void FlightReady()
         {
-            bool findSameRoid = false;
+            base.SetIncomplete();
+        }
 
-            List<ModuleAsteroid> asteroids = FlightGlobals.ActiveVessel.FindPartModulesImplementing<ModuleAsteroid>();
-
-            if (asteroids.Count() > 0)
-            {
-                foreach (ModuleAsteroid asteroid in asteroids)
-                {
-                    if (asteroid.seed == roidSeed)
-                        findSameRoid = true;
-                }
-            }
-
-            asteroidTowed = findSameRoid;
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
         }
 
         private void OnDock(GameEvents.FromToAction<Part, Part> action)
         {
-            if (HighLogic.LoadedSceneIsFlight)
+            if (this.Root.ContractState == Contract.State.Active)
             {
-                List<ModuleAsteroid> asteroids = action.from.vessel.FindPartModulesImplementing<ModuleAsteroid>();
-
-                if (asteroids.Count() > 0)
+                if (HighLogic.LoadedSceneIsFlight)
                 {
-                    foreach (ModuleAsteroid asteroid in asteroids)
+                    if (FlightGlobals.ready)
                     {
-                        if (asteroid.seed == roidSeed)
-                            asteroidTowed = true;
-                    }
-
-                    if (FlightGlobals.ActiveVessel.mainBody == Planetarium.fetch.Sun)
-                    {
-                        foreach (ModuleAsteroid asteroid in asteroids)
+                        foreach (ModuleAsteroid asteroid in action.from.vessel.FindPartModulesImplementing<ModuleAsteroid>())
                         {
-                            roidSeed = asteroid.seed;
-                            asteroidTowed = true;
+                            if (asteroid.vessel.DiscoveryInfo.Level.ToString() != "Owned")
+                            {
+                                //This is a new asteroid. Keep track of any new asteroids in a list.
+                                if (asteroid.vessel.DiscoveryInfo.size.Value == asteroidClass)
+                                {
+                                    addAsteroid(asteroid.seed);
+                                    ScreenMessages.PostScreenMessage("This asteroid fits " + this.Root.Agent.Name + "'s requirements.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                }
+                                else
+                                    ScreenMessages.PostScreenMessage("This asteroid is not the size that " + this.Root.Agent.Name + " requested.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                            }
+                            else
+                            {
+                                bool isNew = false;
+                                foreach (int savedSeed in asteroidSeeds)
+                                {
+                                    if (asteroid.seed == savedSeed)
+                                        isNew = true;
+                                }
+
+                                if (!isNew)
+                                    ScreenMessages.PostScreenMessage(this.Root.Agent.Name + " notes that this is not a newly discovered asteroid.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                else
+                                    ScreenMessages.PostScreenMessage("This asteroid fits " + this.Root.Agent.Name + "'s requirements.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                            }
                         }
                     }
                 }
@@ -111,16 +121,25 @@ namespace FinePrint.Contracts.Parameters
 		protected override void OnSave(ConfigNode node)
 		{
 			node.AddValue("forStation", forStation);
-            node.AddValue("roidSeed", roidSeed);
-            node.AddValue("asteroidTowed", asteroidTowed);
+            node.AddValue("asteroidClass", asteroidClass);
+
+            if (asteroidSeeds == null)
+            {
+                node.AddValue("seedList", "");
+                return;
+            }
+
+            node.AddValue("seedList", packSeeds());
 		}
 
 		protected override void OnLoad(ConfigNode node)
 		{
-			Util.LoadNode(node, "AsteroidParameter", "forStation", ref forStation, false);
-            Util.LoadNode(node, "AsteroidParameter", "roidSeed", ref roidSeed, 0);
-            Util.LoadNode(node, "AsteroidParameter", "asteroidTowed", ref asteroidTowed, false);
-		}
+            string seedList = "";
+            Util.LoadNode(node, "AsteroidParameter", "forStation", ref forStation, false);
+            Util.LoadNode(node, "AsteroidParameter", "asteroidClass", ref asteroidClass, "A");
+            Util.LoadNode(node, "AsteroidParameter", "seedList", ref seedList, "");
+            unpackStrings(seedList);
+        }
 
 		protected override void OnUpdate()
 		{
@@ -130,17 +149,20 @@ namespace FinePrint.Contracts.Parameters
 				{
 					if (FlightGlobals.ready)
 					{
-                        checkSameRoid(FlightGlobals.ActiveVessel);
-
 						if (this.State == ParameterState.Incomplete)
 						{
-                            if (asteroidTowed)
-								base.SetComplete();
+                            if (isTowingAsteroid(FlightGlobals.ActiveVessel))
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if ( successCounter >= Util.frameSuccessDelay )
+                                base.SetComplete();
 						}
 
 						if (this.State == ParameterState.Complete)
 						{
-                            if (!asteroidTowed)
+                            if (!isTowingAsteroid(FlightGlobals.ActiveVessel))
 								base.SetIncomplete();
 						}
 					}
@@ -148,21 +170,62 @@ namespace FinePrint.Contracts.Parameters
 			}
 		}
 
-        private void checkSameRoid(Vessel v)
+        private bool isTowingAsteroid(Vessel v)
         {
-            if (asteroidTowed == false)
-                return;
-
-            asteroidTowed = false;
+            if (asteroidSeeds == null)
+                return false;
 
             foreach (ModuleAsteroid asteroid in v.FindPartModulesImplementing<ModuleAsteroid>())
             {
-                if (asteroid.seed == roidSeed)
+                foreach (int savedSeed in asteroidSeeds)
                 {
-                    asteroidTowed = true;
-                    break;
+                    if (asteroid.seed == savedSeed)
+                        return true;
                 }
             }
+
+            return false;
+        }
+
+        private string packSeeds()
+        {
+            string result = "";
+
+            if (asteroidSeeds != null)
+            {
+                List<string> tempSeeds = asteroidSeeds.ConvertAll<string>(x => x.ToString());
+                result = string.Join("|", tempSeeds.ToArray());
+            }
+
+            return result;
+        }
+
+        private void unpackStrings(string packed)
+        {
+            if (!string.IsNullOrEmpty(packed))
+            {
+                List<string> unpacked = packed.Split('|').ToList();
+
+                if (unpacked.Count > 0)
+                {
+                    foreach (string temp in unpacked)
+                    {
+                        int seed;
+                        if (int.TryParse(temp, out seed))
+                        {
+                            addAsteroid(seed);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void addAsteroid(int seed)
+        {
+            if (asteroidSeeds == null)
+                asteroidSeeds = new List<int>();
+
+            asteroidSeeds.Add(seed);
         }
 	}
 }

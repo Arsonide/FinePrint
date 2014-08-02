@@ -16,6 +16,7 @@ namespace FinePrint.Contracts.Parameters
 		private bool hasPowerGenerator;
         private bool hasDockingPort;
 		private string typeString;
+        private int successCounter;
 
 		public FacilitySystemsParameter()
 		{
@@ -23,7 +24,8 @@ namespace FinePrint.Contracts.Parameters
 			this.hasAntenna = false;
 			this.hasPowerGenerator = false;
             this.hasDockingPort = false;
-		}
+            this.successCounter = 0;
+        }
 
 		public FacilitySystemsParameter(string typeString)
 		{
@@ -31,6 +33,7 @@ namespace FinePrint.Contracts.Parameters
 			this.hasAntenna = false;
 			this.hasPowerGenerator = false;
             this.hasDockingPort = false;
+            this.successCounter = 0;
 		}
 
 		protected override string GetHashString()
@@ -54,7 +57,25 @@ namespace FinePrint.Contracts.Parameters
 			hasAntenna = false;
 			hasPowerGenerator = false;
             hasDockingPort = false;
+            GameEvents.onFlightReady.Add(FlightReady);
+            GameEvents.onVesselChange.Add(VesselChange);
 		}
+
+        protected override void OnUnregister()
+        {
+            GameEvents.onFlightReady.Remove(FlightReady);
+            GameEvents.onVesselChange.Remove(VesselChange);
+        }
+
+        private void FlightReady()
+        {
+            base.SetIncomplete();
+        }
+
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
+        }
 
 		protected override void OnSave(ConfigNode node)
 		{
@@ -84,8 +105,13 @@ namespace FinePrint.Contracts.Parameters
 
                         if (base.State == ParameterState.Incomplete)
 						{
-							if (facility)
-								base.SetComplete();
+                            if (facility)
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if (successCounter >= Util.frameSuccessDelay)
+                                base.SetComplete();
 						}
 
                         if (base.State == ParameterState.Complete)

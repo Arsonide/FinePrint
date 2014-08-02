@@ -15,24 +15,32 @@ namespace FinePrint.Contracts
 	public class ARMContract : Contract
 	{
 		CelestialBody targetBody = null;
+        string asteroidClass = "A";
 
 		protected override bool Generate()
 		{
             if (Util.haveTechnology("GrapplingDevice") == false)
                 return false;
 
+            System.Random generator = new System.Random(base.MissionSeed);
+
+            //ARM fails generation on duplicates, so we can't have many out at once.
             int totalContracts = ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count();
-            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<ARMContract>().Count();
-            int totalcount = totalContracts - TotalFinished;
-            if (totalcount >= 2)
+            if (totalContracts >= 2)
                 return false;
 
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
+                asteroidClass = "A";
 				targetBody = Planetarium.fetch.Home;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Significant)
 			{
+                if (generator.Next(0, 101) > 50)
+                    asteroidClass = "B";
+                else
+                    asteroidClass = "C";
+
 				List<CelestialBody> bodies = GetBodies_Reached(true, false);
 
 				if (bodies.Count == 0)
@@ -40,20 +48,36 @@ namespace FinePrint.Contracts
 
 				targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
 
-				if (targetBody.GetName() == "Jool")
-				{
-					targetBody = Util.RandomJoolianMoon();
-
-					if (targetBody.GetName() == "Jool" || targetBody == null)
-						return false;
-				}
+                if (generator.Next(0, 100) > 90)
+                    targetBody = Planetarium.fetch.Sun;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
 			{
-				targetBody = Planetarium.fetch.Sun;
+                if (generator.Next(0, 101) > 50)
+                    asteroidClass = "D";
+                else
+                    asteroidClass = "E";
+
+                targetBody = GetNextUnreachedTarget(1, true, true);
+
+                if (targetBody == null)
+                {
+                    List<CelestialBody> bodies = GetBodies_Reached(true, false);
+
+                    if (bodies.Count == 0)
+                        return false;
+
+                    targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                }
+
+                if (generator.Next(0, 100) > 70)
+    				targetBody = Planetarium.fetch.Sun;
 			}
 
-			this.AddParameter(new AsteroidParameter(false), null);
+            if (targetBody == null)
+                targetBody = Planetarium.fetch.Home;
+
+            this.AddParameter(new AsteroidParameter(asteroidClass, false), null);
 
 			if (targetBody == Planetarium.fetch.Sun)
 			{
@@ -68,25 +92,16 @@ namespace FinePrint.Contracts
 			base.SetExpiry();
 			base.SetDeadlineYears(7.0f, targetBody);
 
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-			{
-				base.SetFunds(10000f, 60000f, this.targetBody);
-				base.SetReputation(300f, 150f, this.targetBody);
-				base.SetScience(150f, this.targetBody);
-			}
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-			{
-				base.SetFunds(10000f, 60000f, this.targetBody);
-				base.SetReputation(300f, 150f, this.targetBody);
-				base.SetScience(150f, this.targetBody);
-			}
-			else
-			{
-				//targetBody is the Sun, and that modifies the rewards, so the values here need to actually be smaller.
-				base.SetFunds(2500f, 15000f, this.targetBody);
-				base.SetReputation(75f, 40f, this.targetBody);
-				base.SetScience(50f, this.targetBody);
-			}
+            base.SetFunds(15000f, 90000f, this.targetBody);
+            base.SetReputation(450f, 225f, this.targetBody);
+            base.SetScience(225f, this.targetBody);
+
+            //Prevent duplicate contracts shortly before finishing up.
+            foreach (ARMContract active in ContractSystem.Instance.GetCurrentContracts<ARMContract>())
+            {
+                if (active.targetBody == this.targetBody && active.asteroidClass == this.asteroidClass)
+                    return false;
+            }
 
 			return true;
 		}
@@ -108,12 +123,10 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-				return "Bring an asteroid into an orbit around Kerbin.";
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-				return "Bring an asteroid into an orbit around " + targetBody.GetName() + ".";
+			if (targetBody != Planetarium.fetch.Sun )
+                return "Bring a newly discovered Class " + asteroidClass + " asteroid into an orbit around " + targetBody.GetName() + ".";
 			else
-				return "Bring an asteroid into an escape trajectory out of the solar system.";
+                return "Eject a Class " + asteroidClass + " asteroid out of the solar system.";
 		}
 
 		protected override string GetDescription()
@@ -124,18 +137,16 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-				return "Capture an asteroid, then bring it into a stable orbit around Kerbin for further study.";
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-			{
+			if (targetBody != Planetarium.fetch.Sun)
+            {
 				switch (UnityEngine.Random.Range(0, 3))
 				{
 					case 0:
-						return "Capture an asteroid, then bring it into a stable orbit around " + targetBody.GetName() + " to test our capabilities.";
+                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.GetName() + " to test our capabilities.";
 					case 1:
-						return "Capture an asteroid, then bring it into a stable orbit around " + targetBody.GetName() + ". Why? FOR SCIENCE!";
+                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.GetName() + ". Why? FOR SCIENCE!";
 					default:
-						return "Mission control says low Kerbin orbit is getting a bit crowded. Capture an asteroid and take it into orbit around " + targetBody.GetName() + " instead.";
+                        return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.GetName() + " instead.";
 				}
 			}
 			else
@@ -143,20 +154,18 @@ namespace FinePrint.Contracts
 				switch (UnityEngine.Random.Range(0, 3))
 				{
 					case 0:
-						return "Capture an asteroid, then put it on an extrasolar trajectory. The less of these things orbiting the sun, the better.";
+                        return "Capture a new Class " + asteroidClass + " asteroid, then put it on an extrasolar trajectory. The less of these things orbiting the sun, the better.";
 					case 1:
-						return "The last asteroid that passed Kerbin nearly wiped out our species, capture one and get rid of it.";
+                        return "The last Class " + asteroidClass + " asteroid that passed Kerbin nearly wiped out our species, capture one and get rid of it.";
 					default:
-						return "How do you feel about throwing a large rock out of the solar system?";
+                        return "How do you feel about throwing a Class " + asteroidClass + " rock out of the solar system?";
 				}
 			}
 		}
 
 		protected override string MessageCompleted()
 		{
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-				return "You successfully captured an asteroid and brought it home.";
-			else if (this.prestige == Contract.ContractPrestige.Significant)
+            if (targetBody != Planetarium.fetch.Sun)
 				return "You successfully captured an asteroid and brought it to " + targetBody.GetName() + ".";
 			else
 			{
@@ -175,12 +184,14 @@ namespace FinePrint.Contracts
 		protected override void OnLoad(ConfigNode node)
 		{
 			Util.LoadNode(node, "ARMContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
+            Util.LoadNode(node, "ARMContract", "asteroidClass", ref asteroidClass, "A");
 		}
 
 		protected override void OnSave(ConfigNode node)
 		{
 			int bodyID = targetBody.flightGlobalsIndex;
 			node.AddValue("targetBody", bodyID);
+            node.AddValue("asteroidClass", asteroidClass);
 		}
 
 		public override bool MeetRequirements()

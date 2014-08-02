@@ -12,9 +12,11 @@ namespace FinePrint.Contracts.Parameters
 {
 	public class FacilityLabParameter : ContractParameter
 	{
+        private int successCounter;
+
 		public FacilityLabParameter()
 		{
-
+            this.successCounter = 0;
 		}
 
 		protected override string GetHashString()
@@ -30,7 +32,25 @@ namespace FinePrint.Contracts.Parameters
 		protected override void OnRegister()
 		{
 			this.DisableOnStateChange = false;
+            GameEvents.onFlightReady.Add(FlightReady);
+            GameEvents.onVesselChange.Add(VesselChange);
 		}
+
+        protected override void OnUnregister()
+        {
+            GameEvents.onFlightReady.Remove(FlightReady);
+            GameEvents.onVesselChange.Remove(VesselChange);
+        }
+
+        private void FlightReady()
+        {
+            base.SetIncomplete();
+        }
+
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
+        }
 
 		protected override void OnUpdate()
 		{
@@ -44,8 +64,13 @@ namespace FinePrint.Contracts.Parameters
 
 						if (this.State == ParameterState.Incomplete)
 						{
-							if (lab)
-								base.SetComplete();
+                            if (lab)
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if (successCounter >= Util.frameSuccessDelay)
+                                base.SetComplete();
 						}
 
 						if (this.State == ParameterState.Complete)

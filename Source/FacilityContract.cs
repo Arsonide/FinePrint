@@ -24,10 +24,9 @@ namespace FinePrint.Contracts
             if (AreFacilitiesUnlocked() == false)
                 return false;
 
+            //Facility fails generation on duplicates, so we can't have many out at once.
             int totalContracts = ContractSystem.Instance.GetCurrentContracts<FacilityContract>().Count();
-            int TotalFinished = ContractSystem.Instance.GetCompletedContracts<FacilityContract>().Count();
-            int totalcount = totalContracts - TotalFinished;
-            if (totalcount >= 2)
+            if (totalContracts >= 2)
                 return false;
 
 			System.Random generator = new System.Random(this.MissionSeed);
@@ -151,8 +150,15 @@ namespace FinePrint.Contracts
                 {
                     if (generator.Next(0, 100) > 90)
                     {
-                        this.AddParameter(new AsteroidParameter(true), null);
+                        string size;
+                        if (generator.Next(0, 101) > 50)
+                            size = "B";
+                        else
+                            size = "C";
+
+                        this.AddParameter(new AsteroidParameter(size, true), null);
                         difficultyFactor += 2.0f;
+                        repFactor += 2.0f;
                     }
                 }
 
@@ -234,8 +240,15 @@ namespace FinePrint.Contracts
 				{
 					if (generator.Next(0, 100) > 70)
 					{
-						this.AddParameter(new AsteroidParameter(true), null);
+                        string size;
+                        if (generator.Next(0, 101) > 50)
+                            size = "D";
+                        else
+                            size = "E";
+
+						this.AddParameter(new AsteroidParameter(size, true), null);
 						difficultyFactor += 2.0f;
+                        repFactor += 2.0f;
 					}
 				}
 
@@ -256,9 +269,17 @@ namespace FinePrint.Contracts
 
 			base.SetExpiry();
 			base.SetDeadlineYears(5.0f * difficultyFactor, targetBody);
-			base.SetFunds(8000f * difficultyFactor, 35000f * difficultyFactor, this.targetBody);
-			base.SetReputation(repFactor + (100f * difficultyFactor), 50f * difficultyFactor, this.targetBody);
-			base.SetScience(scienceFactor + (1f * difficultyFactor), this.targetBody);
+            base.SetFunds(7500f + (7500f * difficultyFactor), 30000f + (30000f * difficultyFactor), this.targetBody);
+			base.SetReputation(45f + (repFactor * 45f * difficultyFactor), 30f + (30f * difficultyFactor), this.targetBody);
+			base.SetScience(5f + (scienceFactor * 5f * difficultyFactor), this.targetBody);
+
+            //Prevent duplicate contracts shortly before finishing up.
+            foreach (FacilityContract active in ContractSystem.Instance.GetCurrentContracts<FacilityContract>())
+            {
+                if (active.targetBody == this.targetBody && active.onLand == this.onLand)
+                    return false;
+            }
+
 			return true;
 		}
 

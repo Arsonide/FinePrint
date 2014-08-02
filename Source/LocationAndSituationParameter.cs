@@ -15,25 +15,46 @@ namespace FinePrint.Contracts.Parameters
 		private CelestialBody targetBody;
 		private Vessel.Situations targetSituation;
 		private string noun;
+        private int successCounter;
 
 		public LocationAndSituationParameter()
 		{
 			targetSituation = Vessel.Situations.ESCAPING;
 			targetBody = null;
 			noun = "potato";
-		}
+            this.successCounter = 0;
+        }
 
 		public LocationAndSituationParameter(CelestialBody targetBody, Vessel.Situations targetSituation, string noun)
 		{
 			this.targetBody = targetBody;
 			this.targetSituation = targetSituation;
 			this.noun = noun;
+            this.successCounter = 0;
 		}
 
 		protected override void OnRegister()
 		{
 			this.DisableOnStateChange = false;
+            GameEvents.onFlightReady.Add(FlightReady);
+            GameEvents.onVesselChange.Add(VesselChange);
 		}
+
+        protected override void OnUnregister()
+        {
+            GameEvents.onFlightReady.Remove(FlightReady);
+            GameEvents.onVesselChange.Remove(VesselChange);
+        }
+
+        private void FlightReady()
+        {
+            base.SetIncomplete();
+        }
+
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
+        }
 
 		protected override string GetHashString()
 		{
@@ -87,7 +108,7 @@ namespace FinePrint.Contracts.Parameters
 		protected override void OnLoad(ConfigNode node)
 		{
 			Util.LoadNode(node, "LocationAndSituationParameter", "targetBody", ref targetBody, Planetarium.fetch.Home);
-			Util.LoadNode(node, "LocationAndSituationParameter", "targetSituation", ref targetSituation, Vessel.Situations.PRELAUNCH);
+			Util.LoadNode(node, "LocationAndSituationParameter", "targetSituation", ref targetSituation, Vessel.Situations.ORBITING);
 			Util.LoadNode(node, "LocationAndSituationParameter", "noun", ref noun, "potato");
 		}
 
@@ -103,8 +124,13 @@ namespace FinePrint.Contracts.Parameters
 
                         if (this.State == ParameterState.Incomplete)
 						{
-							if (isInLocationAndSituation)
-								base.SetComplete();
+                            if (isInLocationAndSituation)
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if (successCounter >= Util.frameSuccessDelay)
+                                base.SetComplete();
 						}
 
                         if (this.State == ParameterState.Complete)

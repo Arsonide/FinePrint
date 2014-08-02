@@ -12,9 +12,11 @@ namespace FinePrint.Contracts.Parameters
 {
     public class FacilityCupolaParameter : ContractParameter
     {
+        private int successCounter;
+
         public FacilityCupolaParameter()
         {
-
+            this.successCounter = 0;
         }
 
         protected override string GetHashString()
@@ -30,6 +32,24 @@ namespace FinePrint.Contracts.Parameters
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
+            GameEvents.onFlightReady.Add(FlightReady);
+            GameEvents.onVesselChange.Add(VesselChange);
+        }
+
+        protected override void OnUnregister()
+        {
+            GameEvents.onFlightReady.Remove(FlightReady);
+            GameEvents.onVesselChange.Remove(VesselChange);
+        }
+
+        private void FlightReady()
+        {
+            base.SetIncomplete();
+        }
+
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
         }
 
         protected override void OnUpdate()
@@ -45,6 +65,11 @@ namespace FinePrint.Contracts.Parameters
                         if (this.State == ParameterState.Incomplete)
                         {
                             if (cupola)
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if (successCounter >= Util.frameSuccessDelay)
                                 base.SetComplete();
                         }
 

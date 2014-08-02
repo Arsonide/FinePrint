@@ -56,13 +56,15 @@ namespace FinePrint
 
 			if (myPlanet != null)
 			{
-				if (myPlanet.ocean)
+				if (myPlanet.ocean && !waterAllowed )
 				{
 					if (myPlanet.pqsController != null)
 					{
 						while (true)
 						{
-							latitude = UnityEngine.Random.value * 180 - 90;
+                            double rand = UnityEngine.Random.value;
+                            rand = 1.0 - (rand * 2);
+                            latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
 							longitude = UnityEngine.Random.value * 360 - 180;
 							Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
 							double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
@@ -76,7 +78,9 @@ namespace FinePrint
 				}
 				else
 				{
-					latitude = UnityEngine.Random.value * 180 - 90;
+                    double rand = UnityEngine.Random.value;
+                    rand = 1.0 - (rand * 2);
+                    latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
 					longitude = UnityEngine.Random.value * 360 - 180;
 				}
 			}
@@ -101,7 +105,7 @@ namespace FinePrint
 
 			if (myPlanet != null)
 			{
-				if (myPlanet.ocean)
+				if (myPlanet.ocean && !waterAllowed)
 				{
 					if (myPlanet.pqsController != null)
 					{

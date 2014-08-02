@@ -14,6 +14,9 @@ namespace FinePrint
 {
 	class Util
     {
+        public const int frameSuccessDelay = 5;
+        static public bool patchReset = false;
+
         #region Vessel Loops
 
         public static bool shipHasPartName(string partName)
@@ -386,10 +389,17 @@ namespace FinePrint
 			if (hasValue)
 				parsed = double.TryParse(node.GetValue(nameOfValue), out value);
 
+            if (!hasValue)
+                Debug.LogWarning("Fine Print" + nameOfClass + " does not have " + nameOfValue + "!");
+
+            if (!parsed)
+                Debug.LogWarning("Fine Print" + nameOfClass + " could not parse " + nameOfValue +"! String: " + node.GetValue(nameOfValue));
+
 			if (!hasValue || !parsed)
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
+                resetBoard();
 			}
 		}
 
@@ -405,6 +415,7 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
+                resetBoard();
 			}
 		}
 
@@ -420,6 +431,7 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
+                resetBoard();
 			}
 		}
 
@@ -435,6 +447,7 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
+                resetBoard();
 			}
 		}
 
@@ -446,6 +459,7 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
+                resetBoard();
 			}
 		}
 
@@ -473,7 +487,8 @@ namespace FinePrint
 			{
 				body = Planetarium.fetch.Home;
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultBody.GetName() + "!");
-			}
+                resetBoard();
+            }
 		}
 
 		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref Vessel.Situations situation, Vessel.Situations defaultSituation)
@@ -522,8 +537,19 @@ namespace FinePrint
 				}
 
 				situation = defaultSituation;
+                resetBoard();
 			}
         }
         #endregion
+
+        public static void resetBoard()
+        {
+            if (!patchReset)
+            {
+                Debug.LogError("Fine Print has detected save game incompatibilities and is resetting the contract board to fix them. This usually happens after a patch.");
+                ContractSystem.Instance.ClearContractsCurrent();
+                patchReset = true;
+            }
+        }
     }
 }

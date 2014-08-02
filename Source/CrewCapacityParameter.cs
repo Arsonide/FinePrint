@@ -13,15 +13,18 @@ namespace FinePrint.Contracts.Parameters
 	public class CrewCapacityParameter : ContractParameter
 	{
 		private int targetCapacity;
+        private int successCounter;
 
 		public CrewCapacityParameter()
 		{
 			targetCapacity = 8;
+            this.successCounter = 0;
 		}
 
 		public CrewCapacityParameter(int targetCapacity)
 		{
 			this.targetCapacity = targetCapacity;
+            this.successCounter = 0;
 		}
 
 		protected override string GetHashString()
@@ -34,10 +37,29 @@ namespace FinePrint.Contracts.Parameters
 			return "Have a facility supporting at least " + Util.integerToWord(targetCapacity) + " kerbals";
 		}
 
+        // Fuck. You. State. Bugs.
 		protected override void OnRegister()
 		{
 			this.DisableOnStateChange = false;
+            GameEvents.onFlightReady.Add(FlightReady);
+            GameEvents.onVesselChange.Add(VesselChange);
 		}
+
+        protected override void OnUnregister()
+        {
+            GameEvents.onFlightReady.Remove(FlightReady);
+            GameEvents.onVesselChange.Remove(VesselChange);
+        }
+
+        private void FlightReady()
+        {
+            base.SetIncomplete();
+        }
+
+        private void VesselChange(Vessel v)
+        {
+            base.SetIncomplete();
+        }
 
 		protected override void OnSave(ConfigNode node)
 		{
@@ -61,8 +83,13 @@ namespace FinePrint.Contracts.Parameters
 
 						if (this.State == ParameterState.Incomplete)
 						{
-							if (capacityReached)
-								base.SetComplete();
+                            if (capacityReached)
+                                successCounter++;
+                            else
+                                successCounter = 0;
+
+                            if ( successCounter >= Util.frameSuccessDelay )
+                                base.SetComplete();
 						}
 
 						if (this.State == ParameterState.Complete)
