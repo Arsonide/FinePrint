@@ -280,6 +280,8 @@ namespace FinePrint.Contracts
                     return false;
             }
 
+            this.AddParameter(new KillControlsParameter(10), null);
+
 			return true;
 		}
 

@@ -31,8 +31,13 @@ namespace FinePrint
                     {
                         foreach (Part part in v.Parts)
                         {
-                            if (part.name == partName)
-                                return true;
+                            AvailablePart info = part.partInfo;
+
+                            if (info != null)
+                            {
+                                if (info.name == partName)
+                                    return true;
+                            }
                         }
                     }
                     else
@@ -550,6 +555,19 @@ namespace FinePrint
                 ContractSystem.Instance.ClearContractsCurrent();
                 patchReset = true;
             }
+        }
+
+        public static Vector3 LLAtoECEF(double lat, double lon, double alt, double radius)
+        {
+            const double degreesToRadians = Math.PI / 180.0;
+            lat = (lat - 90) * degreesToRadians;
+            lon *= degreesToRadians;
+            double x, y, z;
+            double n = radius; // for now, it's still a sphere, so just the radius
+            x = (n + alt) * -1.0 * Math.Sin(lat) * Math.Cos(lon);
+            y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
+            z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
+            return new Vector3((float)x, (float)y, (float)z);
         }
     }
 }

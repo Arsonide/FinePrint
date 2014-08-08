@@ -137,7 +137,7 @@ namespace FinePrint.Contracts.Parameters
                         {
                             if (WaypointManager.Instance() != null)
                             {
-                                distanceToWP = WaypointManager.Instance().DistanceToVessel(wp);
+                                distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
                                 if (distanceToWP > 30000 && outerWarning)
                                 {

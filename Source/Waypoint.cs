@@ -13,6 +13,7 @@ namespace FinePrint
 		public double height;
 		public bool isExplored;
 		public Vector3 worldPosition;
+        public Vector3d orbitPosition;
 		public int seed;
 		public string textureName = "default";
 		public double altitude = 0;
@@ -20,6 +21,7 @@ namespace FinePrint
 		public string siteName = "Site";
 		public int id;
 		public bool isClustered = false;
+        public bool isOrbital = false;
 
 		public Waypoint()
 		{

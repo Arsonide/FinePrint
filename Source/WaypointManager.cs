@@ -1,7 +1,15 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using Contracts;
+using Contracts.Parameters;
+using KSP;
+using KSPAchievements;
+using FinePrint.Contracts.Parameters;
+using FinePrint.Contracts;
 
 namespace FinePrint
 {
@@ -10,6 +18,7 @@ namespace FinePrint
         private static Texture2D mTexDefault;
         private static Texture2D mTexPlane;
         private static Texture2D mTexRover;
+        private static Texture2D mTexOrbit;
         private List<Waypoint> waypoints;
         private GUIStyle hoverStyle;
         static private NavWaypoint navWaypoint;
@@ -21,6 +30,7 @@ namespace FinePrint
             mTexDefault = GameDatabase.Instance.GetTexture("FinePrint/Textures/default", false);
             mTexPlane = GameDatabase.Instance.GetTexture("FinePrint/Textures/plane", false);
             mTexRover = GameDatabase.Instance.GetTexture("FinePrint/Textures/rover", false);
+            mTexOrbit = GameDatabase.Instance.GetTexture("FinePrint/Textures/orbit", false);
             hoverStyle = new GUIStyle();
             hoverStyle.padding = new RectOffset(0, 0, 0, 0);
             hoverStyle.stretchWidth = true;
@@ -48,6 +58,13 @@ namespace FinePrint
                 mTexRover = new Texture2D(16, 16);
                 mTexRover.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
                 mTexRover.Apply();
+            }
+
+            if (mTexOrbit == null)
+            {
+                mTexOrbit = new Texture2D(16, 16);
+                mTexOrbit.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
+                mTexOrbit.Apply();
             }
         }
 
@@ -100,21 +117,28 @@ namespace FinePrint
             {
                 foreach (CelestialBody body in FlightGlobals.Bodies)
                 {
-                    if (body.GetName() == wp.celestialName)
+                    if (!wp.isOrbital)
                     {
-                        if (body.pqsController != null)
+                        if (body.GetName() == wp.celestialName)
                         {
-                            Vector3d pqsRadialVector = QuaternionD.AngleAxis(wp.longitude, Vector3d.down) * QuaternionD.AngleAxis(wp.latitude, Vector3d.forward) * Vector3d.right;
-                            wp.height = body.pqsController.GetSurfaceHeight(pqsRadialVector) - body.pqsController.radius;
+                            if (body.pqsController != null)
+                            {
+                                Vector3d pqsRadialVector = QuaternionD.AngleAxis(wp.longitude, Vector3d.down) * QuaternionD.AngleAxis(wp.latitude, Vector3d.forward) * Vector3d.right;
+                                wp.height = body.pqsController.GetSurfaceHeight(pqsRadialVector) - body.pqsController.radius;
 
-                            if (wp.height < 0)
-                                wp.height = 0;
+                                if (wp.height < 0)
+                                    wp.height = 0;
+                            }
+
+                            Vector3d surfacePos = body.GetWorldSurfacePosition(wp.latitude, wp.longitude, wp.height + wp.altitude);
+                            Vector3d scaledPos = ScaledSpace.LocalToScaledSpace(surfacePos);
+                            wp.worldPosition = new Vector3((float)scaledPos.x, (float)scaledPos.y, (float)scaledPos.z);
+                            wp.isOccluded = IsOccluded(surfacePos, body);
                         }
-
-                        Vector3d surfacePos = body.GetWorldSurfacePosition(wp.latitude, wp.longitude, wp.height + wp.altitude);
-                        Vector3d scaledPos = ScaledSpace.LocalToScaledSpace(surfacePos);
-                        wp.worldPosition = new Vector3((float)scaledPos.x, (float)scaledPos.y, (float)scaledPos.z);
-                        wp.isOccluded = IsOccluded(surfacePos, body);
+                    }
+                    else
+                    {
+                        wp.worldPosition = ScaledSpace.LocalToScaledSpace(wp.orbitPosition);
                     }
                 }
             }
@@ -133,6 +157,40 @@ namespace FinePrint
 
             if (MapView.MapIsEnabled)
             {
+                /*
+                 * This block makes me feel dirty inside, but Contracts don't fire OnUpdate unless they are active.
+                 * To show inactive satellite contracts in the Tracking Station, we need either this or an elaborate Monobehavior.
+                 */
+                MapObject target = PlanetariumCamera.fetch.target;
+
+                foreach (SatelliteContract c in ContractSystem.Instance.GetCurrentContracts<SatelliteContract>())
+                {
+                    SpecificOrbitParameter p = c.GetParameter<SpecificOrbitParameter>();
+
+                    bool focused = true;
+
+                    switch (target.type)
+                    {
+                        case MapObject.MapObjectType.CELESTIALBODY:
+                            if (target.celestialBody.GetName() != p.targetBody.GetName())
+                                focused = false;
+                            break;
+                        case MapObject.MapObjectType.MANEUVERNODE:
+                            if (target.maneuverNode.patch.referenceBody.GetName() != p.targetBody.GetName())
+                                focused = false;
+                            break;
+                        case MapObject.MapObjectType.VESSEL:
+                            if (target.vessel.mainBody.GetName() != p.targetBody.GetName())
+                                focused = false;
+                            break;
+                        default:
+                                focused = false;
+                            break;
+                    }
+
+                    p.updateMapIcons(focused);
+                }
+
                 foreach (Waypoint wp in waypoints)
                     UpdateWaypoint(wp);
             }
@@ -191,13 +249,16 @@ namespace FinePrint
                         case "rover":
                             Graphics.DrawTexture(screenRect, mTexRover, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
+                        case "orbit":
+                            Graphics.DrawTexture(screenRect, mTexOrbit, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
                         default:
                             Graphics.DrawTexture(screenRect, mTexDefault, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                     }
 
                     // Label the waypoint.
-                    if (screenRect.Contains(Event.current.mousePosition) && !wp.isOccluded && !showingTooltip)
+                    if (screenRect.Contains(Event.current.mousePosition) && !wp.isOccluded && !wp.isOrbital && !showingTooltip)
                     {
                         //Storing the information so we can render the label after the loop, text should overlap any other waypoints.
                         tooltipPosition = pos;
@@ -366,6 +427,22 @@ namespace FinePrint
 
                 if (v.mainBody.GetName() == wp.celestialName)
                     return Distance(v.latitude, v.longitude, v.altitude, wp.latitude, wp.longitude, wp.altitude, v.mainBody);
+                else
+                    return float.PositiveInfinity;
+            }
+            else
+                return float.PositiveInfinity;
+        }
+
+        public float LateralDistanceToVessel(Waypoint wp)
+        {
+            //A version if DistanceToVessel that ignores altitude.
+            if (HighLogic.LoadedSceneIsFlight)
+            {
+                Vessel v = FlightGlobals.ActiveVessel;
+
+                if (v.mainBody.GetName() == wp.celestialName)
+                    return Distance(v.latitude, v.longitude, v.altitude, wp.latitude, wp.longitude, v.altitude, v.mainBody);
                 else
                     return float.PositiveInfinity;
             }

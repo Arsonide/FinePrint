@@ -134,21 +134,21 @@ namespace FinePrint.Contracts.Parameters
                         {
                             if (WaypointManager.Instance() != null)
                             {
-                                distanceToWP = WaypointManager.Instance().DistanceToVessel(wp);
+                                distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > 10000 && outerWarning)
+                                if (distanceToWP > 2000 && outerWarning)
                                 {
                                     outerWarning = false;
                                     ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.siteName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP <= 10000 && !outerWarning)
+                                if (distanceToWP <= 2000 && !outerWarning)
                                 {
                                     outerWarning = true;
                                     ScreenMessages.PostScreenMessage("Approaching target area of " + wp.siteName + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP < 5000)
+                                if (distanceToWP < 1000)
                                 {
                                     if (Util.hasWheelsOnGround())
                                     {

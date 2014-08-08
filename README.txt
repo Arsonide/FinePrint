@@ -1,4 +1,4 @@
-Fine Print v0.53a
+Fine Print v0.54a
 
 -- SUMMARY --
 
@@ -7,8 +7,9 @@ within Kerbal Space Program v0.24.
 
 New contract types include contracts to build space stations, contracts
 to build planetary bases, contracts to retrieve asteroids, contracts 
-to fly planes in atmospheric conditions, and contracts to drive rovers 
-around the surface of a planet searching for things.
+to fly planes in atmospheric conditions, contracts to drive rovers 
+around the surface of a planet searching for things, and contracts to
+deploy satellites into very specific orbits.
 
 For more information, or to submit bug reports, submit feature suggestions,
 or track changes, please go to the official forum thread for Fine Print:
@@ -50,8 +51,8 @@ Kerbal Space Program version 0.24.2
   this file is used to generate flavor text at the top of mission briefings.
   Within it you will find keywords occasionally, look for the word "rescue" 
   for instance. If you would like to add your own flavor text for my contracts
-  the keywords are: spacestation, groundbase, roversearch, surveyflight, and 
-  asteroidretrieval.
+  the keywords are: spacestation, groundbase, roversearch, surveyflight,
+  asteroidretrieval, and deploysatellite.
 
 -- TROUBLESHOOTING --
 
@@ -70,7 +71,7 @@ Kerbal Space Program version 0.24.2
 Q: What technologies do I need to have to get the new contracts?
 
 A: Wheels, Probes, Wings, and for stations and bases some power generation, 
-   docking ports, and antennae.
+   docking ports, and antennae. Satellites also require power and antennae.
 
 Q: I'm at a waypoint and it isn't registering my visit!
 
@@ -79,8 +80,9 @@ A: Make sure your wheels are on the ground on a rover mission, for planes make
 
 Q: How can I thank you?
 
-A: Modders cannot take donations, so you'll just have to tell me "thanks" on
-   the official thread. Oh and pressure Squad to hire me. I like Mexico.
+A: Simply tell me "thanks" on the official thread. I enjoy seeing other people
+   enjoy my work. There might be a donation link there some day if you must 
+   thank with your coin. Oh and pressure Squad to hire me. I like Mexico.
 
 Q: I am experiencing something crazy with your mod, where do I tell you?
 
@@ -109,3 +111,4 @@ with my questions, as well as others for their great mods I learned from:
 * Cilph
 * Xaiier
 * taniwha
+* Burkitt

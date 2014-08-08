@@ -94,7 +94,7 @@ namespace FinePrint.Contracts
 			base.SetDeadlineYears(5.0f, targetBody);
 			base.SetFunds(4000.0f, 17500.0f, targetBody);
 			base.SetReputation(50.0f, 25.0f, targetBody);
-			return true;
+            return true;
 		}
 
 		public override bool CanBeCancelled()
