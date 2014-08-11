@@ -63,37 +63,29 @@ namespace FinePrint.Contracts.Parameters
 
 		protected override string GetTitle()
 		{
-			string formattedBody = "potato";
-
 			if (targetBody == null)
 				return "Do something on the surface of the Sun";
-
-			//I'm OCD wannafightaboutit?
-			if (targetBody.GetName() == "Sun" || targetBody.GetName() == "Mun")
-				formattedBody = "the " + targetBody.GetName();
-			else
-				formattedBody = targetBody.GetName();
 
 			switch (targetSituation)
 			{
 				case Vessel.Situations.DOCKED:
-					return "Dock your " + noun + " near " + formattedBody;
+					return "Dock your " + noun + " near " + targetBody.theName;
 				case Vessel.Situations.ESCAPING:
-					return "Get your " + noun + " into an escape trajectory out of " + formattedBody;
+                    return "Get your " + noun + " into an escape trajectory out of " + targetBody.theName;
 				case Vessel.Situations.FLYING:
-					return "Fly your " + noun + " on " + formattedBody;
+                    return "Fly your " + noun + " on " + targetBody.theName;
 				case Vessel.Situations.LANDED:
-					return "Land your " + noun + " on " + formattedBody;
+                    return "Land your " + noun + " on " + targetBody.theName;
 				case Vessel.Situations.ORBITING:
-					return "Put your " + noun + " in orbit of " + formattedBody;
+                    return "Put your " + noun + " in orbit of " + targetBody.theName;
 				case Vessel.Situations.PRELAUNCH:
-					return "Be ready to launch your " + noun + " from " + formattedBody;
+                    return "Be ready to launch your " + noun + " from " + targetBody.theName;
 				case Vessel.Situations.SPLASHED:
-					return "Splash your " + noun + " down on " + formattedBody;
+                    return "Splash your " + noun + " down on " + targetBody.theName;
 				case Vessel.Situations.SUB_ORBITAL:
-					return "Set your " + noun + " on a crash course for " + formattedBody;
+                    return "Set your " + noun + " on a crash course for " + targetBody.theName;
 				default:
-					return "Have your " + noun + " near " + formattedBody;
+                    return "Have your " + noun + " near " + targetBody.theName;
 			}
 		}
 

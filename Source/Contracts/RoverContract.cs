@@ -26,7 +26,7 @@ namespace FinePrint.Contracts
             //Allow four contracts in pocket but only two on the board at a time.
             int offeredContracts = 0;
             int activeContracts = 0;
-            foreach (AerialContract contract in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
+            foreach (RoverContract contract in ContractSystem.Instance.GetCurrentContracts<RoverContract>())
             {
                 if (contract.ContractState == Contract.State.Offered)
                     offeredContracts++;
@@ -114,7 +114,7 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-			return "Chart source of data anomaly near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + " with a rover.";
+			return "Chart source of data anomaly near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + " with a rover.";
 		}
 
 		protected override string GetDescription()
@@ -125,12 +125,12 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
-			return "We've noticed an interesting anomaly in the general area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ". It's a wide area, so you will need a rover to find it.";
+            return "We've noticed an interesting anomaly in the general area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ". It's a wide area, so you will need a rover to find it.";
 		}
 
 		protected override string MessageCompleted()
 		{
-			return "You have successfully found the source of the data anomaly in " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.GetName() + ".";
+            return "You have successfully found the source of the data anomaly in " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ".";
 		}
 
 		protected override void OnLoad(ConfigNode node)

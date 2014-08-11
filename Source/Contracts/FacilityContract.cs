@@ -77,7 +77,7 @@ namespace FinePrint.Contracts
                 {
                     if (generator.Next(0, 100) > 80)
                     {
-                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        this.AddParameter(new PartNameParameter("Have a viewing cupola at the facility", "cupola"), null);
                         difficultyFactor += 1.0f;
                         repFactor = 2.0f;
                     }
@@ -130,7 +130,7 @@ namespace FinePrint.Contracts
                 {
                     if (generator.Next(0, 100) > 60)
                     {
-                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        this.AddParameter(new PartNameParameter("Have a viewing cupola at the facility", "cupola"), null);
                         difficultyFactor += 1.0f;
                         repFactor = 3.0f;
                     }
@@ -220,7 +220,7 @@ namespace FinePrint.Contracts
                 {
                     if (generator.Next(0, 100) > 60)
                     {
-                        this.AddParameter(new FacilityCupolaParameter(), null);
+                        this.AddParameter(new PartNameParameter("Have a viewing cupola at the facility", "cupola"), null);
                         difficultyFactor += 1.0f;
                         repFactor = 4.0f;
                     }

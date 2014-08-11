@@ -10,13 +10,24 @@ using KSPAchievements;
 
 namespace FinePrint.Contracts.Parameters
 {
-    public class FacilityCupolaParameter : ContractParameter
+    public class PartNameParameter : ContractParameter
     {
         private int successCounter;
+        private string title;
+        private string partName;
 
-        public FacilityCupolaParameter()
+        public PartNameParameter()
         {
             this.successCounter = 0;
+            this.title = "Have a potato";
+            this.partName = "potato";
+        }
+
+        public PartNameParameter(string title, string partName)
+        {
+            this.successCounter = 0;
+            this.title = title;
+            this.partName = partName;
         }
 
         protected override string GetHashString()
@@ -26,7 +37,7 @@ namespace FinePrint.Contracts.Parameters
 
         protected override string GetTitle()
         {
-            return "Have a viewing cupola at the facility";
+            return title;
         }
 
         protected override void OnRegister()
@@ -52,6 +63,18 @@ namespace FinePrint.Contracts.Parameters
             base.SetIncomplete();
         }
 
+        protected override void OnSave(ConfigNode node)
+        {
+            node.AddValue("title", title);
+            node.AddValue("partName", partName);
+        }
+
+        protected override void OnLoad(ConfigNode node)
+        {
+            Util.LoadNode(node, "PartNameParameter", "title", ref title, "Have a potato");
+            Util.LoadNode(node, "PartNameParameter", "partName", ref partName, "potato");
+        }
+
         protected override void OnUpdate()
         {
             if (this.Root.ContractState == Contract.State.Active)
@@ -60,11 +83,11 @@ namespace FinePrint.Contracts.Parameters
                 {
                     if (FlightGlobals.ready)
                     {
-                        bool cupola = (Util.shipHasPartName("cupola"));
+                        bool hasPart = (Util.shipHasPartName(partName));
 
                         if (this.State == ParameterState.Incomplete)
                         {
-                            if (cupola)
+                            if (hasPart)
                                 successCounter++;
                             else
                                 successCounter = 0;
@@ -75,7 +98,7 @@ namespace FinePrint.Contracts.Parameters
 
                         if (this.State == ParameterState.Complete)
                         {
-                            if (!cupola)
+                            if (!hasPart)
                                 base.SetIncomplete();
                         }
                     }

@@ -126,7 +126,7 @@ namespace FinePrint.Contracts
 		protected override string GetTitle()
 		{
 			if (targetBody != Planetarium.fetch.Sun )
-                return "Bring a newly discovered Class " + asteroidClass + " asteroid into an orbit around " + targetBody.GetName() + ".";
+                return "Bring a newly discovered Class " + asteroidClass + " asteroid into an orbit around " + targetBody.theName + ".";
 			else
                 return "Eject a Class " + asteroidClass + " asteroid out of the solar system.";
 		}
@@ -144,11 +144,11 @@ namespace FinePrint.Contracts
 				switch (UnityEngine.Random.Range(0, 3))
 				{
 					case 0:
-                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.GetName() + " to test our capabilities.";
+                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + " to test our capabilities.";
 					case 1:
-                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.GetName() + ". Why? FOR SCIENCE!";
+                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + ". Why? FOR SCIENCE!";
 					default:
-                        return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.GetName() + " instead.";
+                        return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
 				}
 			}
 			else
@@ -168,7 +168,7 @@ namespace FinePrint.Contracts
 		protected override string MessageCompleted()
 		{
             if (targetBody != Planetarium.fetch.Sun)
-				return "You successfully captured an asteroid and brought it to " + targetBody.GetName() + ".";
+                return "You successfully captured an asteroid and brought it to " + targetBody.theName + ".";
 			else
 			{
 				switch (UnityEngine.Random.Range(0, 3))

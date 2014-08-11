@@ -1,4 +1,4 @@
-Fine Print v0.54a
+Fine Print v0.55a
 
 -- SUMMARY --
 
@@ -9,7 +9,7 @@ New contract types include contracts to build space stations, contracts
 to build planetary bases, contracts to retrieve asteroids, contracts 
 to fly planes in atmospheric conditions, contracts to drive rovers 
 around the surface of a planet searching for things, and contracts to
-deploy satellites into very specific orbits.
+deploy purpose built satellites into very specific orbits.
 
 For more information, or to submit bug reports, submit feature suggestions,
 or track changes, please go to the official forum thread for Fine Print:
@@ -112,3 +112,5 @@ with my questions, as well as others for their great mods I learned from:
 * Xaiier
 * taniwha
 * Burkitt
+* Rokker
+* TaranisElsu

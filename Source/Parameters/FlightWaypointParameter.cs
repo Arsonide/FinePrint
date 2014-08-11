@@ -110,15 +110,18 @@ namespace FinePrint.Contracts.Parameters
             // Load all current missions in the tracking station.
             if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
             {
-                wp.celestialName = targetBody.GetName();
-                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
-                wp.seed = Root.MissionSeed;
-                wp.id = waypointID;
-                wp.setName();
-                wp.textureName = "plane";
-                wp.altitude = calculateMidAltitude();
-                WaypointManager.AddWaypoint(wp);
-                submittedWaypoint = true;
+                if (this.Root.ContractState != Contract.State.Completed)
+                {
+                    wp.celestialName = targetBody.GetName();
+                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
+                    wp.seed = Root.MissionSeed;
+                    wp.id = waypointID;
+                    wp.setName();
+                    wp.textureName = "plane";
+                    wp.altitude = calculateMidAltitude();
+                    WaypointManager.AddWaypoint(wp);
+                    submittedWaypoint = true;
+                }
             }
         }
 

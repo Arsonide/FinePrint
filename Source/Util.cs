@@ -31,6 +31,10 @@ namespace FinePrint
                     {
                         foreach (Part part in v.Parts)
                         {
+                            if (part.name == partName)
+                                return true;
+
+                            // Any that fall through either don't match or are bugged. Check for bug.
                             AvailablePart info = part.partInfo;
 
                             if (info != null)
@@ -545,6 +549,53 @@ namespace FinePrint
                 resetBoard();
 			}
         }
+
+        public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref OrbitType orbitType, OrbitType defaultOrbitType)
+        {
+            bool hasValue = node.HasValue(nameOfValue);
+            bool parsed = false;
+
+            if (hasValue)
+            {
+                int loadedOrbitTypeInteger = 0;
+                parsed = int.TryParse(node.GetValue(nameOfValue), out loadedOrbitTypeInteger);
+                orbitType = (OrbitType)loadedOrbitTypeInteger;
+            }
+
+            if (!hasValue || !parsed)
+            {
+                switch (defaultOrbitType)
+                {
+                    case OrbitType.EQUATORIAL:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of EQUATORIAL!");
+						break;
+                    case OrbitType.POLAR:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of POLAR!");
+						break;
+                    case OrbitType.RANDOM:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of RANDOM!");
+						break;
+                    case OrbitType.STATIONARY:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of STATIONARY!");
+						break;
+                    case OrbitType.SYNCHRONOUS:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SYNCHRONOUS!");
+						break;
+                    case OrbitType.MOLNIYA:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of MOLNIYA!");
+                        break;
+                    case OrbitType.TUNDRA:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of MOLNIYA!");
+                        break;
+                    default:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
+                        break;
+                }
+
+                orbitType = defaultOrbitType;
+                resetBoard();
+            }
+        }
         #endregion
 
         public static void resetBoard()
@@ -568,6 +619,87 @@ namespace FinePrint
             y = (n + alt) * Math.Cos(lat); // for now, it's still a sphere, so no eccentricity
             z = (n + alt) * -1.0 * Math.Sin(lat) * Math.Sin(lon);
             return new Vector3((float)x, (float)y, (float)z);
+        }
+
+        public static double getMinimumOrbitalAltitude(CelestialBody body)
+        {
+            double atmosphere = 0.0;
+            double timeWarp = 0.0;
+
+            if (!body.atmosphere)
+                atmosphere = 0.0;
+            else
+                atmosphere = -body.atmosphereScaleHeight * Math.Log(1E-6) * 1000;
+
+            //We need to calculate PeR and ApR, radius needs to be a part of this altitude.
+            atmosphere += body.Radius;
+
+            timeWarp = body.timeWarpAltitudeLimits[1] + body.Radius;
+
+            return Math.Max(atmosphere, timeWarp);
+        }
+
+        public static double synchronousSMA(CelestialBody body)
+        {
+            if ((object)body == null)
+                return 0.0;
+
+            return Math.Pow(body.gravParameter * Math.Pow(body.rotationPeriod / (2.0 * Math.PI), 2.0), (1.0 / 3.0));
+        }
+
+        public static double molniyaSMA(CelestialBody body)
+        {
+            if ((object)body == null)
+                return 0.0;
+
+            // Molniya orbits have periods of half a day.
+            double period = body.rotationPeriod / 2;
+
+            return Math.Pow(body.gravParameter * Math.Pow(period / (2.0 * Math.PI), 2.0), (1.0 / 3.0));
+        }
+
+        public static bool canBodyBeMolniya(CelestialBody body)
+        {
+            if ((object)body == null)
+                return false;
+
+            double semiMajorAxis = molniyaSMA(body);
+            double periapsis = getMinimumOrbitalAltitude(body) * 1.05;
+            double apoapsis = (semiMajorAxis * 2) - periapsis;
+
+            if (apoapsis > body.sphereOfInfluence)
+                return false;
+            else
+                return true;
+        }
+
+        public static bool canBodyBeTundra(CelestialBody body)
+        {
+            if ((object)body == null)
+                return false;
+
+            double semiMajorAxis = synchronousSMA(body);
+            double periapsis = getMinimumOrbitalAltitude(body) * 1.05;
+            double apoapsis = (semiMajorAxis * 2) - periapsis;
+
+            if (apoapsis > body.sphereOfInfluence)
+                return false;
+            else
+                return true;
+        }
+
+        public static bool canBodyBeSynchronous(CelestialBody body, double eccentricity)
+        {
+            if ((object)body == null)
+                return false;
+
+            double semiMajorAxis = synchronousSMA(body);
+            double apoapsis = (1.0 + eccentricity) * semiMajorAxis;
+
+            if (apoapsis > body.sphereOfInfluence)
+                return false;
+            else
+                return true;
         }
     }
 }

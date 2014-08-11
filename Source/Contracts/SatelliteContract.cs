@@ -16,6 +16,9 @@ namespace FinePrint.Contracts
     {
         CelestialBody targetBody = null;
         double deviation = 10;
+        OrbitType orbitType = OrbitType.RANDOM;
+        System.Random generator;
+        double difficultyFactor = 0.5;
 
         protected override bool Generate()
         {
@@ -36,8 +39,9 @@ namespace FinePrint.Contracts
             if (offeredContracts >= 2 || activeContracts >= 4)
                 return false;
 
-            System.Random generator = new System.Random(this.MissionSeed);
-            float fundsMultiplier = 1.0f;
+            generator = new System.Random(this.MissionSeed);
+            float rewardMultiplier = 1.0f;
+            int partChance = 10;
 
             if (this.prestige == Contract.ContractPrestige.Trivial)
             {
@@ -53,7 +57,10 @@ namespace FinePrint.Contracts
                     targetBody = Planetarium.fetch.Home;
 
                 deviation = 7;
-                fundsMultiplier = 1.0f;
+                difficultyFactor = 0.2;
+                pickEasy();
+                rewardMultiplier = 2.0f;
+                partChance = 20;
             }
             else if (this.prestige == Contract.ContractPrestige.Significant)
             {
@@ -72,7 +79,10 @@ namespace FinePrint.Contracts
                     targetBody = Planetarium.fetch.Home;
 
                 deviation = 5;
-                fundsMultiplier = 1.25f;
+                difficultyFactor = 0.4;
+                pickMedium();
+                rewardMultiplier = 2.5f;
+                partChance = 40;
             }
             else if (this.prestige == Contract.ContractPrestige.Exceptional)
             {
@@ -96,16 +106,73 @@ namespace FinePrint.Contracts
                     targetBody = Planetarium.fetch.Home;
 
                 deviation = 3;
-                fundsMultiplier = 1.5f;
+                difficultyFactor = 0.8;
+                pickHard();
+                rewardMultiplier = 3.0f;
+                partChance = 25;
             }
 
             if (targetBody == null)
                 targetBody = Planetarium.fetch.Home;
 
-            this.AddParameter(new ProbeSystemsParameter(), null);
-            this.AddParameter(new SpecificOrbitParameter(deviation, targetBody), null);
-            this.AddParameter(new KillControlsParameter(), null);
+            if (orbitType == OrbitType.POLAR)
+                rewardMultiplier += 0.25f;
 
+            if (orbitType == OrbitType.STATIONARY || orbitType == OrbitType.SYNCHRONOUS)
+                rewardMultiplier += 0.5f;
+
+            if (orbitType == OrbitType.MOLNIYA || orbitType == OrbitType.TUNDRA)
+                rewardMultiplier += 1.0f;
+
+            this.AddParameter(new ProbeSystemsParameter(), null);
+            this.AddParameter(new SpecificOrbitParameter(deviation, targetBody, orbitType, difficultyFactor), null);
+
+            if (generator.Next(0, 101) <= partChance)
+            {
+                if (Util.haveTechnology("GooExperiment"))
+                {
+                    this.AddParameter(new PartNameParameter("Have a goo container on the satellite", "GooExperiment"));
+                    rewardMultiplier += 0.1f;
+                }
+            }
+
+            if (generator.Next(0, 101) <= partChance)
+            {
+                if (Util.haveTechnology("sensorThermometer"))
+                {
+                    this.AddParameter(new PartNameParameter("Have a thermometer on the satellite", "sensorThermometer"));
+                    rewardMultiplier += 0.1f;
+                }
+            }
+
+            if (generator.Next(0, 101) <= partChance)
+            {
+                if (Util.haveTechnology("sensorBarometer"))
+                {
+                    this.AddParameter(new PartNameParameter("Have a barometer on the satellite", "sensorBarometer"));
+                    rewardMultiplier += 0.1f;
+                }
+            }
+
+            if (generator.Next(0, 101) <= partChance)
+            {
+                if (Util.haveTechnology("sensorGravimeter"))
+                {
+                    this.AddParameter(new PartNameParameter("Have a gravimeter on the satellite", "sensorGravimeter"));
+                    rewardMultiplier += 0.1f;
+                }
+            }
+
+            if (generator.Next(0, 101) <= partChance)
+            {
+                if (Util.haveTechnology("sensorAccelerometer"))
+                {
+                    this.AddParameter(new PartNameParameter("Have an accelerometer on the satellite", "sensorAccelerometer"));
+                    rewardMultiplier += 0.1f;
+                }
+            }
+
+            this.AddParameter(new KillControlsParameter(), null);
 
             base.AddKeywords(new string[] { "deploysatellite" });
             base.SetExpiry();
@@ -113,14 +180,14 @@ namespace FinePrint.Contracts
 
             if (targetBody == Planetarium.fetch.Home)
             {
-                fundsMultiplier *= 3.0f;
-                base.SetScience(1f, this.targetBody);
+                rewardMultiplier *= 2.0f;
+                base.SetScience(1f * rewardMultiplier, this.targetBody);
             }
             else
-                base.SetScience(3f, this.targetBody);
+                base.SetScience(4f * rewardMultiplier, this.targetBody);
 
-            base.SetFunds(3000.0f * fundsMultiplier, 15000.0f * fundsMultiplier, this.targetBody);
-            base.SetReputation(50.0f * fundsMultiplier, 25.0f * fundsMultiplier, targetBody);
+            base.SetFunds(3000.0f * rewardMultiplier, 15000.0f * rewardMultiplier, this.targetBody);
+            base.SetReputation(50.0f * rewardMultiplier, 25.0f * rewardMultiplier, targetBody);
             return true;
         }
 
@@ -141,7 +208,29 @@ namespace FinePrint.Contracts
 
         protected override string GetTitle()
         {
-            return "Position satellite in a specific orbit of " + targetBody.GetName() + ".";
+            switch (orbitType)
+            {
+                case OrbitType.EQUATORIAL:
+                    return "Position satellite in an equatorial orbit of " + targetBody.theName + ".";
+                case OrbitType.POLAR:
+                    return "Position satellite in a polar orbit of " + targetBody.theName + ".";
+                case OrbitType.MOLNIYA:
+                    return "Position satellite in a Molniya orbit around " + targetBody.theName + ".";
+                case OrbitType.TUNDRA:
+                    return "Position satellite in a tundra orbit around " + targetBody.theName + ".";
+                case OrbitType.STATIONARY:
+                    if ( targetBody == Planetarium.fetch.Sun )
+                        return "Position satellite in heliostationary orbit of " + targetBody.theName + ".";
+                    else
+                        return "Position satellite in geostationary orbit of " + targetBody.theName + ".";
+                case OrbitType.SYNCHRONOUS:
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "Position satellite in a heliosynchronous orbit of " + targetBody.theName + ".";
+                    else
+                        return "Position satellite in a geosynchronous orbit of " + targetBody.theName + ".";
+                default:
+                    return "Position satellite in a specific orbit of " + targetBody.theName + ".";
+            }
         }
 
         protected override string GetDescription()
@@ -152,18 +241,63 @@ namespace FinePrint.Contracts
 
         protected override string GetSynopsys()
         {
-            return "We need you to build a satellite and deploy it into a very specific orbit around " + targetBody.GetName() + ".";
+            switch (orbitType)
+            {
+                case OrbitType.EQUATORIAL:
+                    return "We need you to build a satellite to our specifications and deploy it into an equatorial orbit around " + targetBody.theName + ".";
+                case OrbitType.POLAR:
+                    return "We need you to build a satellite to our specifications and deploy it into a polar orbit around " + targetBody.theName + ".";
+                case OrbitType.MOLNIYA:
+                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric Molniya \"lightning\" orbit around " + targetBody.theName + ".";
+                case OrbitType.TUNDRA:
+                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric tundra orbit around " + targetBody.theName + ".";
+                case OrbitType.STATIONARY:
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "We need you to build a satellite to our specifications and place it in heliostationary orbit around " + targetBody.theName + ".";
+                    else
+                        return "We need you to build a satellite to our specifications and place it in geostationary orbit around " + targetBody.theName + ".";
+                case OrbitType.SYNCHRONOUS:
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "We need you to build a satellite to our specifications and place it in heliosynchronous orbit around " + targetBody.theName + ".";
+                    else
+                        return "We need you to build a satellite to our specifications and place it in geosynchronous orbit around " + targetBody.theName + ".";
+                default:
+                    return "We need you to build a satellite to our specifications and deploy it into a very specific orbit around " + targetBody.theName + ".";
+            }
         }
 
         protected override string MessageCompleted()
         {
-            return "You have successfully placed our satellite in orbit of " + targetBody.GetName() + ".";
+            switch (orbitType)
+            {
+                case OrbitType.EQUATORIAL:
+                    return "You have successfully deployed our satellite into equatorial orbit around " + targetBody.theName + ".";
+                case OrbitType.POLAR:
+                    return "You have successfully deployed our satellite into polar orbit around " + targetBody.theName + ".";
+                case OrbitType.MOLNIYA:
+                    return "You have successfully deployed our satellite in a Molniya orbit around " + targetBody.theName + ".";
+                case OrbitType.TUNDRA:
+                    return "You have successfully deployed our satellite in a tundra orbit around " + targetBody.theName + ".";
+                case OrbitType.STATIONARY:
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "You have successfully placed our satellite in heliostationary orbit of " + targetBody.theName + ".";
+                    else
+                        return "You have successfully placed our satellite in geostationary orbit of " + targetBody.theName + ".";
+                case OrbitType.SYNCHRONOUS:
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "You have successfully placed our satellite in heliosynchronous orbit of " + targetBody.theName + ".";
+                    else
+                        return "You have successfully placed our satellite in geosynchronous orbit of " + targetBody.theName + ".";
+                default:
+                    return "You have successfully deployed our satellite in orbit of " + targetBody.theName + ".";
+            }
         }
 
         protected override void OnLoad(ConfigNode node)
         {
             Util.LoadNode(node, "SatelliteContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "SatelliteContract", "deviation", ref deviation, 10);
+            Util.LoadNode(node, "SatelliteContract", "orbitType", ref orbitType, OrbitType.RANDOM);
         }
 
         protected override void OnSave(ConfigNode node)
@@ -171,6 +305,7 @@ namespace FinePrint.Contracts
             int bodyID = targetBody.flightGlobalsIndex;
             node.AddValue("targetBody", bodyID);
             node.AddValue("deviation", deviation);
+            node.AddValue("orbitType", (int)orbitType);
         }
 
         public override bool MeetRequirements()
@@ -267,6 +402,92 @@ namespace FinePrint.Contracts
                     return bodies[UnityEngine.Random.Range(0, bodies.Count - 1)];
             }
             return null;
+        }
+
+        private void pickEasy()
+        {
+            if ((object)generator == null)
+                return;
+
+            int percentile = generator.Next(0, 101);
+
+            if (percentile <= 33)
+                setOrbitType(OrbitType.RANDOM, difficultyFactor);
+            else if (percentile > 33 && percentile <= 66)
+                setOrbitType(OrbitType.POLAR, difficultyFactor);
+            else
+                setOrbitType(OrbitType.EQUATORIAL, difficultyFactor);
+        }
+
+        private void pickMedium()
+        {
+            if ((object)generator == null)
+                return;
+
+            int percentile = generator.Next(0, 101);
+
+            if (percentile <= 25)
+                pickEasy();
+            else if (percentile > 25 && percentile <= 50)
+                setOrbitType(OrbitType.RANDOM, difficultyFactor);
+            else if (percentile > 50 && percentile <= 75)
+                setOrbitType(OrbitType.SYNCHRONOUS, difficultyFactor);
+            else
+                setOrbitType(OrbitType.STATIONARY, difficultyFactor);
+        }
+
+        private void pickHard()
+        {
+            if ((object)generator == null)
+                return;
+
+            int percentile = generator.Next(0, 101);
+
+            if (percentile <= 25)
+                pickMedium();
+            else if (percentile > 25 && percentile <= 50)
+                setOrbitType(OrbitType.RANDOM, difficultyFactor);
+            else if (percentile > 50 && percentile <= 75)
+                setOrbitType(OrbitType.MOLNIYA, difficultyFactor);
+            else
+                setOrbitType(OrbitType.TUNDRA, difficultyFactor);
+        }
+
+        private void setOrbitType(OrbitType targetType, double difficultyFactor)
+        {
+            if ((object)targetBody == null)
+                return;
+
+            if (targetType == OrbitType.SYNCHRONOUS)
+            {
+                if (Util.canBodyBeSynchronous(targetBody, difficultyFactor / 2))
+                    orbitType = targetType;
+                else
+                    orbitType = OrbitType.RANDOM;
+            }
+            else if (targetType == OrbitType.STATIONARY)
+            {
+                if (Util.canBodyBeSynchronous(targetBody, difficultyFactor / 2))
+                    orbitType = targetType;
+                else
+                    orbitType = OrbitType.RANDOM;
+            }
+            else if (targetType == OrbitType.MOLNIYA)
+            {
+                if (Util.canBodyBeMolniya(targetBody))
+                    orbitType = targetType;
+                else
+                    orbitType = OrbitType.RANDOM;
+            }
+            else if (targetType == OrbitType.TUNDRA)
+            {
+                if (Util.canBodyBeTundra(targetBody))
+                    orbitType = targetType;
+                else
+                    orbitType = OrbitType.RANDOM;
+            }
+            else
+                orbitType = targetType;
         }
     }
 }

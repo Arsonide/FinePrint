@@ -152,7 +152,7 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-			return "Perform aerial surveys of " + targetBody.GetName() + " at an altitude of " + (int)minAltitude + " to " + (int)maxAltitude + ".";
+            return "Perform aerial surveys of " + targetBody.theName + " at an altitude of " + (int)minAltitude + " to " + (int)maxAltitude + ".";
 		}
 
 		protected override string GetDescription()
@@ -163,12 +163,12 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
-			return "There are places on " + targetBody.GetName() + " that we don't know much about, fly over them and see what you can see.";
+            return "There are places on " + targetBody.theName + " that we don't know much about, fly over them and see what you can see.";
 		}
 
 		protected override string MessageCompleted()
 		{
-			return "You have successfully performed aerial surveys at all of the points of interest on " + targetBody.GetName() + ".";
+            return "You have successfully performed aerial surveys at all of the points of interest on " + targetBody.theName + ".";
 		}
 
 		protected override void OnLoad(ConfigNode node)
