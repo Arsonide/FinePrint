@@ -121,11 +121,17 @@ namespace FinePrint.Contracts
             if (orbitType == OrbitType.STATIONARY || orbitType == OrbitType.SYNCHRONOUS)
                 rewardMultiplier += 0.5f;
 
-            if (orbitType == OrbitType.MOLNIYA || orbitType == OrbitType.TUNDRA)
+            if (orbitType == OrbitType.KOLNIYA || orbitType == OrbitType.TUNDRA)
                 rewardMultiplier += 1.0f;
 
             this.AddParameter(new ProbeSystemsParameter(), null);
-            this.AddParameter(new SpecificOrbitParameter(deviation, targetBody, orbitType, difficultyFactor), null);
+
+            double e = 0.0;
+            if ( orbitType == OrbitType.SYNCHRONOUS )
+                e = generator.NextDouble()*(difficultyFactor/2);
+            Orbit o = Util.GenerateOrbit(orbitType, MissionSeed, targetBody, difficultyFactor, e);
+
+            this.AddParameter(new SpecificOrbitParameter(orbitType, o.inclination, o.eccentricity, o.semiMajorAxis, o.LAN, o.argumentOfPeriapsis, o.meanAnomalyAtEpoch, o.epoch, targetBody, difficultyFactor, deviation), null);
 
             if (generator.Next(0, 101) <= partChance)
             {
@@ -214,20 +220,24 @@ namespace FinePrint.Contracts
                     return "Position satellite in an equatorial orbit of " + targetBody.theName + ".";
                 case OrbitType.POLAR:
                     return "Position satellite in a polar orbit of " + targetBody.theName + ".";
-                case OrbitType.MOLNIYA:
-                    return "Position satellite in a Molniya orbit around " + targetBody.theName + ".";
+                case OrbitType.KOLNIYA:
+                    return "Position satellite in a Kolniya orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "Position satellite in a tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if ( targetBody == Planetarium.fetch.Sun )
-                        return "Position satellite in heliostationary orbit of " + targetBody.theName + ".";
+                        return "Position satellite in keliostationary orbit of " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "Position satellite in keostationary orbit of " + targetBody.theName + ".";
                     else
-                        return "Position satellite in geostationary orbit of " + targetBody.theName + ".";
+                        return "Position satellite in stationary orbit of " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Position satellite in a heliosynchronous orbit of " + targetBody.theName + ".";
+                        return "Position satellite in a keliosynchronous orbit of " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "Position satellite in a keosynchronous orbit of " + targetBody.theName + ".";
                     else
-                        return "Position satellite in a geosynchronous orbit of " + targetBody.theName + ".";
+                        return "Position satellite in a synchronous orbit of " + targetBody.theName + ".";
                 default:
                     return "Position satellite in a specific orbit of " + targetBody.theName + ".";
             }
@@ -247,20 +257,24 @@ namespace FinePrint.Contracts
                     return "We need you to build a satellite to our specifications and deploy it into an equatorial orbit around " + targetBody.theName + ".";
                 case OrbitType.POLAR:
                     return "We need you to build a satellite to our specifications and deploy it into a polar orbit around " + targetBody.theName + ".";
-                case OrbitType.MOLNIYA:
-                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric Molniya \"lightning\" orbit around " + targetBody.theName + ".";
+                case OrbitType.KOLNIYA:
+                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric Kolniya \"lightning\" orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "We need you to build a satellite to our specifications and deploy it into a highly eccentric tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "We need you to build a satellite to our specifications and place it in heliostationary orbit around " + targetBody.theName + ".";
-                    else
-                        return "We need you to build a satellite to our specifications and place it in geostationary orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in keliostationary orbit around " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "We need you to build a satellite to our specifications and place it in keostationary orbit around " + targetBody.theName + ".";
+                else
+                        return "We need you to build a satellite to our specifications and place it in stationary orbit around " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "We need you to build a satellite to our specifications and place it in heliosynchronous orbit around " + targetBody.theName + ".";
-                    else
-                        return "We need you to build a satellite to our specifications and place it in geosynchronous orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in keliosynchronous orbit around " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "We need you to build a satellite to our specifications and place it in keosynchronous orbit around " + targetBody.theName + ".";
+                else
+                        return "We need you to build a satellite to our specifications and place it in synchronous orbit around " + targetBody.theName + ".";
                 default:
                     return "We need you to build a satellite to our specifications and deploy it into a very specific orbit around " + targetBody.theName + ".";
             }
@@ -274,20 +288,24 @@ namespace FinePrint.Contracts
                     return "You have successfully deployed our satellite into equatorial orbit around " + targetBody.theName + ".";
                 case OrbitType.POLAR:
                     return "You have successfully deployed our satellite into polar orbit around " + targetBody.theName + ".";
-                case OrbitType.MOLNIYA:
-                    return "You have successfully deployed our satellite in a Molniya orbit around " + targetBody.theName + ".";
+                case OrbitType.KOLNIYA:
+                    return "You have successfully deployed our satellite in a Kolniya orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "You have successfully deployed our satellite in a tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "You have successfully placed our satellite in heliostationary orbit of " + targetBody.theName + ".";
-                    else
-                        return "You have successfully placed our satellite in geostationary orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in keliostationary orbit of " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "You have successfully placed our satellite in keostationary orbit of " + targetBody.theName + ".";
+                else
+                        return "You have successfully placed our satellite in stationary orbit of " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "You have successfully placed our satellite in heliosynchronous orbit of " + targetBody.theName + ".";
-                    else
-                        return "You have successfully placed our satellite in geosynchronous orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in keliosynchronous orbit of " + targetBody.theName + ".";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "You have successfully placed our satellite in keosynchronous orbit of " + targetBody.theName + ".";
+                else
+                        return "You have successfully placed our satellite in synchronous orbit of " + targetBody.theName + ".";
                 default:
                     return "You have successfully deployed our satellite in orbit of " + targetBody.theName + ".";
             }
@@ -448,7 +466,7 @@ namespace FinePrint.Contracts
             else if (percentile > 25 && percentile <= 50)
                 setOrbitType(OrbitType.RANDOM, difficultyFactor);
             else if (percentile > 50 && percentile <= 75)
-                setOrbitType(OrbitType.MOLNIYA, difficultyFactor);
+                setOrbitType(OrbitType.KOLNIYA, difficultyFactor);
             else
                 setOrbitType(OrbitType.TUNDRA, difficultyFactor);
         }
@@ -472,9 +490,9 @@ namespace FinePrint.Contracts
                 else
                     orbitType = OrbitType.RANDOM;
             }
-            else if (targetType == OrbitType.MOLNIYA)
+            else if (targetType == OrbitType.KOLNIYA)
             {
-                if (Util.canBodyBeMolniya(targetBody))
+                if (Util.canBodyBeKolniya(targetBody))
                     orbitType = targetType;
                 else
                     orbitType = OrbitType.RANDOM;

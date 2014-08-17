@@ -101,8 +101,10 @@ namespace FinePrint.Contracts.Parameters
                 wp.seed = Root.MissionSeed;
                 wp.id = waypointID;
                 wp.setName();
-                wp.textureName = "plane";
+                wp.waypointType = WaypointType.PLANE;
                 wp.altitude = calculateMidAltitude();
+                wp.isOnSurface = true;
+                wp.isNavigatable = true;
                 WaypointManager.AddWaypoint(wp);
                 submittedWaypoint = true;
             }
@@ -117,8 +119,10 @@ namespace FinePrint.Contracts.Parameters
                     wp.seed = Root.MissionSeed;
                     wp.id = waypointID;
                     wp.setName();
-                    wp.textureName = "plane";
+                    wp.waypointType = WaypointType.PLANE;
                     wp.altitude = calculateMidAltitude();
+                    wp.isOnSurface = true;
+                    wp.isNavigatable = false;
                     WaypointManager.AddWaypoint(wp);
                     submittedWaypoint = true;
                 }
@@ -145,20 +149,20 @@ namespace FinePrint.Contracts.Parameters
                                 if (distanceToWP > 30000 && outerWarning)
                                 {
                                     outerWarning = false;
-                                    ScreenMessages.PostScreenMessage("You are leaving the area of " + wp.siteName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    ScreenMessages.PostScreenMessage("You are leaving the area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
                                 if (distanceToWP <= 30000 && !outerWarning)
                                 {
                                     outerWarning = true;
-                                    ScreenMessages.PostScreenMessage("Approaching " + wp.siteName + ", beginning aerial surveillance.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    ScreenMessages.PostScreenMessage("Approaching " + wp.tooltip + ", beginning aerial surveillance.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
                                 if (v.altitude > minAltitude && v.altitude < maxAltitude)
                                 {
                                     if (distanceToWP < 15000)
                                     {
-                                        ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.siteName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                        ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                         wp.isExplored = true;
                                         WaypointManager.deactivateNavPoint();
                                         WaypointManager.RemoveWaypoint(wp);

@@ -581,11 +581,11 @@ namespace FinePrint
                     case OrbitType.SYNCHRONOUS:
                         Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SYNCHRONOUS!");
 						break;
-                    case OrbitType.MOLNIYA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of MOLNIYA!");
+                    case OrbitType.KOLNIYA:
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of KOLNIYA!");
                         break;
                     case OrbitType.TUNDRA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of MOLNIYA!");
+                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of TUNDRA!");
                         break;
                     default:
                         Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
@@ -647,23 +647,23 @@ namespace FinePrint
             return Math.Pow(body.gravParameter * Math.Pow(body.rotationPeriod / (2.0 * Math.PI), 2.0), (1.0 / 3.0));
         }
 
-        public static double molniyaSMA(CelestialBody body)
+        public static double kolniyaSMA(CelestialBody body)
         {
             if ((object)body == null)
                 return 0.0;
 
-            // Molniya orbits have periods of half a day.
+            // Kolniya orbits have periods of half a day.
             double period = body.rotationPeriod / 2;
 
             return Math.Pow(body.gravParameter * Math.Pow(period / (2.0 * Math.PI), 2.0), (1.0 / 3.0));
         }
 
-        public static bool canBodyBeMolniya(CelestialBody body)
+        public static bool canBodyBeKolniya(CelestialBody body)
         {
             if ((object)body == null)
                 return false;
 
-            double semiMajorAxis = molniyaSMA(body);
+            double semiMajorAxis = kolniyaSMA(body);
             double periapsis = getMinimumOrbitalAltitude(body) * 1.05;
             double apoapsis = (semiMajorAxis * 2) - periapsis;
 
@@ -700,6 +700,191 @@ namespace FinePrint
                 return false;
             else
                 return true;
+        }
+
+        public static double angleOfAscendingNode(Orbit currentOrbit, Orbit targetOrbit)
+        {
+            //Credit to the folks with MechJeb for pioneering this stuff.
+            //Get the raw normals of both orbits.
+            Vector3d currentNormal = -currentOrbit.GetOrbitNormal().xzy.normalized;
+            Vector3d targetNormal = -targetOrbit.GetOrbitNormal().xzy.normalized;
+
+            //Math inc...
+            Vector3d vectorToAN = Vector3d.Cross(currentNormal, targetNormal);
+
+            Vector3d projected = Vector3d.Exclude(currentNormal, vectorToAN);
+
+            Vector3d localVectorToAN = Quaternion.AngleAxis(-(float)currentOrbit.LAN, Planetarium.up) * Planetarium.right;
+            Vector3d localvectorToPe = Quaternion.AngleAxis((float)currentOrbit.argumentOfPeriapsis, currentNormal) * localVectorToAN;
+
+            Vector3d vectorToPe = currentOrbit.PeR * localvectorToPe;
+            double angleFromPe = Vector3d.Angle(vectorToPe, projected);
+
+            //If the vector points to the infalling part of the orbit then we need to do 360 minus the angle from Pe to get the true anomaly.
+            double trueAnomalyOfAscendingNode = 0.0;
+            if (Math.Abs(Vector3d.Angle(projected, Vector3d.Cross(currentNormal, vectorToPe))) < 90)
+                trueAnomalyOfAscendingNode = angleFromPe;
+            else
+                trueAnomalyOfAscendingNode = 360 - angleFromPe;
+
+            return trueAnomalyOfAscendingNode;
+        }
+
+        public static double angleOfDescendingNode(Orbit currentOrbit, Orbit targetOrbit)
+        {
+            double trueAnomalyOfDescendingNode = angleOfAscendingNode(currentOrbit, targetOrbit);
+            trueAnomalyOfDescendingNode = (trueAnomalyOfDescendingNode + 180) % 360;
+
+            return trueAnomalyOfDescendingNode;
+        }
+
+        public static Vector3d positionOfPeriapsis(Orbit o)
+        {
+            return o.getPositionFromTrueAnomaly(0.0);
+        }
+
+        public static Vector3d positionOfApoapsis(Orbit o)
+        {
+            return o.getPositionFromTrueAnomaly(Math.PI);
+        }
+
+        public static Texture2D LoadTexture(string textureName, int width, int height)
+        {
+            textureName = "FinePrint/Textures/" + textureName;
+
+            Texture2D texture = GameDatabase.Instance.GetTexture(textureName, false);
+
+            if (texture == null)
+            {
+                texture = new Texture2D(width, height);
+                texture.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, width * height).ToArray());
+                texture.Apply();
+            }
+
+            return texture;
+        }
+
+        public static Orbit GenerateOrbit(OrbitType orbitType, int seed, CelestialBody targetBody, double difficultyFactor, double eccentricity = 0.0)
+        {
+            if ((object)targetBody == null)
+                return null;
+
+            Orbit o = new Orbit();
+            System.Random generator = new System.Random(seed);
+
+            //Initialize all the things.
+            double inc = (generator.NextDouble() * 90.0) * difficultyFactor;
+            double desiredPeriapsis = 0.0;
+            double desiredApoapsis = 0.0;
+            double pointA = 0.0;
+            double pointB = 0.0;
+            float maximumAltitude = 0f;
+            double easeFactor = 1.0 - difficultyFactor;
+            double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
+            o.referenceBody = targetBody;
+
+            //If it chooses the sun, the infinite SOI can cause NAN, so choose Eeloo's altitude instead.
+            //Use 90% of the SOI to give a little leeway for error correction.
+            if (targetBody == Planetarium.fetch.Sun)
+                maximumAltitude = 113549713200f;
+            else
+                maximumAltitude = Math.Max((float)minimumAltitude, (float)targetBody.sphereOfInfluence * (float)difficultyFactor);
+
+            if (orbitType == OrbitType.RANDOM || orbitType == OrbitType.POLAR || orbitType == OrbitType.EQUATORIAL)
+            {
+                pointA = minimumAltitude + ((maximumAltitude - minimumAltitude) * generator.NextDouble());
+                pointB = minimumAltitude + ((maximumAltitude - minimumAltitude) * generator.NextDouble());
+                pointA = UnityEngine.Mathf.Lerp((float)pointA, (float)pointB, (float)easeFactor);
+                desiredApoapsis = Math.Max(pointA, pointB);
+                desiredPeriapsis = Math.Min(pointA, pointB);
+                o.semiMajorAxis = (desiredApoapsis + desiredPeriapsis) / 2.0;
+                o.eccentricity = (desiredApoapsis - desiredPeriapsis) / (desiredApoapsis + desiredPeriapsis);
+                o.argumentOfPeriapsis = generator.NextDouble() * 360.0;
+            }
+            else if (orbitType == OrbitType.KOLNIYA)
+            {
+                o.semiMajorAxis = Util.kolniyaSMA(targetBody);
+                desiredPeriapsis = minimumAltitude * 1.05;
+                desiredApoapsis = (o.semiMajorAxis * 2) - desiredPeriapsis;
+                o.eccentricity = (desiredApoapsis - desiredPeriapsis) / (desiredApoapsis + desiredPeriapsis);
+
+                if (generator.Next(0, 100) > 50)
+                    o.argumentOfPeriapsis = 270;
+                else
+                    o.argumentOfPeriapsis = 90;
+            }
+            else if (orbitType == OrbitType.TUNDRA)
+            {
+                o.semiMajorAxis = Util.synchronousSMA(targetBody);
+                desiredPeriapsis = minimumAltitude * 1.05;
+                desiredApoapsis = (o.semiMajorAxis * 2) - desiredPeriapsis;
+                o.eccentricity = (desiredApoapsis - desiredPeriapsis) / (desiredApoapsis + desiredPeriapsis);
+
+                if (generator.Next(0, 100) > 50)
+                    o.argumentOfPeriapsis = 270;
+                else
+                    o.argumentOfPeriapsis = 90;
+            }
+            else if (orbitType == OrbitType.SYNCHRONOUS || orbitType == OrbitType.STATIONARY)
+            {
+                o.semiMajorAxis = Util.synchronousSMA(targetBody);
+
+                if (orbitType == OrbitType.SYNCHRONOUS)
+                    o.eccentricity = eccentricity;
+                else
+                    o.eccentricity = 0.0;
+
+                o.argumentOfPeriapsis = generator.NextDouble() * 360.0;
+            }
+
+            if (orbitType == OrbitType.POLAR)
+                inc = 90;
+            else if (orbitType == OrbitType.EQUATORIAL || orbitType == OrbitType.STATIONARY)
+                inc = 0;
+
+            //Retrograde orbits are harder on Kerbin and the Sun, but otherwise, 50% chance.
+            //Kolniya and Tundra have invalid inclinations until this point.
+            if (targetBody == Planetarium.fetch.Home || targetBody == Planetarium.fetch.Sun)
+            {
+                if (orbitType == OrbitType.RANDOM || orbitType == OrbitType.POLAR || orbitType == OrbitType.EQUATORIAL || orbitType == OrbitType.SYNCHRONOUS)
+                {
+                    if (generator.Next(0, 100) < difficultyFactor * 50)
+                        inc = 180.0 - inc;
+                }
+                else if (orbitType == OrbitType.KOLNIYA || orbitType == OrbitType.TUNDRA)
+                {
+                    if (generator.Next(0, 100) < difficultyFactor * 50)
+                        inc = 116.6;
+                    else
+                        inc = 63.4;
+                }
+            }
+            else
+            {
+                if (orbitType == OrbitType.RANDOM || orbitType == OrbitType.POLAR || orbitType == OrbitType.EQUATORIAL || orbitType == OrbitType.SYNCHRONOUS)
+                {
+                    if (generator.Next(0, 100) > 50)
+                        inc = 180.0 - inc;
+                }
+                else if (orbitType == OrbitType.KOLNIYA || orbitType == OrbitType.TUNDRA)
+                {
+                    if (generator.Next(0, 100) > 50)
+                        inc = 116.6;
+                    else
+                        inc = 63.4;
+                }
+            }
+
+            o.inclination = inc;
+            o.LAN = generator.NextDouble() * 360.0;
+            o.meanAnomalyAtEpoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
+            o.epoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
+            o.Init();
+            Vector3d pos = o.getRelativePositionAtUT(0.0);
+            Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
+            o.h = Vector3d.Cross(pos, vel);
+
+            return o;
         }
     }
 }

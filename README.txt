@@ -1,4 +1,4 @@
-Fine Print v0.55a
+Fine Print v0.56a
 
 -- SUMMARY --
 
@@ -105,6 +105,7 @@ with my questions, as well as others for their great mods I learned from:
 
 * Frontier
 * regex
+* Rokker
 * NathanKell
 * r4m0n
 * Sarbian
@@ -112,5 +113,4 @@ with my questions, as well as others for their great mods I learned from:
 * Xaiier
 * taniwha
 * Burkitt
-* Rokker
 * TaranisElsu

@@ -16,7 +16,7 @@ namespace FinePrint.Contracts.Parameters
         STATIONARY,
         POLAR,
         EQUATORIAL,
-        MOLNIYA,
+        KOLNIYA,
         TUNDRA,
         RANDOM
     }
@@ -28,32 +28,54 @@ namespace FinePrint.Contracts.Parameters
         public double deviationWindow;
         public OrbitRenderer orbitRenderer;
         public OrbitDriver orbitDriver;
-        public CelestialBody targetBody;
         public List<Waypoint> iconWaypoints;
         private bool beenSetup;
         private int successCounter;
         private System.Random generator;
-        private OrbitType orbitType;
-        private double difficultyFactor;
+        public OrbitType orbitType;
+        public double difficultyFactor;
+        private double inclination;
+        private double eccentricity;
+        private double sma;
+        private double lan;
+        private double argumentOfPeriapsis;
+        private double meanAnomalyAtEpoch;
+        private double epoch;
+        public CelestialBody targetBody;
+        private const int numSpinners = 8;
 
         public SpecificOrbitParameter()
         {
             deviationWindow = 10;
-            targetBody = Planetarium.fetch.Home;
             this.successCounter = 0;
             beenSetup = false;
             orbitType = OrbitType.RANDOM;
             difficultyFactor = 0.5;
+            inclination = 0.0;
+            eccentricity = 0.0;
+            sma = 10000000.0;
+            lan = 0.0;
+            argumentOfPeriapsis = 0.0;
+            meanAnomalyAtEpoch = 0.0;
+            epoch = 0.0;
+            targetBody = Planetarium.fetch.Home;
         }
 
-        public SpecificOrbitParameter(double deviationWindow, CelestialBody targetBody, OrbitType orbitType, double difficultyFactor)
+        public SpecificOrbitParameter(OrbitType orbitType, double inclination, double eccentricity, double sma, double lan, double argumentOfPeriapsis, double meanAnomalyAtEpoch, double epoch, CelestialBody targetBody, double difficultyFactor, double deviationWindow)
         {
             this.deviationWindow = deviationWindow;
-            this.targetBody = targetBody;
             this.successCounter = 0;
             beenSetup = false;
             this.orbitType = orbitType;
             this.difficultyFactor = difficultyFactor;
+            this.inclination = inclination;
+            this.eccentricity = eccentricity;
+            this.sma = sma;
+            this.lan = lan;
+            this.argumentOfPeriapsis = argumentOfPeriapsis;
+            this.meanAnomalyAtEpoch = meanAnomalyAtEpoch;
+            this.epoch = epoch;
+            this.targetBody = targetBody;
         }
 
         protected override string GetHashString()
@@ -63,29 +85,49 @@ namespace FinePrint.Contracts.Parameters
 
         protected override string GetTitle()
         {
-            switch ( orbitType )
+            switch (orbitType)
             {
                 case OrbitType.EQUATORIAL:
                     return "Reach the designated equatorial orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.POLAR:
                     return "Reach the designated polar orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
-                case OrbitType.MOLNIYA:
-                    return "Reach the designated Molniya orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                case OrbitType.KOLNIYA:
+                    return "Reach the designated Kolniya orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.TUNDRA:
                     return "Reach the designated tundra orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.STATIONARY:
-                    if ( targetBody == Planetarium.fetch.Sun )
-                        return "Reach heliostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "Reach keliostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "Reach keostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach geostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach stationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.SYNCHRONOUS:
-                    if ( targetBody == Planetarium.fetch.Sun )
-                        return "Reach the designated heliosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    if (targetBody == Planetarium.fetch.Sun)
+                        return "Reach the designated keliosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    else if (targetBody == Planetarium.fetch.Home)
+                        return "Reach the designated keosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach the designated geosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated synchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 default:
                     return "Reach the designated orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
             }
+        }
+
+        protected override string GetNotes()
+        {
+            double PeA = (sma * (1 - eccentricity)) - targetBody.Radius;
+            double ApA = (sma * (1 + eccentricity)) - targetBody.Radius;
+
+            string notes = "";
+
+            //In Gene's dialogue, the notes for the previous parameter and this one get smushed together, need to add a \n, but it looks dumb in flight.
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+                notes += "\n";
+
+            notes += "Orbit Specifics:\nApoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + " meters\nPeriapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + " meters\nInclination: " + Math.Round(inclination, 1) + " degrees\nLongitude of Ascending Node: " + Math.Round(lan, 1) + " degrees";
+
+            return notes;
         }
 
         // Fuck. You. State. Bugs.
@@ -120,6 +162,13 @@ namespace FinePrint.Contracts.Parameters
             node.AddValue("deviationWindow", deviationWindow);
             node.AddValue("difficultyFactor", difficultyFactor);
             node.AddValue("orbitType", (int)orbitType);
+            node.AddValue("inclination", inclination);
+            node.AddValue("eccentricity", eccentricity);
+            node.AddValue("sma", sma);
+            node.AddValue("lan", lan);
+            node.AddValue("argumentOfPeriapsis", argumentOfPeriapsis);
+            node.AddValue("meanAnomalyAtEpoch", meanAnomalyAtEpoch);
+            node.AddValue("epoch", epoch);
         }
 
         protected override void OnLoad(ConfigNode node)
@@ -128,6 +177,13 @@ namespace FinePrint.Contracts.Parameters
             Util.LoadNode(node, "SpecificOrbitParameter", "deviationWindow", ref deviationWindow, 10);
             Util.LoadNode(node, "SpecificOrbitParameter", "difficultyFactor", ref difficultyFactor, 0.5);
             Util.LoadNode(node, "SpecificOrbitParameter", "orbitType", ref orbitType, OrbitType.RANDOM);
+            Util.LoadNode(node, "SpecificOrbitParameter", "inclination", ref inclination, 0.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "eccentricity", ref eccentricity, 0.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "sma", ref sma, 1000000.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "lan", ref lan, 0.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "argumentOfPeriapsis", ref argumentOfPeriapsis, 0.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "meanAnomalyAtEpoch", ref meanAnomalyAtEpoch, 0.0);
+            Util.LoadNode(node, "SpecificOrbitParameter", "epoch", ref epoch, 0.0);
 
             if (HighLogic.LoadedSceneIsFlight)
             {
@@ -181,34 +237,6 @@ namespace FinePrint.Contracts.Parameters
 
         public void updateMapIcons(bool isFocused)
         {
-            if (HighLogic.LoadedSceneIsFlight)
-            {
-                if (this.Root.ContractState == Contract.State.Active)
-                {
-                    if (!beenSetup)
-                        setup();
-                }
-                else
-                {
-                    if (beenSetup)
-                        cleanup();
-                }
-            }
-
-            if (HighLogic.LoadedScene == GameScenes.TRACKSTATION)
-            {
-                if (this.Root.ContractState != Contract.State.Completed)
-                {
-                    if (!beenSetup)
-                        setup();
-                }
-                else
-                {
-                    if (beenSetup)
-                        cleanup();
-                }
-            }
-
             if (beenSetup && MapView.MapIsEnabled)
             {
                 if (!isFocused)
@@ -217,20 +245,49 @@ namespace FinePrint.Contracts.Parameters
                     return;
                 }
                 else
-                {
                     setVisible(true);
-                }
 
                 iconTimer = (iconTimer + Time.deltaTime) % maxIconTimer;
 
+                float offset = -(1f / numSpinners);
+
                 for (int x = 0; x < iconWaypoints.Count; x++)
                 {
-                    float offset = 0;
-
-                    if (iconWaypoints.Count > 0)
-                        offset = (float)x / (float)iconWaypoints.Count;
-
-                    iconWaypoints[x].orbitPosition = getOrbitPositionAtRatio(offset + (iconTimer / maxIconTimer));
+                    switch (iconWaypoints[x].waypointType)
+                    {
+                        case WaypointType.ORBITAL:
+                            offset += (1f / numSpinners);
+                            iconWaypoints[x].orbitPosition = getOrbitPositionAtRatio(offset + (iconTimer / maxIconTimer));
+                            break;
+                        case WaypointType.ASCENDINGNODE:
+                            if (HighLogic.LoadedSceneIsFlight)
+                            {
+                                iconWaypoints[x].visible = checkWaypointVisibility(iconWaypoints[x]);
+                                double angleOfAscendingNode = Util.angleOfAscendingNode(orbitDriver.orbit, FlightGlobals.ActiveVessel.orbit);
+                                iconWaypoints[x].orbitPosition = orbitDriver.orbit.getPositionFromTrueAnomaly(angleOfAscendingNode * (Math.PI / 180));
+                                iconWaypoints[x].tooltip = "Ascending Node: " + Math.Round(angleOfAscendingNode - 180.0, 1) + "°";
+                            }
+                            break;
+                        case WaypointType.DESCENDINGNODE:
+                            if (HighLogic.LoadedSceneIsFlight)
+                            {
+                                iconWaypoints[x].visible = checkWaypointVisibility(iconWaypoints[x]);
+                                double angleOfDescendingNode = Util.angleOfDescendingNode(orbitDriver.orbit, FlightGlobals.ActiveVessel.orbit);
+                                iconWaypoints[x].orbitPosition = orbitDriver.orbit.getPositionFromTrueAnomaly(angleOfDescendingNode * (Math.PI / 180));
+                                iconWaypoints[x].tooltip = "Descending Node: " + Math.Round(angleOfDescendingNode - 180.0, 1) + "°";
+                            }
+                            break;
+                        case WaypointType.APOAPSIS:
+                            double ApA = (sma * (1 + eccentricity)) - targetBody.Radius;
+                            iconWaypoints[x].orbitPosition = Util.positionOfApoapsis(orbitDriver.orbit);
+                            iconWaypoints[x].tooltip = targetBody.GetName() + " Apoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + "m";
+                            break;
+                        case WaypointType.PERIAPSIS:
+                            double PeA = (sma * (1 - eccentricity)) - targetBody.Radius;
+                            iconWaypoints[x].orbitPosition = Util.positionOfPeriapsis(orbitDriver.orbit);
+                            iconWaypoints[x].tooltip = targetBody.GetName() + " Periapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + "m";
+                            break;
+                    }
                 }
             }
         }
@@ -262,46 +319,76 @@ namespace FinePrint.Contracts.Parameters
 
             iconWaypoints = new List<Waypoint>();
 
-            for (int x = 0; x < 4; x++)
+            for (int cardinals = 0; cardinals < 4; cardinals++)
+            {
+                bool addedWaypoint = false;
+
+                switch (cardinals)
+                {
+                    case 0:
+                        if (HighLogic.LoadedSceneIsFlight)
+                        {
+                            iconWaypoints.Add(new Waypoint());
+                            iconWaypoints[iconWaypoints.Count - 1].waypointType = WaypointType.ASCENDINGNODE;
+                            addedWaypoint = true;
+                        }
+                        break;
+                    case 1:
+                        if (HighLogic.LoadedSceneIsFlight)
+                        {
+                            iconWaypoints.Add(new Waypoint());
+                            iconWaypoints[iconWaypoints.Count - 1].waypointType = WaypointType.DESCENDINGNODE;
+                            addedWaypoint = true;
+                        }
+                        break;
+                    case 2:
+                        iconWaypoints.Add(new Waypoint());
+                        iconWaypoints[iconWaypoints.Count - 1].waypointType = WaypointType.APOAPSIS;
+                        addedWaypoint = true;
+                        break;
+                    case 3:
+                        iconWaypoints.Add(new Waypoint());
+                        iconWaypoints[iconWaypoints.Count - 1].waypointType = WaypointType.PERIAPSIS;
+                        addedWaypoint = true;
+                        break;
+                }
+
+                if (addedWaypoint)
+                {
+                    iconWaypoints[iconWaypoints.Count - 1].celestialName = targetBody.GetName();
+                    iconWaypoints[iconWaypoints.Count - 1].isOnSurface = false;
+                    iconWaypoints[iconWaypoints.Count - 1].isNavigatable = false;
+                    iconWaypoints[iconWaypoints.Count - 1].seed = Root.MissionSeed;
+                    WaypointManager.AddWaypoint(iconWaypoints[iconWaypoints.Count - 1]);
+                }
+            }
+
+            for (int x = 0; x < numSpinners; x++)
             {
                 iconWaypoints.Add(new Waypoint());
                 iconWaypoints[iconWaypoints.Count - 1].celestialName = targetBody.GetName();
-                iconWaypoints[iconWaypoints.Count - 1].textureName = "orbit";
-                iconWaypoints[iconWaypoints.Count - 1].isOrbital = true;
+                iconWaypoints[iconWaypoints.Count - 1].waypointType = WaypointType.ORBITAL;
+                iconWaypoints[iconWaypoints.Count - 1].isOnSurface = false;
+                iconWaypoints[iconWaypoints.Count - 1].isNavigatable = false;
                 iconWaypoints[iconWaypoints.Count - 1].seed = Root.MissionSeed;
                 WaypointManager.AddWaypoint(iconWaypoints[iconWaypoints.Count - 1]);
             }
 
             orbitDriver = new OrbitDriver();
-
-            //Start with periapsis at a safe distance and a random eccentricity, weighted towards the bottom.
-            //Derive SMA from eccentricity and desired periapsis.
             orbitDriver.orbit = new Orbit();
-
-            switch (this.orbitType)
-            {
-                case OrbitType.POLAR:
-                    setRandomOrbit(difficultyFactor, false, true);
-                    break;
-                case OrbitType.EQUATORIAL:
-                    setRandomOrbit(difficultyFactor, true, false);
-                    break;
-                case OrbitType.STATIONARY:
-                    setSynchronousOrbit(difficultyFactor, true, 0.0);
-                    break;
-                case OrbitType.SYNCHRONOUS:
-                    setSynchronousOrbit(difficultyFactor, false, generator.NextDouble()*(difficultyFactor/2));
-                    break;
-                case OrbitType.MOLNIYA:
-                    setMolniyaOrbit();
-                    break;
-                case OrbitType.TUNDRA:
-                    setTundraOrbit();
-                    break;
-                default:
-                    setRandomOrbit(difficultyFactor, false, false);
-                    break;
-            }
+            orbitDriver.orbit.referenceBody = targetBody;
+            orbitDriver.orbit.semiMajorAxis = sma;
+            orbitDriver.orbit.eccentricity = eccentricity;
+            orbitDriver.orbit.argumentOfPeriapsis = argumentOfPeriapsis;
+            orbitDriver.orbit.inclination = inclination;
+            orbitDriver.orbit.LAN = lan;
+            orbitDriver.orbit.meanAnomalyAtEpoch = meanAnomalyAtEpoch;
+            orbitDriver.orbit.epoch = epoch;
+            orbitDriver.orbit.Init();
+            //These lines unfortunately cannot be saved. They must be run after every load, or the orbit normals will be inaccurate.
+            Vector3d pos = orbitDriver.orbit.getRelativePositionAtUT(0.0);
+            Vector3d vel = orbitDriver.orbit.getOrbitalVelocityAtUT(0.0);
+            orbitDriver.orbit.h = Vector3d.Cross(pos, vel);
 
             orbitDriver.orbitColor = WaypointManager.RandomColor(Root.MissionSeed);
 
@@ -344,6 +431,14 @@ namespace FinePrint.Contracts.Parameters
             bool INCMatch = Math.Abs(Math.Abs(v.orbit.inclination) - Math.Abs(orbitDriver.orbit.inclination)) <= (deviationWindow / 100) * 90;
             bool horizontal = (Math.Abs(orbitDriver.orbit.inclination) % 180 < 1);
             bool LANMatch = false;
+            bool ARGMatch = false;
+
+            float argDifference = (float)Math.Abs(v.orbit.argumentOfPeriapsis - orbitDriver.orbit.argumentOfPeriapsis) % 360;
+
+            if (argDifference > 180)
+                argDifference = 360 - argDifference;
+
+            ARGMatch = (argDifference <= (deviationWindow / 100) * 360.0);
 
             //Autopass LAN checks on inclinations under one degree, they are stupid.
             if (!horizontal)
@@ -367,7 +462,7 @@ namespace FinePrint.Contracts.Parameters
             else
                 LANMatch = true;
 
-            if (APOMatch && PERMatch && INCMatch && LANMatch)
+            if (APOMatch && PERMatch && INCMatch && LANMatch && ARGMatch)
                 return true;
             else
                 return false;
@@ -383,11 +478,6 @@ namespace FinePrint.Contracts.Parameters
                 return false;
         }
 
-        private double weightedDouble(double min, double max, double rand, double exponent)
-        {
-            return min + (max - min) * Math.Pow(rand, exponent);
-        }
-
         public void setVisible(bool visible)
         {
             if ((object)orbitRenderer != null)
@@ -399,180 +489,18 @@ namespace FinePrint.Contracts.Parameters
             }
         }
 
-        private void setRandomOrbit(double difficultyFactor, bool equatorial, bool polar)
+        public bool checkWaypointVisibility(Waypoint wp)
         {
-            if ((object)orbitDriver == null)
-                return;
+            if (!HighLogic.LoadedSceneIsFlight)
+                return false;
 
-            if ((object)orbitDriver.orbit == null)
-                return;
+            if (FlightGlobals.ActiveVessel.mainBody.GetName() != wp.celestialName)
+                return false;
 
-            if ((object)targetBody == null)
-                return;
+            if (FlightGlobals.ActiveVessel.situation != Vessel.Situations.ORBITING)
+                return false;
 
-            if ((object)generator == null)
-                return;
-
-            //I need this for my sanity.
-            double easeFactor = 1.0 - difficultyFactor;
-
-            orbitDriver.orbit.referenceBody = targetBody;
-            double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
-
-            double inc = 0;
-            double desiredPeriapsis = 0.0;
-            double desiredApoapsis = 0.0;
-            double pointA = 0.0;
-            double pointB = 0.0;
-
-            float maximumAltitude = 0f;
-
-            //If it chooses the sun, the infinite SOI can cause NAN, so choose Eeloo's altitude instead.
-            //Use 90% of the SOI to give a little leeway for error correction.
-            if (targetBody == Planetarium.fetch.Sun)
-                maximumAltitude = 113549713200f;
-            else
-                maximumAltitude = Math.Max((float)minimumAltitude, (float)targetBody.sphereOfInfluence * (float)difficultyFactor);
-
-            pointA = minimumAltitude + ((maximumAltitude - minimumAltitude) * generator.NextDouble());
-            pointB = minimumAltitude + ((maximumAltitude - minimumAltitude) * generator.NextDouble());
-
-            pointA = UnityEngine.Mathf.Lerp((float)pointA, (float)pointB, (float)easeFactor);
-
-            desiredApoapsis = Math.Max(pointA, pointB);
-            desiredPeriapsis = Math.Min(pointA, pointB);
-            inc = generator.NextDouble() * 90.0;
-            inc *= difficultyFactor;
-
-            if (polar)
-                inc = 90;
-            else if (equatorial)
-                inc = 0;
-
-            if (generator.Next(0, 100) > 50)
-                inc *= -1;
-
-            if (generator.Next(0, 100) > 50)
-                inc += 180;
-
-            orbitDriver.orbit.inclination = inc;
-
-            orbitDriver.orbit.semiMajorAxis = (desiredApoapsis + desiredPeriapsis) / 2.0;
-            orbitDriver.orbit.eccentricity = (desiredApoapsis - desiredPeriapsis) / (desiredApoapsis + desiredPeriapsis);
-            orbitDriver.orbit.LAN = generator.NextDouble() * 360.0;
-            orbitDriver.orbit.argumentOfPeriapsis = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
-            orbitDriver.orbit.meanAnomalyAtEpoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
-            orbitDriver.orbit.epoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
-            orbitDriver.orbit.Init();
-        }
-
-        private void setSynchronousOrbit(double difficultyFactor, bool stationary, double eccentricity)
-        {
-            if ((object)orbitDriver == null)
-                return;
-
-            if ((object)orbitDriver.orbit == null)
-                return;
-
-            if ((object)targetBody == null)
-                return;
-
-            if ((object)generator == null)
-                return;
-
-            orbitDriver.referenceBody = targetBody;
-
-            if (stationary)
-            {
-                orbitDriver.orbit.eccentricity = 0.0;
-                orbitDriver.orbit.inclination = 0.0;
-            }
-            else
-            {
-                orbitDriver.orbit.eccentricity = eccentricity;
-                orbitDriver.orbit.inclination = weightedDouble(0, 90, generator.NextDouble(), 4 - 4 * difficultyFactor);
-            }
-
-            orbitDriver.orbit.semiMajorAxis = Util.synchronousSMA(targetBody);
-            orbitDriver.orbit.LAN = generator.NextDouble() * 360.0;
-            orbitDriver.orbit.argumentOfPeriapsis = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.meanAnomalyAtEpoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.epoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.Init();
-        }
-
-        private void setMolniyaOrbit()
-        {
-            if ((object)orbitDriver == null)
-                return;
-
-            if ((object)orbitDriver.orbit == null)
-                return;
-
-            if ((object)targetBody == null)
-                return;
-
-            if ((object)generator == null)
-                return;
-
-            orbitDriver.referenceBody = targetBody;
-
-            double inc = 63.4;
-
-            if (generator.Next(0, 100) > 50)
-                inc *= -1;
-
-            if (generator.Next(0, 100) > 50)
-                inc += 180;
-
-            orbitDriver.orbit.inclination = inc;
-            double semiMajorAxis = Util.molniyaSMA(targetBody);
-            orbitDriver.orbit.semiMajorAxis = semiMajorAxis;
-            double periapsis = Util.getMinimumOrbitalAltitude(targetBody) * 1.05;
-            double apoapsis = (semiMajorAxis * 2) - periapsis;
-            orbitDriver.orbit.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
-            orbitDriver.orbit.LAN = generator.NextDouble() * 360.0;
-            orbitDriver.orbit.argumentOfPeriapsis = -90.0;
-            orbitDriver.orbit.meanAnomalyAtEpoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.epoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.Init();
-        }
-
-        private void setTundraOrbit()
-        {
-            if ((object)orbitDriver == null)
-                return;
-
-            if ((object)orbitDriver.orbit == null)
-                return;
-
-            if ((object)targetBody == null)
-                return;
-
-            if ((object)generator == null)
-                return;
-
-            orbitDriver.referenceBody = targetBody;
-
-            double inc = 63.4;
-
-            if (generator.Next(0, 100) > 50)
-                inc *= -1;
-
-            if (generator.Next(0, 100) > 50)
-                inc += 180;
-
-            orbitDriver.orbit.inclination = inc;
-            double semiMajorAxis = Util.synchronousSMA(targetBody);
-            orbitDriver.orbit.semiMajorAxis = semiMajorAxis;
-            double periapsis = Util.getMinimumOrbitalAltitude(targetBody) * 1.05;
-            double apoapsis = (semiMajorAxis * 2) - periapsis;
-            orbitDriver.orbit.eccentricity = (apoapsis - periapsis) / (apoapsis + periapsis);
-            orbitDriver.orbit.LAN = generator.NextDouble() * 360.0;
-            orbitDriver.orbit.argumentOfPeriapsis = -90.0;
-            orbitDriver.orbit.meanAnomalyAtEpoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.epoch = (double)UnityEngine.Random.Range(0.999f, 1.001f);
-            orbitDriver.orbit.Init();
+            return true;
         }
     }
 }

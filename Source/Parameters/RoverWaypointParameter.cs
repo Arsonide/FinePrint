@@ -97,9 +97,11 @@ namespace FinePrint.Contracts.Parameters
                 wp.seed = Root.MissionSeed;
                 wp.id = waypointID;
                 wp.setName(false);
-                wp.textureName = "rover";
+                wp.waypointType = WaypointType.ROVER;
                 wp.altitude = 0.0;
                 wp.isClustered = true;
+                wp.isOnSurface = true;
+                wp.isNavigatable = true;
                 WaypointManager.AddWaypoint(wp);
                 submittedWaypoint = true;
             }
@@ -113,9 +115,11 @@ namespace FinePrint.Contracts.Parameters
                     wp.seed = Root.MissionSeed;
                     wp.id = waypointID;
                     wp.setName(false);
-                    wp.textureName = "rover";
+                    wp.waypointType = WaypointType.ROVER;
                     wp.altitude = 0.0;
                     wp.isClustered = true;
+                    wp.isOnSurface = true;
+                    wp.isNavigatable = false;
                     WaypointManager.AddWaypoint(wp);
                     submittedWaypoint = true;
                 }
@@ -142,13 +146,13 @@ namespace FinePrint.Contracts.Parameters
                                 if (distanceToWP > 2000 && outerWarning)
                                 {
                                     outerWarning = false;
-                                    ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.siteName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
                                 if (distanceToWP <= 2000 && !outerWarning)
                                 {
                                     outerWarning = true;
-                                    ScreenMessages.PostScreenMessage("Approaching target area of " + wp.siteName + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
                                 if (distanceToWP < 1000)
@@ -157,7 +161,7 @@ namespace FinePrint.Contracts.Parameters
                                     {
                                         if (isSecret)
                                         {
-                                            ScreenMessages.PostScreenMessage("This is the source of the anomalous data that we've been looking for in " + wp.siteName + "!", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                            ScreenMessages.PostScreenMessage("This is the source of the anomalous data that we've been looking for in " + wp.tooltip + "!", 5.0f, ScreenMessageStyle.UPPER_LEFT);
 
                                             base.SetComplete();
 

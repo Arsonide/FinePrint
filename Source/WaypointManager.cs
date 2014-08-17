@@ -19,6 +19,10 @@ namespace FinePrint
         private static Texture2D mTexPlane;
         private static Texture2D mTexRover;
         private static Texture2D mTexOrbit;
+        private static Texture2D mTexAN;
+        private static Texture2D mTexDN;
+        private static Texture2D mTexAP;
+        private static Texture2D mTexPE;
         private List<Waypoint> waypoints;
         private GUIStyle hoverStyle;
         static private NavWaypoint navWaypoint;
@@ -27,10 +31,14 @@ namespace FinePrint
         public WaypointManager()
         {
             waypoints = new List<Waypoint>();
-            mTexDefault = GameDatabase.Instance.GetTexture("FinePrint/Textures/default", false);
-            mTexPlane = GameDatabase.Instance.GetTexture("FinePrint/Textures/plane", false);
-            mTexRover = GameDatabase.Instance.GetTexture("FinePrint/Textures/rover", false);
-            mTexOrbit = GameDatabase.Instance.GetTexture("FinePrint/Textures/orbit", false);
+            mTexDefault = Util.LoadTexture("default", 16, 16);
+            mTexPlane = Util.LoadTexture("plane", 16, 16);
+            mTexRover = Util.LoadTexture("rover", 16, 16);
+            mTexOrbit = Util.LoadTexture("orbit", 16, 16);
+            mTexAN = Util.LoadTexture("an", 16, 16);
+            mTexDN = Util.LoadTexture("dn", 16, 16);
+            mTexAP = Util.LoadTexture("ap", 16, 16);
+            mTexPE = Util.LoadTexture("pe", 16, 16);
             hoverStyle = new GUIStyle();
             hoverStyle.padding = new RectOffset(0, 0, 0, 0);
             hoverStyle.stretchWidth = true;
@@ -38,34 +46,6 @@ namespace FinePrint
             hoverStyle.alignment = TextAnchor.MiddleLeft;
             hoverStyle.fontStyle = FontStyle.Bold;
             hoverStyle.normal.textColor = XKCDColors.ElectricLime;
-
-            if (mTexDefault == null)
-            {
-                mTexDefault = new Texture2D(16, 16);
-                mTexDefault.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-                mTexDefault.Apply();
-            }
-
-            if (mTexPlane == null)
-            {
-                mTexPlane = new Texture2D(16, 16);
-                mTexPlane.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-                mTexPlane.Apply();
-            }
-
-            if (mTexRover == null)
-            {
-                mTexRover = new Texture2D(16, 16);
-                mTexRover.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-                mTexRover.Apply();
-            }
-
-            if (mTexOrbit == null)
-            {
-                mTexOrbit = new Texture2D(16, 16);
-                mTexOrbit.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-                mTexOrbit.Apply();
-            }
         }
 
         private bool IsOccluded(Vector3d loc, CelestialBody body)
@@ -117,7 +97,7 @@ namespace FinePrint
             {
                 foreach (CelestialBody body in FlightGlobals.Bodies)
                 {
-                    if (!wp.isOrbital)
+                    if (wp.isOnSurface)
                     {
                         if (body.GetName() == wp.celestialName)
                         {
@@ -207,6 +187,9 @@ namespace FinePrint
 
                 foreach (Waypoint wp in waypoints)
                 {
+                    if (!wp.visible)
+                        continue;
+
                     MapObject target = PlanetariumCamera.fetch.target;
 
                     //Don't show waypoints on Jool if I'm looking at Kerbin.
@@ -233,6 +216,23 @@ namespace FinePrint
                         continue;
 
                     Vector3 pos = MapView.MapCamera.camera.WorldToScreenPoint(wp.worldPosition);
+
+                    switch ( wp.waypointType )
+                    {
+                        case WaypointType.APOAPSIS:
+                            pos += new Vector3(0f, 10f, 0f);
+                            break;
+                        case WaypointType.PERIAPSIS:
+                            pos += new Vector3(0f, 10f, 0f);
+                            break;
+                        case WaypointType.DESCENDINGNODE:
+                            pos += new Vector3(-10f, 0f, 0f);
+                            break;
+                        case WaypointType.ASCENDINGNODE:
+                            pos += new Vector3(10f, 0f, 0f);
+                            break;
+                    }
+
                     Rect screenRect = new Rect((pos.x - 8), (Screen.height - pos.y) - 8, 16, 16);
                     float alpha = 1.0f;
 
@@ -241,16 +241,28 @@ namespace FinePrint
                     else
                         alpha = 0.6f;
 
-                    switch (wp.textureName)
+                    switch (wp.waypointType)
                     {
-                        case "plane":
+                        case WaypointType.PLANE:
                             Graphics.DrawTexture(screenRect, mTexPlane, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
-                        case "rover":
+                        case WaypointType.ROVER:
                             Graphics.DrawTexture(screenRect, mTexRover, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
-                        case "orbit":
+                        case WaypointType.ORBITAL:
                             Graphics.DrawTexture(screenRect, mTexOrbit, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
+                        case WaypointType.ASCENDINGNODE:
+                            Graphics.DrawTexture(screenRect, mTexAN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
+                        case WaypointType.DESCENDINGNODE:
+                            Graphics.DrawTexture(screenRect, mTexDN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
+                        case WaypointType.PERIAPSIS:
+                            Graphics.DrawTexture(screenRect, mTexPE, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
+                        case WaypointType.APOAPSIS:
+                            Graphics.DrawTexture(screenRect, mTexAP, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         default:
                             Graphics.DrawTexture(screenRect, mTexDefault, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
@@ -258,15 +270,15 @@ namespace FinePrint
                     }
 
                     // Label the waypoint.
-                    if (screenRect.Contains(Event.current.mousePosition) && !wp.isOccluded && !wp.isOrbital && !showingTooltip)
+                    if (screenRect.Contains(Event.current.mousePosition) && !wp.isOccluded && wp.waypointType != WaypointType.ORBITAL && !showingTooltip)
                     {
                         //Storing the information so we can render the label after the loop, text should overlap any other waypoints.
                         tooltipPosition = pos;
 
                         if (wp.isClustered)
-                            tooltipString = wp.siteName + " " + Util.integerToGreek(wp.id);
+                            tooltipString = wp.tooltip + " " + Util.integerToGreek(wp.id);
                         else
-                            tooltipString = wp.siteName;
+                            tooltipString = wp.tooltip;
 
                         showingTooltip = true;
 
@@ -274,18 +286,21 @@ namespace FinePrint
                         {
                             if (Event.current.type == EventType.mouseDown && Event.current.button == 0)
                             {
-                                linkNavPoint();
-                                if (navWaypoint.latitude == wp.latitude && navWaypoint.longitude == wp.longitude && navWaypoint.altitude == wp.altitude)
+                                if (wp.isNavigatable)
                                 {
-                                    ScreenMessages.PostScreenMessage("Navigation waypoint deactivated.", 2.5f, ScreenMessageStyle.LOWER_CENTER);
-                                    clearNavPoint();
-                                    deactivateNavPoint();
-                                }
-                                else
-                                {
-                                    ScreenMessages.PostScreenMessage("Navigation set to " + tooltipString + ".", 2.5f, ScreenMessageStyle.LOWER_CENTER);
-                                    setupNavPoint(wp);
-                                    activateNavPoint();
+                                    linkNavPoint();
+                                    if (navWaypoint.latitude == wp.latitude && navWaypoint.longitude == wp.longitude && navWaypoint.altitude == wp.altitude)
+                                    {
+                                        ScreenMessages.PostScreenMessage("Navigation waypoint deactivated.", 2.5f, ScreenMessageStyle.LOWER_CENTER);
+                                        clearNavPoint();
+                                        deactivateNavPoint();
+                                    }
+                                    else
+                                    {
+                                        ScreenMessages.PostScreenMessage("Navigation set to " + tooltipString + ".", 2.5f, ScreenMessageStyle.LOWER_CENTER);
+                                        setupNavPoint(wp);
+                                        activateNavPoint();
+                                    }
                                 }
                             }
                         }
@@ -324,7 +339,7 @@ namespace FinePrint
 
                     HSBColor brighterRandom = HSBColor.FromColor(RandomColor(wp.seed));
                     brighterRandom.b = 1.0f;
-                    navWaypoint.SetupNavWaypoint(body, wp.latitude, wp.longitude, wp.altitude, wp.textureName, brighterRandom.ToColor());
+                    navWaypoint.SetupNavWaypoint(body, wp.latitude, wp.longitude, wp.altitude, wp.waypointType, brighterRandom.ToColor());
                     trackWP = wp;
                 }
             }
@@ -338,7 +353,7 @@ namespace FinePrint
 
                 //Set navpoint to values that cannot possibly exist, to allow for multiple clicks in the map to toggle.
                 if (navWaypoint != null)
-                    navWaypoint.SetupNavWaypoint(Planetarium.fetch.Sun, 500.0, 500.0, 0.0, "default", new Color(0,0,0));
+                    navWaypoint.SetupNavWaypoint(Planetarium.fetch.Sun, 500.0, 500.0, 0.0, WaypointType.NONE, new Color(0, 0, 0));
             }
         }
 

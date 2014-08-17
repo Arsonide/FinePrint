@@ -5,6 +5,18 @@ using UnityEngine;
 
 namespace FinePrint
 {
+    public enum WaypointType
+    {
+        NONE,
+        ORBITAL,
+        ASCENDINGNODE,
+        DESCENDINGNODE,
+        APOAPSIS,
+        PERIAPSIS,
+        PLANE,
+        ROVER
+    }
+
 	public class Waypoint
 	{
 		public string celestialName;
@@ -12,16 +24,19 @@ namespace FinePrint
 		public double longitude;
 		public double height;
 		public bool isExplored;
-		public Vector3 worldPosition;
-        public Vector3d orbitPosition;
+		public Vector3d worldPosition;
+        public Vector3 orbitPosition;
 		public int seed;
-		public string textureName = "default";
 		public double altitude = 0;
 		public bool isOccluded = false;
-		public string siteName = "Site";
+		public string tooltip = "Site";
 		public int id;
 		public bool isClustered = false;
-        public bool isOrbital = false;
+        public bool isOnSurface = false;
+        public bool isNavigatable = false;
+        public bool visible = true;
+
+        public WaypointType waypointType = WaypointType.NONE;
 
 		public Waypoint()
 		{
@@ -33,16 +48,16 @@ namespace FinePrint
 			if (uniqueSites)
 			{
 				if (celestialName == "Kerbin")
-					this.siteName = Util.generateSiteName(seed + id, true);
+					this.tooltip = Util.generateSiteName(seed + id, true);
 				else
-					this.siteName = Util.generateSiteName(seed + id, false);
+					this.tooltip = Util.generateSiteName(seed + id, false);
 			}
 			else
 			{
 				if (celestialName == "Kerbin")
-					this.siteName = Util.generateSiteName(seed, true);
+					this.tooltip = Util.generateSiteName(seed, true);
 				else
-					this.siteName = Util.generateSiteName(seed, false);
+					this.tooltip = Util.generateSiteName(seed, false);
 			}
 		}
 

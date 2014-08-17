@@ -1,8 +1,16 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using KSP.IO;
+using Contracts;
+using Contracts.Parameters;
+using KSP;
+using KSPAchievements;
+using FinePrint.Contracts.Parameters;
+using FinePrint.Contracts;
+using FinePrint;
 
 [KSPAddon(KSPAddon.Startup.Flight, false)]
 public class NavWaypoint : MonoBehaviour
@@ -23,19 +31,19 @@ public class NavWaypoint : MonoBehaviour
     private static Texture2D mTexPlane;
     private static Texture2D mTexRover;
 
-    public void SetupNavWaypoint(CelestialBody targetBody, double latitude, double longitude, double altitude, string texture, Color color)
+    public void SetupNavWaypoint(CelestialBody targetBody, double latitude, double longitude, double altitude, WaypointType type, Color color)
     {
         this.targetBody = targetBody;
         this.latitude = latitude;
         this.longitude = longitude;
         this.altitude = altitude;
 
-        switch ( texture )
+        switch ( type )
         {
-            case "plane":
+            case WaypointType.PLANE:
                 indicator.renderer.material.mainTexture = mTexPlane;
                 break;
-            case "rover":
+            case WaypointType.ROVER:
                 indicator.renderer.material.mainTexture = mTexRover;
                 break;
             default:
@@ -67,30 +75,9 @@ public class NavWaypoint : MonoBehaviour
 
 	public void Start()
 	{
-        mTexDefault = GameDatabase.Instance.GetTexture("FinePrint/Textures/default", false);
-        mTexPlane = GameDatabase.Instance.GetTexture("FinePrint/Textures/plane", false);
-        mTexRover = GameDatabase.Instance.GetTexture("FinePrint/Textures/rover", false);
-
-        if (mTexDefault == null)
-        {
-            mTexDefault = new Texture2D(16, 16);
-            mTexDefault.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-            mTexDefault.Apply();
-        }
-
-        if (mTexPlane == null)
-        {
-            mTexPlane = new Texture2D(16, 16);
-            mTexPlane.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-            mTexPlane.Apply();
-        }
-
-        if (mTexRover == null)
-        {
-            mTexRover = new Texture2D(16, 16);
-            mTexRover.SetPixels32(Enumerable.Repeat((Color32)Color.magenta, 16 * 16).ToArray());
-            mTexRover.Apply();
-        }
+        mTexDefault = Util.LoadTexture("default", 16, 16);
+        mTexPlane = Util.LoadTexture("plane", 16, 16);
+        mTexRover = Util.LoadTexture("rover", 16, 16);
 
         this.targetBody = Planetarium.fetch.Home;
         this.latitude = 0.0;
@@ -155,7 +142,7 @@ public class NavWaypoint : MonoBehaviour
 
         indicator.SetActive(false);
 
-        SetupNavWaypoint(Planetarium.fetch.Home, 0.0, -74.5, 1.0, "plane", new Color(0.0f, 1.0f, 0.0f));
+        SetupNavWaypoint(Planetarium.fetch.Home, 0.0, -74.5, 1.0, WaypointType.PLANE, new Color(0.0f, 1.0f, 0.0f));
         Deactivate();
 	}
 
