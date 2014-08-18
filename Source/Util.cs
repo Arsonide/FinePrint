@@ -748,6 +748,16 @@ namespace FinePrint
             return o.getPositionFromTrueAnomaly(Math.PI);
         }
 
+        public static double getRelativeInclination(Orbit o, Orbit other)
+        {
+            //Credit to Blizzy and PreciseNode
+            Vector3d normal = o.GetOrbitNormal().xzy.normalized;
+            Vector3d otherNormal = other.GetOrbitNormal().xzy.normalized;
+            double angle = Vector3d.Angle(normal, otherNormal);
+            bool south = Vector3d.Dot(Vector3d.Cross(normal, otherNormal), normal.xzy) > 0;
+            return south ? -angle : angle;
+        }
+
         public static Texture2D LoadTexture(string textureName, int width, int height)
         {
             textureName = "FinePrint/Textures/" + textureName;

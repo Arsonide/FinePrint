@@ -1,4 +1,4 @@
-Fine Print v0.56a
+Fine Print v0.57a
 
 -- SUMMARY --
 
@@ -114,3 +114,4 @@ with my questions, as well as others for their great mods I learned from:
 * taniwha
 * Burkitt
 * TaranisElsu
+* blizzy

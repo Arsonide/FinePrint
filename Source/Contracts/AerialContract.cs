@@ -116,7 +116,7 @@ namespace FinePrint.Contracts
                 range = 300000.0;
 			}
 
-            WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true);
+            WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
 
 			for (int x = 0; x < waypointCount; x++)
 			{

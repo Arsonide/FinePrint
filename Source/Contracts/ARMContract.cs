@@ -16,6 +16,7 @@ namespace FinePrint.Contracts
 	{
 		CelestialBody targetBody = null;
         string asteroidClass = "A";
+        bool isLanding = false;
 
 		protected override bool Generate()
 		{
@@ -85,7 +86,13 @@ namespace FinePrint.Contracts
 			}
 			else
 			{
-				this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.ORBITING, "vessel"), null);
+                if (targetBody == Planetarium.fetch.Home && generator.Next(0, 101) > 80)
+                {
+                    isLanding = true;
+                    this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.LANDED, "vessel"), null);
+                }
+                else
+    				this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.ORBITING, "vessel"), null);
 			}
 
 			base.AddKeywords(new string[] { "asteroidretrieval" });
@@ -125,9 +132,14 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-			if (targetBody != Planetarium.fetch.Sun )
-                return "Bring a newly discovered Class " + asteroidClass + " asteroid into an orbit around " + targetBody.theName + ".";
-			else
+            if (targetBody != Planetarium.fetch.Sun)
+            {
+                if ( isLanding )
+                    return "Bring a newly discovered Class " + asteroidClass + " asteroid to " + targetBody.theName + " and land it.";
+                else
+                    return "Bring a newly discovered Class " + asteroidClass + " asteroid into an orbit around " + targetBody.theName + ".";
+            }
+            else
                 return "Eject a Class " + asteroidClass + " asteroid out of the solar system.";
 		}
 
@@ -141,15 +153,22 @@ namespace FinePrint.Contracts
 		{
 			if (targetBody != Planetarium.fetch.Sun)
             {
-				switch (UnityEngine.Random.Range(0, 3))
-				{
-					case 0:
-                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + " to test our capabilities.";
-					case 1:
-                        return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + ". Why? FOR SCIENCE!";
-					default:
-                        return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
-				}
+                if (isLanding)
+                {
+                    return "Capture a new Class " + asteroidClass + " asteroid, then bring it to " + targetBody.theName + " and land it...gently.";
+                }
+                else
+                {
+                    switch (UnityEngine.Random.Range(0, 3))
+                    {
+                        case 0:
+                            return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + " to test our capabilities.";
+                        case 1:
+                            return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + ". Why? FOR SCIENCE!";
+                        default:
+                            return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
+                    }
+                }
 			}
 			else
 			{
@@ -187,6 +206,7 @@ namespace FinePrint.Contracts
 		{
 			Util.LoadNode(node, "ARMContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "ARMContract", "asteroidClass", ref asteroidClass, "A");
+            Util.LoadNode(node, "ARMContract", "isLanding", ref isLanding, false);
 		}
 
 		protected override void OnSave(ConfigNode node)
@@ -194,6 +214,7 @@ namespace FinePrint.Contracts
 			int bodyID = targetBody.flightGlobalsIndex;
 			node.AddValue("targetBody", bodyID);
             node.AddValue("asteroidClass", asteroidClass);
+            node.AddValue("isLanding", isLanding);
 		}
 
 		public override bool MeetRequirements()

@@ -14,7 +14,8 @@ namespace FinePrint
         APOAPSIS,
         PERIAPSIS,
         PLANE,
-        ROVER
+        ROVER,
+        DISH
     }
 
 	public class Waypoint

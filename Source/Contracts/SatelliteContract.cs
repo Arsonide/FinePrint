@@ -133,6 +133,14 @@ namespace FinePrint.Contracts
 
             this.AddParameter(new SpecificOrbitParameter(orbitType, o.inclination, o.eccentricity, o.semiMajorAxis, o.LAN, o.argumentOfPeriapsis, o.meanAnomalyAtEpoch, o.epoch, targetBody, difficultyFactor, deviation), null);
 
+            if (orbitType == OrbitType.STATIONARY)
+            {
+                double latitude = 0.0;
+                double longitude = 0.0;
+                WaypointManager.ChooseRandomPosition(out latitude, out longitude, targetBody.GetName(), false, true);
+                this.AddParameter(new StationaryPointParameter(targetBody, longitude), null);
+            }
+
             if (generator.Next(0, 101) <= partChance)
             {
                 if (Util.haveTechnology("GooExperiment"))
@@ -444,14 +452,12 @@ namespace FinePrint.Contracts
 
             int percentile = generator.Next(0, 101);
 
-            if (percentile <= 25)
+            if (percentile <= 33)
                 pickEasy();
-            else if (percentile > 25 && percentile <= 50)
+            else if (percentile > 33 && percentile <= 66)
                 setOrbitType(OrbitType.RANDOM, difficultyFactor);
-            else if (percentile > 50 && percentile <= 75)
-                setOrbitType(OrbitType.SYNCHRONOUS, difficultyFactor);
             else
-                setOrbitType(OrbitType.STATIONARY, difficultyFactor);
+                setOrbitType(OrbitType.SYNCHRONOUS, difficultyFactor);
         }
 
         private void pickHard()
@@ -461,14 +467,16 @@ namespace FinePrint.Contracts
 
             int percentile = generator.Next(0, 101);
 
-            if (percentile <= 25)
+            if (percentile <= 20)
                 pickMedium();
-            else if (percentile > 25 && percentile <= 50)
+            else if (percentile > 20 && percentile <= 40)
                 setOrbitType(OrbitType.RANDOM, difficultyFactor);
-            else if (percentile > 50 && percentile <= 75)
+            else if (percentile > 40 && percentile <= 60)
                 setOrbitType(OrbitType.KOLNIYA, difficultyFactor);
-            else
+            else if (percentile > 60 && percentile <= 80)
                 setOrbitType(OrbitType.TUNDRA, difficultyFactor);
+            else
+                setOrbitType(OrbitType.STATIONARY, difficultyFactor);
         }
 
         private void setOrbitType(OrbitType targetType, double difficultyFactor)

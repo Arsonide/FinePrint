@@ -23,6 +23,7 @@ namespace FinePrint
         private static Texture2D mTexDN;
         private static Texture2D mTexAP;
         private static Texture2D mTexPE;
+        private static Texture2D mTexDish;
         private List<Waypoint> waypoints;
         private GUIStyle hoverStyle;
         static private NavWaypoint navWaypoint;
@@ -39,6 +40,7 @@ namespace FinePrint
             mTexDN = Util.LoadTexture("dn", 16, 16);
             mTexAP = Util.LoadTexture("ap", 16, 16);
             mTexPE = Util.LoadTexture("pe", 16, 16);
+            mTexDish = Util.LoadTexture("dish", 16, 16);
             hoverStyle = new GUIStyle();
             hoverStyle.padding = new RectOffset(0, 0, 0, 0);
             hoverStyle.stretchWidth = true;
@@ -263,6 +265,9 @@ namespace FinePrint
                             break;
                         case WaypointType.APOAPSIS:
                             Graphics.DrawTexture(screenRect, mTexAP, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            break;
+                        case WaypointType.DISH:
+                            Graphics.DrawTexture(screenRect, mTexDish, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         default:
                             Graphics.DrawTexture(screenRect, mTexDefault, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
@@ -495,7 +500,7 @@ namespace FinePrint
             return color.ToColor();
         }
 
-        public static void ChooseRandomPosition(out double latitude, out double longitude, string celestialName, bool waterAllowed = true)
+        public static void ChooseRandomPosition(out double latitude, out double longitude, string celestialName, bool waterAllowed = true, bool equatorial = false)
         {
             latitude = 0.0;
             longitude = 0.0;
@@ -515,9 +520,15 @@ namespace FinePrint
                     {
                         while (true)
                         {
-                            double rand = UnityEngine.Random.value;
-                            rand = 1.0 - (rand * 2);
-                            latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
+                            if (!equatorial)
+                            {
+                                double rand = UnityEngine.Random.value;
+                                rand = 1.0 - (rand * 2);
+                                latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
+                            }
+                            else
+                                latitude = 0.0;
+
                             longitude = UnityEngine.Random.value * 360 - 180;
                             Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
                             double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
@@ -531,9 +542,15 @@ namespace FinePrint
                 }
                 else
                 {
-                    double rand = UnityEngine.Random.value;
-                    rand = 1.0 - (rand * 2);
-                    latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
+                    if (!equatorial)
+                    {
+                        double rand = UnityEngine.Random.value;
+                        rand = 1.0 - (rand * 2);
+                        latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
+                    }
+                    else
+                        latitude = 0.0;
+
                     longitude = UnityEngine.Random.value * 360 - 180;
                 }
             }

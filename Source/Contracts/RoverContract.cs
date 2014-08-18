@@ -72,7 +72,7 @@ namespace FinePrint.Contracts
 				range = 3000 + 3000 * targetBody.GeeASL;
 			}
 
-			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false);
+			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
 			int secret = UnityEngine.Random.Range(0, waypointCount);
 
 			for (int x = 0; x < waypointCount; x++)

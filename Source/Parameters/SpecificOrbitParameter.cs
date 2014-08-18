@@ -265,7 +265,7 @@ namespace FinePrint.Contracts.Parameters
                                 iconWaypoints[x].visible = checkWaypointVisibility(iconWaypoints[x]);
                                 double angleOfAscendingNode = Util.angleOfAscendingNode(orbitDriver.orbit, FlightGlobals.ActiveVessel.orbit);
                                 iconWaypoints[x].orbitPosition = orbitDriver.orbit.getPositionFromTrueAnomaly(angleOfAscendingNode * (Math.PI / 180));
-                                iconWaypoints[x].tooltip = "Ascending Node: " + Math.Round(angleOfAscendingNode - 180.0, 1) + "°";
+                                iconWaypoints[x].tooltip = "Ascending Node: " + Math.Round(Util.getRelativeInclination(FlightGlobals.ActiveVessel.orbit, orbitDriver.orbit), 1) + "°";
                             }
                             break;
                         case WaypointType.DESCENDINGNODE:
@@ -274,7 +274,7 @@ namespace FinePrint.Contracts.Parameters
                                 iconWaypoints[x].visible = checkWaypointVisibility(iconWaypoints[x]);
                                 double angleOfDescendingNode = Util.angleOfDescendingNode(orbitDriver.orbit, FlightGlobals.ActiveVessel.orbit);
                                 iconWaypoints[x].orbitPosition = orbitDriver.orbit.getPositionFromTrueAnomaly(angleOfDescendingNode * (Math.PI / 180));
-                                iconWaypoints[x].tooltip = "Descending Node: " + Math.Round(angleOfDescendingNode - 180.0, 1) + "°";
+                                iconWaypoints[x].tooltip = "Descending Node: " + Math.Round(-Util.getRelativeInclination(FlightGlobals.ActiveVessel.orbit, orbitDriver.orbit), 1) + "°";
                             }
                             break;
                         case WaypointType.APOAPSIS:
@@ -438,7 +438,11 @@ namespace FinePrint.Contracts.Parameters
             if (argDifference > 180)
                 argDifference = 360 - argDifference;
 
-            ARGMatch = (argDifference <= (deviationWindow / 100) * 360.0);
+            //Autopass argument of periapsis checks on circular orbits, they are stupid.
+            if (orbitDriver.orbit.eccentricity <= 0.05)
+                ARGMatch = true;
+            else
+                ARGMatch = (argDifference <= (deviationWindow / 100) * 360.0);
 
             //Autopass LAN checks on inclinations under one degree, they are stupid.
             if (!horizontal)
