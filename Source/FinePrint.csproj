@@ -49,6 +49,7 @@
     <Compile Include="Contracts\AerialContract.cs" />
     <Compile Include="Contracts\ARMContract.cs" />
     <Compile Include="Contracts\FacilityContract.cs" />
+    <Compile Include="Contracts\LowLevelAerialContract.cs" />
     <Compile Include="Contracts\RoverContract.cs" />
     <Compile Include="Contracts\SatelliteContract.cs" />
     <Compile Include="HSBColor.cs">
@@ -82,6 +83,14 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Link>LICENSE.txt</Link>
+    </None>
+    <None Include="..\README.txt">
+      <Link>README.txt</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -14,30 +14,30 @@ namespace FinePrint.Contracts
 {
 	public class AerialContract : Contract
 	{
-		CelestialBody targetBody = null;
-		double minAltitude = 0.0;
-		double maxAltitude = 2000.0;
-        double centerLatitude = 0.0;
-        double centerLongitude = 0.0;
+        protected CelestialBody targetBody = null;
+		protected double minAltitude = 0.0;
+        protected double maxAltitude = 2000.0;
+        protected double centerLatitude = 0.0;
+        protected double centerLongitude = 0.0;
+
+        protected virtual bool AllowContract()
+        {
+            //Allow four contracts in pocket but only two on the board at a time.
+            var acs = Util.GetContracts<AerialContract>();
+            int offeredContracts = Util.CountContractState(acs, Contract.State.Offered);
+            int activeContracts = Util.CountContractState(acs, Contract.State.Active);
+
+            if (offeredContracts >= 2 || activeContracts >= 4)
+                return false;
+            return true;
+        }
 
 		protected override bool Generate()
 		{
             if (AreWingsUnlocked() == false)
                 return false;
 
-            //Allow four contracts in pocket but only two on the board at a time.
-            int offeredContracts = 0;
-            int activeContracts = 0;
-            foreach (AerialContract contract in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
-            {
-                if (contract.ContractState == Contract.State.Offered)
-                    offeredContracts++;
-                else if (contract.ContractState == Contract.State.Active)
-                    activeContracts++;
-            }
-
-            if (offeredContracts >= 2 || activeContracts >= 4)
-                return false;
+            if (!AllowContract()) return false;
 
             double range = 10000.0;
 			System.Random generator = new System.Random(this.MissionSeed);
@@ -55,40 +55,7 @@ namespace FinePrint.Contracts
 				return false;
 
 			targetBody = atmosphereBodies[UnityEngine.Random.Range(0, atmosphereBodies.Count)];
-
-			switch (targetBody.GetName())
-			{
-				case "Jool":
-					additionalWaypoints = 0;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Duna":
-					additionalWaypoints = 1;
-					minAltitude = 8000.0;
-					maxAltitude = 16000.0;
-					break;
-				case "Laythe":
-					additionalWaypoints = 1;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Eve":
-					additionalWaypoints = 1;
-					minAltitude = 20000.0;
-					maxAltitude = 40000.0;
-					break;
-				case "Kerbin":
-					additionalWaypoints = 2;
-					minAltitude = 12500.0;
-					maxAltitude = 25000.0;
-					break;
-				default:
-					additionalWaypoints = 0;
-					minAltitude = 0.0;
-					maxAltitude = 10000.0;
-					break;
-			}
+            additionalWaypoints = SetAltitudeRange(additionalWaypoints);
 
 			int waypointCount = 0;
 			double altitudeHalfQuarterRange = Math.Abs(maxAltitude - minAltitude) * 0.125;
@@ -135,6 +102,45 @@ namespace FinePrint.Contracts
 			return true;
 		}
 
+        protected virtual int SetAltitudeRange(int additionalWaypoints)
+        {
+
+            switch (targetBody.GetName())
+            {
+                case "Jool":
+                    additionalWaypoints = 0;
+                    minAltitude = 15000.0;
+                    maxAltitude = 30000.0;
+                    break;
+                case "Duna":
+                    additionalWaypoints = 1;
+                    minAltitude = 8000.0;
+                    maxAltitude = 16000.0;
+                    break;
+                case "Laythe":
+                    additionalWaypoints = 1;
+                    minAltitude = 15000.0;
+                    maxAltitude = 30000.0;
+                    break;
+                case "Eve":
+                    additionalWaypoints = 1;
+                    minAltitude = 20000.0;
+                    maxAltitude = 40000.0;
+                    break;
+                case "Kerbin":
+                    additionalWaypoints = 2;
+                    minAltitude = 12500.0;
+                    maxAltitude = 25000.0;
+                    break;
+                default:
+                    additionalWaypoints = 0;
+                    minAltitude = 0.0;
+                    maxAltitude = 10000.0;
+                    break;
+            }
+            return additionalWaypoints;
+        }
+
 		public override bool CanBeCancelled()
 		{
 			return true;
@@ -173,11 +179,11 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
-			Util.LoadNode(node, "AerialContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
-			Util.LoadNode(node, "AerialContract", "minAltitude", ref minAltitude, 0.0);
-            Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, 10000);
-            Util.LoadNode(node, "AerialContract", "centerLatitude", ref centerLatitude, 0.0);
-            Util.LoadNode(node, "AerialContract", "centerLongitude", ref centerLongitude, 0.0);
+            Util.LoadNode(node, this.GetType().Name, "targetBody", ref targetBody, Planetarium.fetch.Home);
+            Util.LoadNode(node, this.GetType().Name, "minAltitude", ref minAltitude, 0.0);
+            Util.LoadNode(node, this.GetType().Name, "maxAltitude", ref maxAltitude, 10000);
+            Util.LoadNode(node, this.GetType().Name, "centerLatitude", ref centerLatitude, 0.0);
+            Util.LoadNode(node, this.GetType().Name, "centerLongitude", ref centerLongitude, 0.0);
 		}
 
 		protected override void OnSave(ConfigNode node)

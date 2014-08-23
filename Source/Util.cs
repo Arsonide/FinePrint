@@ -896,5 +896,27 @@ namespace FinePrint
 
             return o;
         }
+
+        /// <summary>
+        /// Obtain a list of the current existing (offered,accepted) contracts of a given type
+        /// </summary>
+        public static List<T> GetContracts<T>()
+            where T : Contract
+        {
+            var conts = ContractSystem.Instance.GetCurrentContracts<T>();
+            return conts.ToList<T>();
+        }
+
+        /// <summary>
+        /// Count the number of contracts in contracts with the given state.
+        /// </summary>
+        /// <param name="contracts"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        public static int CountContractState<T>(IEnumerable<T> contracts, Contract.State state)
+            where T : Contract
+        {
+            return contracts.Count(c => c.ContractState == state);
+        }
     }
 }
