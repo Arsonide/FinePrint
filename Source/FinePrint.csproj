@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0D5DFDE7-7E52-465D-B5CF-85FD8E57D391}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FinePrint</RootNamespace>
+    <AssemblyName>FinePrint</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Contracts\AerialContract.cs" />
+    <Compile Include="Contracts\ARMContract.cs" />
+    <Compile Include="Contracts\FacilityContract.cs" />
+    <Compile Include="Contracts\LowLevelAerialContract.cs" />
+    <Compile Include="Contracts\RoverContract.cs" />
+    <Compile Include="Contracts\SatelliteContract.cs" />
+    <Compile Include="HSBColor.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="NavWaypoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Parameters\AsteroidParameter.cs" />
+    <Compile Include="Parameters\CrewCapacityParameter.cs" />
+    <Compile Include="Parameters\FacilityLabParameter.cs" />
+    <Compile Include="Parameters\FacilitySystemsParameter.cs" />
+    <Compile Include="Parameters\FlightWaypointParameter.cs" />
+    <Compile Include="Parameters\KillControlsParameter.cs" />
+    <Compile Include="Parameters\LocationAndSituationParameter.cs" />
+    <Compile Include="Parameters\MobileBaseParameter.cs" />
+    <Compile Include="Parameters\PartNameParameter.cs" />
+    <Compile Include="Parameters\ProbeSystemsParameter.cs" />
+    <Compile Include="Parameters\RoverWaypointParameter.cs" />
+    <Compile Include="Parameters\SpecificOrbitParameter.cs" />
+    <Compile Include="Parameters\StationaryPointParameter.cs" />
+    <Compile Include="Util.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Waypoint.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="WaypointManager.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LICENSE.txt">
+      <Link>LICENSE.txt</Link>
+    </None>
+    <None Include="..\README.txt">
+      <Link>README.txt</Link>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
