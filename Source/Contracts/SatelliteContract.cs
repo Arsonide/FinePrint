@@ -19,6 +19,9 @@ namespace FinePrint.Contracts
         OrbitType orbitType = OrbitType.RANDOM;
         System.Random generator;
         double difficultyFactor = 0.5;
+        float fundsMultiplier = 1;
+        float scienceMultiplier = 1;
+        float reputationMultiplier = 1;
 
         protected override bool Generate()
         {
@@ -35,13 +38,13 @@ namespace FinePrint.Contracts
                 else if (contract.ContractState == Contract.State.Active)
                     activeContracts++;
             }
-            
-            if (offeredContracts >= 2 || activeContracts >= 4)
+
+            if (offeredContracts >= FPConfig.Satellite.MaximumAvailable || activeContracts >= FPConfig.Satellite.MaximumActive)
                 return false;
 
             generator = new System.Random(this.MissionSeed);
             float rewardMultiplier = 1.0f;
-            int partChance = 10;
+            float partChance = 10;
 
             if (this.prestige == Contract.ContractPrestige.Trivial)
             {
@@ -52,15 +55,18 @@ namespace FinePrint.Contracts
 
                 targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
 
+                if (generator.Next(0, 100) < FPConfig.Satellite.TrivialSolarChance && FPConfig.Satellite.AllowSolar)
+                    targetBody = Planetarium.fetch.Sun;
+
                 //Prefer Kerbin
-                if (generator.Next(0, 100) < 70)
+                if (generator.Next(0, 100) < FPConfig.Satellite.TrivialHomeOverrideChance && FPConfig.Satellite.PreferHome)
                     targetBody = Planetarium.fetch.Home;
 
-                deviation = 7;
-                difficultyFactor = 0.2;
+                deviation = FPConfig.Satellite.TrivialDeviation;
+                difficultyFactor = FPConfig.Satellite.TrivialDifficulty;
                 pickEasy();
                 rewardMultiplier = 2.0f;
-                partChance = 20;
+                partChance = FPConfig.Satellite.TrivialPartChance;
             }
             else if (this.prestige == Contract.ContractPrestige.Significant)
             {
@@ -71,18 +77,21 @@ namespace FinePrint.Contracts
 
                 targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
 
-                if (generator.Next(0, 100) > 90)
+                if (generator.Next(0, 100) < FPConfig.Satellite.SignificantSolarChance && FPConfig.Satellite.AllowSolar)
                     targetBody = Planetarium.fetch.Sun;
 
                 //Prefer Kerbin
-                if (generator.Next(0, 100) < 50)
+                if (generator.Next(0, 100) < FPConfig.Satellite.SignificantHomeOverrideChance && FPConfig.Satellite.PreferHome)
                     targetBody = Planetarium.fetch.Home;
 
-                deviation = 5;
-                difficultyFactor = 0.4;
+                deviation = FPConfig.Satellite.SignificantDeviation;
+                difficultyFactor = FPConfig.Satellite.SignificantDifficulty;
                 pickMedium();
                 rewardMultiplier = 2.5f;
-                partChance = 40;
+                partChance = FPConfig.Satellite.SignificantPartChance;
+                fundsMultiplier = FPConfig.Satellite.Funds.SignificantMultiplier;
+                scienceMultiplier = FPConfig.Satellite.Science.SignificantMultiplier;
+                reputationMultiplier = FPConfig.Satellite.Reputation.SignificantMultiplier;
             }
             else if (this.prestige == Contract.ContractPrestige.Exceptional)
             {
@@ -98,18 +107,21 @@ namespace FinePrint.Contracts
                     targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
                 }
 
-                if (generator.Next(0, 100) > 70)
+                if (generator.Next(0, 100) < FPConfig.Satellite.ExceptionalSolarChance && FPConfig.Satellite.AllowSolar)
                     targetBody = Planetarium.fetch.Sun;
 
                 //Prefer Kerbin
-                if (generator.Next(0, 100) < 30)
+                if (generator.Next(0, 100) < FPConfig.Satellite.ExceptionalHomeOverrideChance && FPConfig.Satellite.PreferHome)
                     targetBody = Planetarium.fetch.Home;
 
-                deviation = 3;
-                difficultyFactor = 0.8;
+                deviation = FPConfig.Satellite.ExceptionalDeviation;
+                difficultyFactor = FPConfig.Satellite.ExceptionalDifficulty;
                 pickHard();
                 rewardMultiplier = 3.0f;
-                partChance = 25;
+                partChance = FPConfig.Satellite.ExceptionalPartChance;
+                fundsMultiplier = FPConfig.Satellite.Funds.ExceptionalMultiplier;
+                scienceMultiplier = FPConfig.Satellite.Science.ExceptionalMultiplier;
+                reputationMultiplier = FPConfig.Satellite.Reputation.ExceptionalMultiplier;
             }
 
             if (targetBody == null)
@@ -146,7 +158,9 @@ namespace FinePrint.Contracts
                 if (Util.haveTechnology("GooExperiment"))
                 {
                     this.AddParameter(new PartNameParameter("Have a goo container on the satellite", "GooExperiment"));
-                    rewardMultiplier += 0.1f;
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
                 }
             }
 
@@ -155,7 +169,9 @@ namespace FinePrint.Contracts
                 if (Util.haveTechnology("sensorThermometer"))
                 {
                     this.AddParameter(new PartNameParameter("Have a thermometer on the satellite", "sensorThermometer"));
-                    rewardMultiplier += 0.1f;
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
                 }
             }
 
@@ -164,7 +180,9 @@ namespace FinePrint.Contracts
                 if (Util.haveTechnology("sensorBarometer"))
                 {
                     this.AddParameter(new PartNameParameter("Have a barometer on the satellite", "sensorBarometer"));
-                    rewardMultiplier += 0.1f;
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
                 }
             }
 
@@ -173,7 +191,9 @@ namespace FinePrint.Contracts
                 if (Util.haveTechnology("sensorGravimeter"))
                 {
                     this.AddParameter(new PartNameParameter("Have a gravimeter on the satellite", "sensorGravimeter"));
-                    rewardMultiplier += 0.1f;
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
                 }
             }
 
@@ -182,26 +202,56 @@ namespace FinePrint.Contracts
                 if (Util.haveTechnology("sensorAccelerometer"))
                 {
                     this.AddParameter(new PartNameParameter("Have an accelerometer on the satellite", "sensorAccelerometer"));
-                    rewardMultiplier += 0.1f;
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
                 }
             }
 
             this.AddParameter(new KillControlsParameter(), null);
 
-            base.AddKeywords(new string[] { "deploysatellite" });
-            base.SetExpiry();
-            base.SetDeadlineYears(5.0f, targetBody);
+            switch (orbitType)
+            {
+                case OrbitType.POLAR:
+                    fundsMultiplier *= FPConfig.Satellite.Funds.PolarMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.PolarMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.PolarMultiplier;
+                    break;
+                case OrbitType.SYNCHRONOUS:
+                    fundsMultiplier *= FPConfig.Satellite.Funds.SynchronousMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.SynchronousMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.SynchronousMultiplier;
+                    break;
+                case OrbitType.STATIONARY:
+                    fundsMultiplier *= FPConfig.Satellite.Funds.StationaryMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.StationaryMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.StationaryMultiplier;
+                    break;
+                case OrbitType.KOLNIYA:
+                    fundsMultiplier *= FPConfig.Satellite.Funds.KolniyaMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.KolniyaMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.KolniyaMultiplier;
+                    break;
+                case OrbitType.TUNDRA:
+                    fundsMultiplier *= FPConfig.Satellite.Funds.TundraMultiplier;
+                    scienceMultiplier *= FPConfig.Satellite.Science.TundraMultiplier;
+                    reputationMultiplier *= FPConfig.Satellite.Reputation.TundraMultiplier;
+                    break;
+            }
 
             if (targetBody == Planetarium.fetch.Home)
             {
-                rewardMultiplier *= 2.0f;
-                base.SetScience(1f * rewardMultiplier, this.targetBody);
+                fundsMultiplier *= FPConfig.Satellite.Funds.HomeMultiplier;
+                scienceMultiplier *= FPConfig.Satellite.Science.HomeMultiplier;
+                reputationMultiplier *= FPConfig.Satellite.Reputation.HomeMultiplier;
             }
-            else
-                base.SetScience(4f * rewardMultiplier, this.targetBody);
 
-            base.SetFunds(3000.0f * rewardMultiplier, 15000.0f * rewardMultiplier, this.targetBody);
-            base.SetReputation(50.0f * rewardMultiplier, 25.0f * rewardMultiplier, targetBody);
+            base.AddKeywords(new string[] { "deploysatellite" });
+            base.SetExpiry(FPConfig.Satellite.Expire.MinimumExpireDays, FPConfig.Satellite.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.Satellite.Expire.DeadlineDays, targetBody);
+            base.SetFunds(FPConfig.Satellite.Funds.BaseAdvance * fundsMultiplier, FPConfig.Satellite.Funds.BaseReward * fundsMultiplier, FPConfig.Satellite.Funds.BaseFailure * fundsMultiplier, this.targetBody);
+            base.SetScience(FPConfig.Satellite.Science.BaseReward * scienceMultiplier, this.targetBody);
+            base.SetReputation(FPConfig.Satellite.Reputation.BaseReward * reputationMultiplier, FPConfig.Satellite.Reputation.BaseFailure * reputationMultiplier, targetBody);
             return true;
         }
 
@@ -484,6 +534,54 @@ namespace FinePrint.Contracts
             if ((object)targetBody == null)
                 return;
 
+            //Check if the configuration allows this orbit type.
+            switch (targetType)
+            {
+                case OrbitType.EQUATORIAL:
+                    if (!FPConfig.Satellite.AllowEquatorial)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+                case OrbitType.POLAR:
+                    if (!FPConfig.Satellite.AllowPolar)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+                case OrbitType.STATIONARY:
+                    if (!FPConfig.Satellite.AllowStationary)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+                case OrbitType.SYNCHRONOUS:
+                    if (!FPConfig.Satellite.AllowSynchronous)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+                case OrbitType.KOLNIYA:
+                    if (!FPConfig.Satellite.AllowKolniya)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+                case OrbitType.TUNDRA:
+                    if (!FPConfig.Satellite.AllowTundra)
+                    {
+                        orbitType = OrbitType.RANDOM;
+                        return;
+                    }
+                    break;
+            }
+
+            //Check if this orbit type is possible on the target body.
             if (targetType == OrbitType.SYNCHRONOUS)
             {
                 if (Util.canBodyBeSynchronous(targetBody, difficultyFactor / 2))

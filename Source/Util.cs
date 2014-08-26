@@ -9,10 +9,11 @@ using Contracts.Parameters;
 using KSP;
 using KSPAchievements;
 using FinePrint.Contracts.Parameters;
+using KSP.IO;
 
 namespace FinePrint
 {
-	class Util
+	public class Util
     {
         public const int frameSuccessDelay = 5;
         static public bool patchReset = false;
@@ -774,6 +775,33 @@ namespace FinePrint
             return texture;
         }
 
+        public static double LongitudeOfPeriapsis(Orbit o)
+        {
+            double lonper = -1;
+
+            if ( o.eccentricity < 0.05 )
+            {
+                Debug.Log("Undefined LoP");
+            }
+            else
+            {
+                double temp = o.GetEccVector().y/o.eccentricity;
+                if (Math.Abs(temp) > 1.0 )
+                    temp = Math.Sign(temp);
+
+                lonper = Math.Acos(temp);
+
+                if ( o.GetEccVector().z < 0.0)
+                    lonper = Math.PI*2.0 - lonper;
+
+                if ( o.inclination > 180)
+                    lonper = Math.PI*2.0 - lonper;
+            }
+
+            lonper *= UnityEngine.Mathf.Rad2Deg;
+            return lonper;
+        }
+
         public static Orbit GenerateOrbit(OrbitType orbitType, int seed, CelestialBody targetBody, double difficultyFactor, double eccentricity = 0.0)
         {
             if ((object)targetBody == null)
@@ -893,6 +921,7 @@ namespace FinePrint
             Vector3d pos = o.getRelativePositionAtUT(0.0);
             Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
             o.h = Vector3d.Cross(pos, vel);
+            o.eccVec = Vector3d.Cross(vel, o.h) / targetBody.gravParameter - pos / pos.magnitude;
 
             return o;
         }

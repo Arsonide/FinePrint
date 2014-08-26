@@ -389,6 +389,8 @@ namespace FinePrint.Contracts.Parameters
             Vector3d pos = orbitDriver.orbit.getRelativePositionAtUT(0.0);
             Vector3d vel = orbitDriver.orbit.getOrbitalVelocityAtUT(0.0);
             orbitDriver.orbit.h = Vector3d.Cross(pos, vel);
+            orbitDriver.orbit.eccVec = Vector3d.Cross(vel, orbitDriver.orbit.h) / targetBody.gravParameter - pos / pos.magnitude;
+
 
             orbitDriver.orbitColor = WaypointManager.RandomColor(Root.MissionSeed);
 
@@ -433,7 +435,28 @@ namespace FinePrint.Contracts.Parameters
             bool LANMatch = false;
             bool ARGMatch = false;
 
-            float argDifference = (float)Math.Abs(v.orbit.argumentOfPeriapsis - orbitDriver.orbit.argumentOfPeriapsis) % 360;
+            float argDifference = 0f;
+            
+            // Argdifference was originally argument of periapsis, but on horizontal orbits, use longitude of periapsis instead.
+            if ( horizontal )
+            {
+                double vLP = Math.Atan2(v.orbit.eccVec.xzy.y, v.orbit.eccVec.xzy.x);
+                if (v.orbit.h.xzy.z < 0.0)
+                    vLP = 6.2831853071795862 - vLP;
+
+                double oLP = Math.Atan2(orbitDriver.orbit.eccVec.xzy.y, orbitDriver.orbit.eccVec.xzy.x);
+                if (orbitDriver.orbit.h.xzy.z < 0.0)
+                    oLP = 6.2831853071795862 - oLP;
+
+                vLP *= UnityEngine.Mathf.Rad2Deg;
+                oLP *= UnityEngine.Mathf.Rad2Deg;
+
+                Debug.Log("V: " + Util.LongitudeOfPeriapsis(v.orbit) + ", O: " + Util.LongitudeOfPeriapsis(orbitDriver.orbit));
+
+                argDifference = (float)Math.Abs(vLP - oLP) % 360;
+            }
+            else
+                argDifference = (float)Math.Abs(v.orbit.argumentOfPeriapsis - orbitDriver.orbit.argumentOfPeriapsis) % 360;
 
             if (argDifference > 180)
                 argDifference = 360 - argDifference;
@@ -466,6 +489,7 @@ namespace FinePrint.Contracts.Parameters
             else
                 LANMatch = true;
 
+            Debug.Log(APOMatch + "," + PERMatch + "," + INCMatch + "," + LANMatch + "," + ARGMatch);
             if (APOMatch && PERMatch && INCMatch && LANMatch && ARGMatch)
                 return true;
             else

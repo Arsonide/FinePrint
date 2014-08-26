@@ -27,8 +27,12 @@ namespace FinePrint.Contracts
 
             //ARM fails generation on duplicates, so we can't have many out at once.
             int totalContracts = ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count();
-            if (totalContracts >= 2)
+            if (totalContracts >= FPConfig.ARM.MaximumAvailable)
                 return false;
+
+            float fundsMultiplier = 1;
+            float scienceMultiplier = 1;
+            float reputationMultiplier = 1;
 
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
@@ -49,7 +53,11 @@ namespace FinePrint.Contracts
 
 				targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
 
-                if (generator.Next(0, 100) > 90)
+                fundsMultiplier = FPConfig.ARM.Funds.SignificantMultiplier;
+                scienceMultiplier = FPConfig.ARM.Science.SignificantMultiplier;
+                reputationMultiplier = FPConfig.ARM.Reputation.SignificantMultiplier;
+
+                if (generator.Next(0, 100) < FPConfig.ARM.SignificantSolarEjectionChance && FPConfig.ARM.AllowSolarEjections)
                     targetBody = Planetarium.fetch.Sun;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
@@ -71,8 +79,12 @@ namespace FinePrint.Contracts
                     targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
                 }
 
-                if (generator.Next(0, 100) > 70)
-    				targetBody = Planetarium.fetch.Sun;
+                fundsMultiplier = FPConfig.ARM.Funds.ExceptionalMultiplier;
+                scienceMultiplier = FPConfig.ARM.Science.ExceptionalMultiplier;
+                reputationMultiplier = FPConfig.ARM.Reputation.ExceptionalMultiplier;
+
+                if (generator.Next(0, 100) < FPConfig.ARM.ExceptionalSolarEjectionChance && FPConfig.ARM.AllowSolarEjections)
+                    targetBody = Planetarium.fetch.Sun;
 			}
 
             if (targetBody == null)
@@ -83,10 +95,13 @@ namespace FinePrint.Contracts
 			if (targetBody == Planetarium.fetch.Sun)
 			{
 				this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.ESCAPING, "vessel"), null);
+                fundsMultiplier *= FPConfig.ARM.Funds.SolarEjectionMultiplier;
+                scienceMultiplier *= FPConfig.ARM.Science.SolarEjectionMultiplier;
+                reputationMultiplier *= FPConfig.ARM.Reputation.SolarEjectionMultiplier;
 			}
 			else
 			{
-                if (targetBody == Planetarium.fetch.Home && generator.Next(0, 101) > 80)
+                if (targetBody == Planetarium.fetch.Home && generator.Next(0, 101) < FPConfig.ARM.HomeLandingChance && FPConfig.ARM.AllowHomeLandings)
                 {
                     isLanding = true;
                     this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.LANDED, "vessel"), null);
@@ -96,12 +111,12 @@ namespace FinePrint.Contracts
 			}
 
 			base.AddKeywords(new string[] { "asteroidretrieval" });
-			base.SetExpiry();
-			base.SetDeadlineYears(7.0f, targetBody);
+			base.SetExpiry(FPConfig.ARM.Expire.MinimumExpireDays, FPConfig.ARM.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.ARM.Expire.DeadlineDays, targetBody);
 
-            base.SetFunds(15000f, 90000f, this.targetBody);
-            base.SetReputation(450f, 225f, this.targetBody);
-            base.SetScience(225f, this.targetBody);
+            base.SetFunds(FPConfig.ARM.Funds.BaseAdvance * fundsMultiplier, FPConfig.ARM.Funds.BaseReward * fundsMultiplier, FPConfig.ARM.Funds.BaseFailure * fundsMultiplier, this.targetBody);
+            base.SetScience(FPConfig.ARM.Science.BaseReward * scienceMultiplier, this.targetBody);
+            base.SetReputation(FPConfig.ARM.Reputation.BaseReward * reputationMultiplier, FPConfig.ARM.Reputation.BaseFailure * reputationMultiplier, this.targetBody);
 
             //Prevent duplicate contracts shortly before finishing up.
             foreach (ARMContract active in ContractSystem.Instance.GetCurrentContracts<ARMContract>())

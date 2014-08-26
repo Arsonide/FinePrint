@@ -34,7 +34,7 @@ namespace FinePrint.Contracts
                     activeContracts++;
             }
 
-            if (offeredContracts >= 2 || activeContracts >= 4)
+            if (offeredContracts >= FPConfig.Rover.MaximumAvailable || activeContracts >= FPConfig.Rover.MaximumActive)
                 return false;
 
 			System.Random generator = new System.Random(this.MissionSeed);
@@ -55,22 +55,44 @@ namespace FinePrint.Contracts
 			}
 
 			int waypointCount = 0;
+            float fundsMultiplier = 1;
+            float scienceMultiplier = 1;
+            float reputationMultiplier = 1;
+            float wpFundsMultiplier = 1;
+            float wpScienceMultiplier = 1;
+            float wpReputationMultiplier = 1;
 
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-			{
-				waypointCount = 3;
-				range = 1000 + 1000 * targetBody.GeeASL;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-			{
-				waypointCount = 5;
-				range = 2000 + 2000 * targetBody.GeeASL;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Exceptional)
-			{
-				waypointCount = 7;
-				range = 3000 + 3000 * targetBody.GeeASL;
-			}
+			switch(this.prestige)
+            {
+                case ContractPrestige.Trivial:
+                    waypointCount = FPConfig.Rover.TrivialWaypoints;
+                    range = FPConfig.Rover.TrivialRange;
+                    break;
+                case ContractPrestige.Significant:
+                    waypointCount = FPConfig.Rover.SignificantWaypoints;
+                    range = FPConfig.Rover.SignificantRange;
+                    fundsMultiplier = FPConfig.Rover.Funds.SignificantMultiplier;
+                    scienceMultiplier = FPConfig.Rover.Science.SignificantMultiplier;
+                    reputationMultiplier = FPConfig.Rover.Reputation.SignificantMultiplier;
+                    wpFundsMultiplier = FPConfig.Rover.Funds.WaypointSignificantMultiplier;
+                    wpScienceMultiplier = FPConfig.Rover.Science.WaypointSignificantMultiplier;
+                    wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointSignificantMultiplier;
+                    break;
+                case ContractPrestige.Exceptional:
+                    waypointCount = FPConfig.Rover.ExceptionalWaypoints;
+                    range = FPConfig.Rover.ExceptionalRange;
+                    fundsMultiplier = FPConfig.Rover.Funds.ExceptionalMultiplier;
+                    scienceMultiplier = FPConfig.Rover.Science.ExceptionalMultiplier;
+                    reputationMultiplier = FPConfig.Rover.Reputation.ExceptionalMultiplier;
+                    wpFundsMultiplier = FPConfig.Rover.Funds.WaypointExceptionalMultiplier;
+                    wpScienceMultiplier = FPConfig.Rover.Science.WaypointExceptionalMultiplier;
+                    wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointExceptionalMultiplier;
+                    break;
+            }
+
+            //The range provided is halved, and the greater half is lowered (or raised) based on the gravity of the target body.
+            range /= 2;
+            range = range + range * targetBody.GeeASL;
 
 			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
 			int secret = UnityEngine.Random.Range(0, waypointCount);
@@ -84,16 +106,17 @@ namespace FinePrint.Contracts
 				else
 					newParameter = this.AddParameter(new RoverWaypointParameter(x, targetBody, centerLatitude, centerLongitude, range, false), null);
 
-				newParameter.SetFunds(5000.0f, targetBody);
-				newParameter.SetReputation(10.0f, targetBody);
-                newParameter.SetScience(10.0f, targetBody);
+				newParameter.SetFunds(FPConfig.Rover.Funds.WaypointBaseReward * wpFundsMultiplier, targetBody);
+                newParameter.SetScience(FPConfig.Rover.Science.WaypointBaseReward * wpScienceMultiplier, targetBody);
+                newParameter.SetReputation(FPConfig.Rover.Reputation.WaypointBaseReward * wpReputationMultiplier, targetBody);
 			}
 
 			base.AddKeywords(new string[] { "roversearch" });
-			base.SetExpiry();
-			base.SetDeadlineYears(5.0f, targetBody);
-			base.SetFunds(4000.0f, 17500.0f, targetBody);
-			base.SetReputation(50.0f, 25.0f, targetBody);
+            base.SetExpiry(FPConfig.Rover.Expire.MinimumExpireDays, FPConfig.Rover.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.Rover.Expire.DeadlineDays, targetBody);
+            base.SetFunds(FPConfig.Rover.Funds.BaseAdvance * fundsMultiplier, FPConfig.Rover.Funds.BaseReward * fundsMultiplier, FPConfig.Rover.Funds.BaseFailure * fundsMultiplier, targetBody);
+            base.SetScience(FPConfig.Rover.Science.BaseReward * scienceMultiplier, targetBody);
+			base.SetReputation(FPConfig.Rover.Reputation.BaseReward * reputationMultiplier, FPConfig.Rover.Reputation.BaseFailure * reputationMultiplier, targetBody);
             return true;
 		}
 

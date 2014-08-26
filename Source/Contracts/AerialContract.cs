@@ -25,7 +25,6 @@ namespace FinePrint.Contracts
             if (AreWingsUnlocked() == false)
                 return false;
 
-            //Allow four contracts in pocket but only two on the board at a time.
             int offeredContracts = 0;
             int activeContracts = 0;
             foreach (AerialContract contract in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
@@ -36,7 +35,7 @@ namespace FinePrint.Contracts
                     activeContracts++;
             }
 
-            if (offeredContracts >= 2 || activeContracts >= 4)
+            if (offeredContracts >= FPConfig.Aerial.MaximumAvailable || activeContracts >= FPConfig.Aerial.MaximumActive)
                 return false;
 
             double range = 10000.0;
@@ -90,31 +89,51 @@ namespace FinePrint.Contracts
 					break;
 			}
 
-			int waypointCount = 0;
-			double altitudeHalfQuarterRange = Math.Abs(maxAltitude - minAltitude) * 0.125;
+
+            int waypointCount = 0;
+            float fundsMultiplier = 1;
+            float scienceMultiplier = 1;
+            float reputationMultiplier = 1;
+            float wpFundsMultiplier = 1;
+            float wpScienceMultiplier = 1;
+            float wpReputationMultiplier = 1;
+            
+            double altitudeHalfQuarterRange = Math.Abs(maxAltitude - minAltitude) * 0.125;
 			double upperMidAltitude = ((maxAltitude + minAltitude) / 2.0) + altitudeHalfQuarterRange;
 			double lowerMidAltitude = ((maxAltitude + minAltitude) / 2.0) - altitudeHalfQuarterRange;
 			minAltitude = Math.Round((minAltitude + (generator.NextDouble() * (lowerMidAltitude - minAltitude))) / 100.0) * 100.0;
 			maxAltitude = Math.Round((upperMidAltitude + (generator.NextDouble() * (maxAltitude - upperMidAltitude))) / 100.0) * 100.0;
 
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-			{
-				waypointCount = 1;
-				waypointCount += additionalWaypoints;
-                range = 100000.0;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-			{
-				waypointCount = 2;
-				waypointCount += additionalWaypoints;
-                range = 200000.0;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Exceptional)
-			{
-				waypointCount = 3;
-				waypointCount += additionalWaypoints;
-                range = 300000.0;
-			}
+			switch(this.prestige)
+            {
+                case ContractPrestige.Trivial:
+				    waypointCount = FPConfig.Aerial.TrivialWaypoints;
+				    waypointCount += additionalWaypoints;
+                    range = FPConfig.Aerial.TrivialRange;
+                    break;
+                case ContractPrestige.Significant:
+                    waypointCount = FPConfig.Aerial.SignificantWaypoints;
+				    waypointCount += additionalWaypoints;
+                    range = FPConfig.Aerial.SignificantRange;
+                    fundsMultiplier = FPConfig.Aerial.Funds.SignificantMultiplier;
+                    scienceMultiplier = FPConfig.Aerial.Science.SignificantMultiplier;
+                    reputationMultiplier = FPConfig.Aerial.Reputation.SignificantMultiplier;
+                    wpFundsMultiplier = FPConfig.Aerial.Funds.WaypointSignificantMultiplier;
+                    wpScienceMultiplier = FPConfig.Aerial.Science.WaypointSignificantMultiplier;
+                    wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointSignificantMultiplier;
+                    break;
+                case ContractPrestige.Exceptional:
+                    waypointCount = FPConfig.Aerial.ExceptionalWaypoints;
+				    waypointCount += additionalWaypoints;
+                    range = FPConfig.Aerial.ExceptionalRange;
+                    fundsMultiplier = FPConfig.Aerial.Funds.ExceptionalMultiplier;
+                    scienceMultiplier = FPConfig.Aerial.Science.ExceptionalMultiplier;
+                    reputationMultiplier = FPConfig.Aerial.Reputation.ExceptionalMultiplier;
+                    wpFundsMultiplier = FPConfig.Aerial.Funds.WaypointExceptionalMultiplier;
+                    wpScienceMultiplier = FPConfig.Aerial.Science.WaypointExceptionalMultiplier;
+                    wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier;
+                    break;
+            }
 
             WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
 
@@ -122,16 +141,17 @@ namespace FinePrint.Contracts
 			{
 				ContractParameter newParameter;
 				newParameter = this.AddParameter(new FlightWaypointParameter(x, targetBody, minAltitude, maxAltitude, centerLatitude, centerLongitude, range), null);
-				newParameter.SetFunds(3750.0f, targetBody);
-				newParameter.SetReputation(7.5f, targetBody);
-				newParameter.SetScience(7.5f, targetBody);
+				newParameter.SetFunds(FPConfig.Aerial.Funds.WaypointBaseReward * wpFundsMultiplier, targetBody);
+                newParameter.SetReputation(FPConfig.Aerial.Reputation.WaypointBaseReward * wpReputationMultiplier, targetBody);
+                newParameter.SetScience(FPConfig.Aerial.Science.WaypointBaseReward * wpScienceMultiplier, targetBody);
 			}
 
 			base.AddKeywords(new string[] { "surveyflight" });
-			base.SetExpiry();
-			base.SetDeadlineYears(5.0f, targetBody);
-			base.SetFunds(4000.0f, 17500.0f, targetBody);
-			base.SetReputation(50.0f, 25.0f, targetBody);
+            base.SetExpiry(FPConfig.Aerial.Expire.MinimumExpireDays, FPConfig.Aerial.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.Aerial.Expire.DeadlineDays, targetBody);
+            base.SetFunds(FPConfig.Aerial.Funds.BaseAdvance * fundsMultiplier, FPConfig.Aerial.Funds.BaseReward * fundsMultiplier, FPConfig.Aerial.Funds.BaseFailure * fundsMultiplier, targetBody);
+            base.SetScience(FPConfig.Aerial.Science.BaseReward * scienceMultiplier, targetBody);
+            base.SetReputation(FPConfig.Aerial.Reputation.BaseReward * reputationMultiplier, FPConfig.Aerial.Reputation.BaseFailure * reputationMultiplier, targetBody);
 			return true;
 		}
 
