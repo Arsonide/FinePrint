@@ -112,6 +112,7 @@ namespace FinePrint
 		public void RandomizeNear(double centerLatitude, double centerLongitude, string celestialName, double searchRadius, bool waterAllowed = true)
 		{
 			CelestialBody myPlanet = null;
+            System.Random generator = new System.Random(this.seed + this.id);
 
 			foreach (CelestialBody body in FlightGlobals.Bodies)
 			{
@@ -134,8 +135,8 @@ namespace FinePrint
 							double lng_max = centerLongitude + searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
 							double lat_min = centerLatitude - (searchRadius / distancePerDegree);
 							double lat_max = centerLatitude + (searchRadius / distancePerDegree);
-							latitude = UnityEngine.Random.Range((float)lat_min, (float)lat_max);
-							longitude = UnityEngine.Random.Range((float)lng_min, (float)lng_max);
+                            latitude = lat_min + generator.NextDouble() * (lat_max - lat_min);
+                            longitude = lng_min + generator.NextDouble() * (lng_max - lng_min);
 							Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
 							double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
 
@@ -153,8 +154,8 @@ namespace FinePrint
 					double lng_max = centerLongitude + searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
 					double lat_min = centerLatitude - (searchRadius / distancePerDegree);
 					double lat_max = centerLatitude + (searchRadius / distancePerDegree);
-					latitude = UnityEngine.Random.Range((float)lat_min, (float)lat_max);
-					longitude = UnityEngine.Random.Range((float)lng_min, (float)lng_max);
+                    latitude = lat_min + generator.NextDouble() * (lat_max - lat_min);
+                    longitude = lng_min + generator.NextDouble() * (lng_max - lng_min);
 				}
 			}
 		}

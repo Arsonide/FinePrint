@@ -93,9 +93,9 @@ namespace FinePrint.Contracts.Parameters
             if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
             {
                 wp.celestialName = targetBody.GetName();
-                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                 wp.seed = Root.MissionSeed;
                 wp.id = waypointID;
+                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                 wp.setName(false);
                 wp.waypointType = WaypointType.ROVER;
                 wp.altitude = 0.0;
@@ -111,9 +111,9 @@ namespace FinePrint.Contracts.Parameters
                 if (this.Root.ContractState != Contract.State.Completed)
                 {
                     wp.celestialName = targetBody.GetName();
-                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                     wp.seed = Root.MissionSeed;
                     wp.id = waypointID;
+                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                     wp.setName(false);
                     wp.waypointType = WaypointType.ROVER;
                     wp.altitude = 0.0;
