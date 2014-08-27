@@ -32,6 +32,14 @@ namespace FinePrint
         private static FPConfig instance;
         private static float timer;
 
+        public static string SunStationaryName = "keliostationary";
+        public static string HomeStationaryName = "keostationary";
+        public static string OtherStationaryName = "stationary";
+        public static string SunSynchronousName = "keliosynchronous";
+        public static string HomeSynchronousName = "keosynchronous";
+        public static string OtherSynchronousName = "synchronous";
+        public static string MolniyaName = "Kolniya";
+
         public static FPConfig Instance
         {
             get
@@ -465,6 +473,14 @@ namespace FinePrint
             ConfigNode stationScience = stationNode.AddNode(new ConfigNode("Science"));
             ConfigNode stationReputation = stationNode.AddNode(new ConfigNode("Reputation"));
 
+            topNode.AddValue("SunStationaryName", FPConfig.SunStationaryName);
+            topNode.AddValue("HomeStationaryName", FPConfig.HomeStationaryName);
+            topNode.AddValue("OtherStationaryName", FPConfig.OtherStationaryName);
+            topNode.AddValue("SunSynchronousName", FPConfig.SunSynchronousName);
+            topNode.AddValue("HomeSynchronousName", FPConfig.HomeSynchronousName);
+            topNode.AddValue("OtherSynchronousName", FPConfig.OtherSynchronousName);
+            topNode.AddValue("MolniyaName", FPConfig.MolniyaName);
+
             aerialNode.AddValue("MaximumAvailable", FPConfig.Aerial.MaximumAvailable);
             aerialNode.AddValue("MaximumActive", FPConfig.Aerial.MaximumActive);
             aerialNode.AddValue("TrivialWaypoints", FPConfig.Aerial.TrivialWaypoints);
@@ -742,6 +758,14 @@ namespace FinePrint
             //It feeds it a reference of itself, which is modified if the function succeeds.
             //It also feeds itself in as a value, which it reverts to if it fails.
             //This ensures that the value stays at default if the load fails.
+
+            Util.LoadNode(topNode, "FPConfig", "SunStationaryName", ref FPConfig.SunStationaryName, FPConfig.SunStationaryName);
+            Util.LoadNode(topNode, "FPConfig", "HomeStationaryName", ref FPConfig.HomeStationaryName, FPConfig.HomeStationaryName);
+            Util.LoadNode(topNode, "FPConfig", "OtherStationaryName", ref FPConfig.OtherStationaryName, FPConfig.OtherStationaryName);
+            Util.LoadNode(topNode, "FPConfig", "SunSynchronousName", ref FPConfig.SunSynchronousName, FPConfig.SunSynchronousName);
+            Util.LoadNode(topNode, "FPConfig", "HomeSynchronousName", ref FPConfig.HomeSynchronousName, FPConfig.HomeSynchronousName);
+            Util.LoadNode(topNode, "FPConfig", "OtherSynchronousName", ref FPConfig.OtherSynchronousName, FPConfig.OtherSynchronousName);
+            Util.LoadNode(topNode, "FPConfig", "MolniyaName", ref FPConfig.MolniyaName, FPConfig.MolniyaName);
 
             Util.LoadNode(aerialNode, "FPConfig", "MaximumAvailable", ref FPConfig.Aerial.MaximumAvailable, FPConfig.Aerial.MaximumAvailable);
             Util.LoadNode(aerialNode, "FPConfig", "MaximumActive", ref FPConfig.Aerial.MaximumActive, FPConfig.Aerial.MaximumActive);

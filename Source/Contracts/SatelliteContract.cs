@@ -280,23 +280,23 @@ namespace FinePrint.Contracts
                 case OrbitType.POLAR:
                     return "Position satellite in a polar orbit of " + targetBody.theName + ".";
                 case OrbitType.KOLNIYA:
-                    return "Position satellite in a Kolniya orbit around " + targetBody.theName + ".";
+                    return "Position satellite in a " + Util.TitleCase(FPConfig.MolniyaName) + " orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "Position satellite in a tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if ( targetBody == Planetarium.fetch.Sun )
-                        return "Position satellite in keliostationary orbit of " + targetBody.theName + ".";
+                        return "Position satellite in " + FPConfig.SunStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Position satellite in keostationary orbit of " + targetBody.theName + ".";
+                        return "Position satellite in " + FPConfig.HomeStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else
-                        return "Position satellite in stationary orbit of " + targetBody.theName + ".";
+                        return "Position satellite in " + FPConfig.OtherStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Position satellite in a keliosynchronous orbit of " + targetBody.theName + ".";
+                        return "Position satellite in a " + FPConfig.SunSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Position satellite in a keosynchronous orbit of " + targetBody.theName + ".";
+                        return "Position satellite in a " + FPConfig.HomeSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else
-                        return "Position satellite in a synchronous orbit of " + targetBody.theName + ".";
+                        return "Position satellite in a " + FPConfig.OtherSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                 default:
                     return "Position satellite in a specific orbit of " + targetBody.theName + ".";
             }
@@ -317,23 +317,23 @@ namespace FinePrint.Contracts
                 case OrbitType.POLAR:
                     return "We need you to build a satellite to our specifications and deploy it into a polar orbit around " + targetBody.theName + ".";
                 case OrbitType.KOLNIYA:
-                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric Kolniya \"lightning\" orbit around " + targetBody.theName + ".";
+                    return "We need you to build a satellite to our specifications and deploy it into a highly eccentric " + Util.TitleCase(FPConfig.MolniyaName) + " \"lightning\" orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "We need you to build a satellite to our specifications and deploy it into a highly eccentric tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "We need you to build a satellite to our specifications and place it in keliostationary orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.SunStationaryName.ToLower() + " orbit around " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "We need you to build a satellite to our specifications and place it in keostationary orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.HomeStationaryName.ToLower() + " orbit around " + targetBody.theName + ".";
                 else
-                        return "We need you to build a satellite to our specifications and place it in stationary orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.OtherStationaryName.ToLower() + " orbit around " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "We need you to build a satellite to our specifications and place it in keliosynchronous orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.SunSynchronousName.ToLower() + " orbit around " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "We need you to build a satellite to our specifications and place it in keosynchronous orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.HomeSynchronousName.ToLower() + " orbit around " + targetBody.theName + ".";
                 else
-                        return "We need you to build a satellite to our specifications and place it in synchronous orbit around " + targetBody.theName + ".";
+                        return "We need you to build a satellite to our specifications and place it in " + FPConfig.OtherSynchronousName.ToLower() + " orbit around " + targetBody.theName + ".";
                 default:
                     return "We need you to build a satellite to our specifications and deploy it into a very specific orbit around " + targetBody.theName + ".";
             }
@@ -348,23 +348,23 @@ namespace FinePrint.Contracts
                 case OrbitType.POLAR:
                     return "You have successfully deployed our satellite into polar orbit around " + targetBody.theName + ".";
                 case OrbitType.KOLNIYA:
-                    return "You have successfully deployed our satellite in a Kolniya orbit around " + targetBody.theName + ".";
+                    return "You have successfully deployed our satellite in a " + Util.TitleCase(FPConfig.MolniyaName) + " orbit around " + targetBody.theName + ".";
                 case OrbitType.TUNDRA:
                     return "You have successfully deployed our satellite in a tundra orbit around " + targetBody.theName + ".";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "You have successfully placed our satellite in keliostationary orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.SunStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "You have successfully placed our satellite in keostationary orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.HomeStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                 else
-                        return "You have successfully placed our satellite in stationary orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.OtherStationaryName.ToLower() + " orbit of " + targetBody.theName + ".";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "You have successfully placed our satellite in keliosynchronous orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.SunSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "You have successfully placed our satellite in keosynchronous orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.HomeSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                 else
-                        return "You have successfully placed our satellite in synchronous orbit of " + targetBody.theName + ".";
+                        return "You have successfully placed our satellite in " + FPConfig.OtherSynchronousName.ToLower() + " orbit of " + targetBody.theName + ".";
                 default:
                     return "You have successfully deployed our satellite in orbit of " + targetBody.theName + ".";
             }

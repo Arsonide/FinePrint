@@ -915,5 +915,10 @@ namespace FinePrint
                     o.argumentOfPeriapsis = Math.Acos(o.eccVec.x / o.eccentricity);
             }
         }
+
+        public static string TitleCase(string str)
+        {
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
+        }
     }
 }

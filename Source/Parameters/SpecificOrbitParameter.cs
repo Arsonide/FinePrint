@@ -93,23 +93,23 @@ namespace FinePrint.Contracts.Parameters
                 case OrbitType.POLAR:
                     return "Reach the designated polar orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.KOLNIYA:
-                    return "Reach the designated Kolniya orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    return "Reach the designated " + Util.TitleCase(FPConfig.MolniyaName) + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.TUNDRA:
                     return "Reach the designated tundra orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Reach keliostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.SunStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Reach keostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.HomeStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach stationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.OtherStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Reach the designated keliosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.SunSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Reach the designated keosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.HomeSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach the designated synchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.OtherSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 default:
                     return "Reach the designated orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
             }
