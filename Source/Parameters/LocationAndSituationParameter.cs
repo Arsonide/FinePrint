@@ -16,6 +16,7 @@ namespace FinePrint.Contracts.Parameters
 		private Vessel.Situations targetSituation;
 		private string noun;
         private int successCounter;
+        bool eventsAdded;
 
 		public LocationAndSituationParameter()
 		{
@@ -36,14 +37,22 @@ namespace FinePrint.Contracts.Parameters
 		protected override void OnRegister()
 		{
 			this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
 		}
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
         }
 
         private void FlightReady()

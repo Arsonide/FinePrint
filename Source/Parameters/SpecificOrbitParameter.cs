@@ -43,6 +43,7 @@ namespace FinePrint.Contracts.Parameters
         private double epoch;
         public CelestialBody targetBody;
         private const int numSpinners = 8;
+        bool eventsAdded;
 
         public SpecificOrbitParameter()
         {
@@ -130,18 +131,26 @@ namespace FinePrint.Contracts.Parameters
             return notes;
         }
 
-        // Fuck. You. State. Bugs.
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
         }
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
+
             cleanup();
         }
 

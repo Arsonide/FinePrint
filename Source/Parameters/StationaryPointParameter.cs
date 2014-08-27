@@ -17,6 +17,7 @@ namespace FinePrint.Contracts.Parameters
         private bool submittedWaypoint;
         private double longitude;
         private int successCounter;
+        bool eventsAdded;
 
         // Game freaks out without a default constructor. I never use it.
         public StationaryPointParameter()
@@ -55,14 +56,22 @@ namespace FinePrint.Contracts.Parameters
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
         }
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
 
             if (submittedWaypoint)
                 WaypointManager.RemoveWaypoint(wp);

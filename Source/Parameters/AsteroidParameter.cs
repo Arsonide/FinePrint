@@ -16,6 +16,7 @@ namespace FinePrint.Contracts.Parameters
         private List<int> asteroidSeeds;
         private string asteroidClass;
         private int successCounter;
+        bool eventsAdded;
 
 		public AsteroidParameter()
 		{
@@ -47,18 +48,20 @@ namespace FinePrint.Contracts.Parameters
 		protected override void OnRegister()
 		{
             this.DisableOnStateChange = false;
+            eventsAdded = false;
 
             if (Root.ContractState == Contract.State.Active)
             {
                 GameEvents.onPartCouple.Add(OnDock);
                 GameEvents.onFlightReady.Add(FlightReady);
                 GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
             }
         }
 
         protected override void OnUnregister()
         {
-            if (Root.ContractState == Contract.State.Active)
+            if (eventsAdded)
             {
                 GameEvents.onPartCouple.Remove(OnDock);
                 GameEvents.onFlightReady.Remove(FlightReady);
