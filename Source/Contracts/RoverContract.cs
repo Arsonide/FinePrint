@@ -158,6 +158,7 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
+            Util.CheckForPatchReset();
 			Util.LoadNode(node, "RoverContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
 			Util.LoadNode(node, "RoverContract", "centerLatitude", ref centerLatitude, 0.0);
 			Util.LoadNode(node, "RoverContract", "centerLongitude", ref centerLongitude, 0.0);

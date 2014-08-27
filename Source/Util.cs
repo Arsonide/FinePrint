@@ -10,13 +10,13 @@ using KSP;
 using KSPAchievements;
 using FinePrint.Contracts.Parameters;
 using KSP.IO;
+using FinePrint.Contracts;
 
 namespace FinePrint
 {
 	public class Util
     {
         public const int frameSuccessDelay = 5;
-        static public bool patchReset = false;
 
         #region Vessel Loops
 
@@ -409,7 +409,6 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
-                resetBoard();
 			}
 		}
 
@@ -425,7 +424,6 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
-                resetBoard();
 			}
 		}
 
@@ -441,7 +439,6 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
-                resetBoard();
 			}
 		}
 
@@ -457,7 +454,6 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
-                resetBoard();
 			}
 		}
 
@@ -469,7 +465,6 @@ namespace FinePrint
 			{
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
 				value = defaultValue;
-                resetBoard();
 			}
 		}
 
@@ -497,7 +492,6 @@ namespace FinePrint
 			{
 				body = Planetarium.fetch.Home;
 				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultBody.GetName() + "!");
-                resetBoard();
             }
 		}
 
@@ -547,7 +541,6 @@ namespace FinePrint
 				}
 
 				situation = defaultSituation;
-                resetBoard();
 			}
         }
 
@@ -594,18 +587,56 @@ namespace FinePrint
                 }
 
                 orbitType = defaultOrbitType;
-                resetBoard();
             }
         }
         #endregion
 
-        public static void resetBoard()
+        public static void CheckForPatchReset()
         {
-            if (!patchReset)
+            if (FPConfig.PatchReset == false)
+                return;
+
+            FPConfig.PatchReset = false;
+
+            FPConfig.config.GetNode("FinePrint").AddValue("PatchReset", FPConfig.PatchReset);
+            FPConfig.config.Save(FPConfig.ConfigFileName());
+
+            Debug.LogError("Fine Print has been patched and will now reset all Fine Print contracts.");
+
+            foreach (AerialContract c in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
             {
-                Debug.LogError("Fine Print has detected save game incompatibilities and is resetting the contract board to fix them. This usually happens after a patch.");
-                ContractSystem.Instance.ClearContractsCurrent();
-                patchReset = true;
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (ARMContract c in ContractSystem.Instance.GetCurrentContracts<ARMContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (BaseContract c in ContractSystem.Instance.GetCurrentContracts<BaseContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (RoverContract c in ContractSystem.Instance.GetCurrentContracts<RoverContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (SatelliteContract c in ContractSystem.Instance.GetCurrentContracts<SatelliteContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (StationContract c in ContractSystem.Instance.GetCurrentContracts<StationContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
             }
         }
 

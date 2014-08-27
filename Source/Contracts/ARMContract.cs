@@ -219,6 +219,7 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
+            Util.CheckForPatchReset();
 			Util.LoadNode(node, "ARMContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "ARMContract", "asteroidClass", ref asteroidClass, "A");
             Util.LoadNode(node, "ARMContract", "isLanding", ref isLanding, false);

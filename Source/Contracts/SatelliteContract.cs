@@ -372,6 +372,7 @@ namespace FinePrint.Contracts
 
         protected override void OnLoad(ConfigNode node)
         {
+            Util.CheckForPatchReset();
             Util.LoadNode(node, "SatelliteContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "SatelliteContract", "deviation", ref deviation, 10);
             Util.LoadNode(node, "SatelliteContract", "orbitType", ref orbitType, OrbitType.RANDOM);

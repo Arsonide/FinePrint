@@ -32,6 +32,7 @@ namespace FinePrint
         private static FPConfig instance;
         private static float timer;
 
+        public static bool PatchReset = true;
         public static string SunStationaryName = "keliostationary";
         public static string HomeStationaryName = "keostationary";
         public static string OtherStationaryName = "stationary";
@@ -425,7 +426,7 @@ namespace FinePrint
             }
         }
 
-        private static string ConfigFileName()
+        public static string ConfigFileName()
         {
             return Path.GetFullPath(KSPUtil.ApplicationRootPath) + "GameData/FinePrint/FinePrint.cfg";
         }
@@ -473,6 +474,7 @@ namespace FinePrint
             ConfigNode stationScience = stationNode.AddNode(new ConfigNode("Science"));
             ConfigNode stationReputation = stationNode.AddNode(new ConfigNode("Reputation"));
 
+            topNode.AddValue("PatchReset", FPConfig.PatchReset);
             topNode.AddValue("SunStationaryName", FPConfig.SunStationaryName);
             topNode.AddValue("HomeStationaryName", FPConfig.HomeStationaryName);
             topNode.AddValue("OtherStationaryName", FPConfig.OtherStationaryName);
@@ -759,6 +761,7 @@ namespace FinePrint
             //It also feeds itself in as a value, which it reverts to if it fails.
             //This ensures that the value stays at default if the load fails.
 
+            Util.LoadNode(topNode, "FPConfig", "PatchReset", ref FPConfig.PatchReset, FPConfig.PatchReset);
             Util.LoadNode(topNode, "FPConfig", "SunStationaryName", ref FPConfig.SunStationaryName, FPConfig.SunStationaryName);
             Util.LoadNode(topNode, "FPConfig", "HomeStationaryName", ref FPConfig.HomeStationaryName, FPConfig.HomeStationaryName);
             Util.LoadNode(topNode, "FPConfig", "OtherStationaryName", ref FPConfig.OtherStationaryName, FPConfig.OtherStationaryName);

@@ -285,6 +285,7 @@ namespace FinePrint.Contracts
 
         protected override void OnLoad(ConfigNode node)
         {
+            Util.CheckForPatchReset();
             Util.LoadNode(node, "FacilityContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "FacilityContract", "capacity", ref capacity, 8);
         }

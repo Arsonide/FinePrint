@@ -193,6 +193,7 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
+            Util.CheckForPatchReset();
 			Util.LoadNode(node, "AerialContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
 			Util.LoadNode(node, "AerialContract", "minAltitude", ref minAltitude, 0.0);
             Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, 10000);
