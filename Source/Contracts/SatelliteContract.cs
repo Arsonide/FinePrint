@@ -142,6 +142,7 @@ namespace FinePrint.Contracts
             if ( orbitType == OrbitType.SYNCHRONOUS )
                 e = generator.NextDouble()*(difficultyFactor/2);
             Orbit o = Util.GenerateOrbit(orbitType, MissionSeed, targetBody, difficultyFactor, e);
+            Util.PostProcessOrbit(ref o);
 
             this.AddParameter(new SpecificOrbitParameter(orbitType, o.inclination, o.eccentricity, o.semiMajorAxis, o.LAN, o.argumentOfPeriapsis, o.meanAnomalyAtEpoch, o.epoch, targetBody, difficultyFactor, deviation), null);
 

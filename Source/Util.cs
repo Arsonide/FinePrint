@@ -775,33 +775,6 @@ namespace FinePrint
             return texture;
         }
 
-        public static double LongitudeOfPeriapsis(Orbit o)
-        {
-            double lonper = -1;
-
-            if ( o.eccentricity < 0.05 )
-            {
-                Debug.Log("Undefined LoP");
-            }
-            else
-            {
-                double temp = o.GetEccVector().y/o.eccentricity;
-                if (Math.Abs(temp) > 1.0 )
-                    temp = Math.Sign(temp);
-
-                lonper = Math.Acos(temp);
-
-                if ( o.GetEccVector().z < 0.0)
-                    lonper = Math.PI*2.0 - lonper;
-
-                if ( o.inclination > 180)
-                    lonper = Math.PI*2.0 - lonper;
-            }
-
-            lonper *= UnityEngine.Mathf.Rad2Deg;
-            return lonper;
-        }
-
         public static Orbit GenerateOrbit(OrbitType orbitType, int seed, CelestialBody targetBody, double difficultyFactor, double eccentricity = 0.0)
         {
             if ((object)targetBody == null)
@@ -811,7 +784,8 @@ namespace FinePrint
             System.Random generator = new System.Random(seed);
 
             //Initialize all the things.
-            double inc = (generator.NextDouble() * 90.0) * difficultyFactor;
+            //Default inclination needs to be greater than one, just...just trust me on this.
+            double inc = Math.Max(1, (generator.NextDouble() * 90.0) * difficultyFactor);
             double desiredPeriapsis = 0.0;
             double desiredApoapsis = 0.0;
             double pointA = 0.0;
@@ -820,6 +794,7 @@ namespace FinePrint
             double easeFactor = 1.0 - difficultyFactor;
             double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
             o.referenceBody = targetBody;
+            o.LAN = generator.NextDouble() * 360.0;
 
             //If it chooses the sun, the infinite SOI can cause NAN, so choose Eeloo's altitude instead.
             //Use 90% of the SOI to give a little leeway for error correction.
@@ -878,7 +853,11 @@ namespace FinePrint
             if (orbitType == OrbitType.POLAR)
                 inc = 90;
             else if (orbitType == OrbitType.EQUATORIAL || orbitType == OrbitType.STATIONARY)
+            {
                 inc = 0;
+                o.an = Vector3.zero;
+                o.LAN = 0.0;
+            }
 
             //Retrograde orbits are harder on Kerbin and the Sun, but otherwise, 50% chance.
             //Kolniya and Tundra have invalid inclinations until this point.
@@ -914,16 +893,27 @@ namespace FinePrint
             }
 
             o.inclination = inc;
-            o.LAN = generator.NextDouble() * 360.0;
             o.meanAnomalyAtEpoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
             o.epoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
             o.Init();
-            Vector3d pos = o.getRelativePositionAtUT(0.0);
-            Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
-            o.h = Vector3d.Cross(pos, vel);
-            o.eccVec = Vector3d.Cross(vel, o.h) / targetBody.gravParameter - pos / pos.magnitude;
-
+            PostProcessOrbit(ref o);
             return o;
+        }
+
+        public static void PostProcessOrbit(ref Orbit o)
+        {
+            if (HighLogic.LoadedSceneHasPlanetarium)
+            {
+                //These values can only be set in an appropriate scene. Setting them when the contract is generated is meaningless and will cause bad things to happen.
+                Vector3d pos = o.getRelativePositionAtUT(0.0);
+                Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
+                o.h = Vector3d.Cross(pos, vel);
+                o.eccVec = Vector3d.Cross(vel, o.h) / o.referenceBody.gravParameter - pos / pos.magnitude;
+
+                //The argument of periapsis here is two dimensional.
+                if (o.an == Vector3d.zero)
+                    o.argumentOfPeriapsis = Math.Acos(o.eccVec.x / o.eccentricity);
+            }
         }
     }
 }
