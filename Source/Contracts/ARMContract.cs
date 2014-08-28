@@ -27,7 +27,7 @@ namespace FinePrint.Contracts
 
             //ARM fails generation on duplicates, so we can't have many out at once.
             int totalContracts = ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count();
-            if (totalContracts >= FPConfig.ARM.MaximumAvailable)
+            if (totalContracts >= FPConfig.ARM.MaximumExistent)
                 return false;
 
             float fundsMultiplier = 1;

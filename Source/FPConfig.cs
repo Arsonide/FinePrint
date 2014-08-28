@@ -30,7 +30,6 @@ namespace FinePrint
         public static ConfigNode config;
 
         private static FPConfig instance;
-        private static float timer;
 
         public static bool PatchReset = true;
         public static string SunStationaryName = "keliostationary";
@@ -65,20 +64,6 @@ namespace FinePrint
 
             if (config == null)
                 CreateDefaultConfig();
-
-            timer = 0f;
-        }
-
-        public void Update()
-        {
-            timer += UnityEngine.Time.deltaTime;
-
-            if (timer > 10f)
-            {
-                timer = 0f;
-                config = ConfigNode.Load(ConfigFileName());
-                LoadConfig();
-            }
         }
 
         public static class Aerial
@@ -135,8 +120,7 @@ namespace FinePrint
 
         public static class ARM
         {
-            public static int MaximumAvailable = 2;
-            public static int MaximumActive = 2;
+            public static int MaximumExistent = 2;
             public static bool AllowSolarEjections = true;
             public static bool AllowHomeLandings = true;
             public static float SignificantSolarEjectionChance = 10;
@@ -516,8 +500,7 @@ namespace FinePrint
             aerialReputation.AddValue("WaypointSignificantMultiplier", FPConfig.Aerial.Reputation.WaypointSignificantMultiplier);
             aerialReputation.AddValue("WaypointExceptionalMultiplier", FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier);
 
-            armNode.AddValue("MaximumAvailable", FPConfig.ARM.MaximumAvailable);
-            armNode.AddValue("MaximumActive", FPConfig.ARM.MaximumActive);
+            armNode.AddValue("MaximumExistent", FPConfig.ARM.MaximumExistent);
             armNode.AddValue("AllowSolarEjections", FPConfig.ARM.AllowSolarEjections);
             armNode.AddValue("AllowHomeLandings", FPConfig.ARM.AllowHomeLandings);
             armNode.AddValue("SignificantSolarEjectionChance", FPConfig.ARM.SignificantSolarEjectionChance);
@@ -803,8 +786,7 @@ namespace FinePrint
             Util.LoadNode(aerialReputation, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Aerial.Reputation.WaypointSignificantMultiplier, FPConfig.Aerial.Reputation.WaypointSignificantMultiplier);
             Util.LoadNode(aerialReputation, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier, FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier);
 
-            Util.LoadNode(armNode, "FPConfig", "MaximumAvailable", ref FPConfig.ARM.MaximumAvailable, FPConfig.ARM.MaximumAvailable);
-            Util.LoadNode(armNode, "FPConfig", "MaximumActive", ref FPConfig.ARM.MaximumActive, FPConfig.ARM.MaximumActive);
+            Util.LoadNode(armNode, "FPConfig", "MaximumExistent", ref FPConfig.ARM.MaximumExistent, FPConfig.ARM.MaximumExistent);
             Util.LoadNode(armNode, "FPConfig", "AllowSolarEjections", ref FPConfig.ARM.AllowSolarEjections, FPConfig.ARM.AllowSolarEjections);
             Util.LoadNode(armNode, "FPConfig", "AllowHomeLandings", ref FPConfig.ARM.AllowHomeLandings, FPConfig.ARM.AllowHomeLandings);
             Util.LoadNode(armNode, "FPConfig", "SignificantSolarEjectionChance", ref FPConfig.ARM.SignificantSolarEjectionChance, FPConfig.ARM.SignificantSolarEjectionChance);
