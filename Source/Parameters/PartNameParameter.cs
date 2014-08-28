@@ -114,5 +114,11 @@ namespace FinePrint.Contracts.Parameters
                 }
             }
         }
+
+        public static string PartName(ContractParameter parameter)
+        {
+            PartNameParameter Instance = (PartNameParameter)parameter;
+            return Instance.partName;
+        }
     }
 }
