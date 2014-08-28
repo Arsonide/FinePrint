@@ -155,7 +155,7 @@ namespace FinePrint.Contracts.Parameters
                                     ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP < 1000)
+                                if (distanceToWP < 100)
                                 {
                                     if (Util.hasWheelsOnGround())
                                     {
