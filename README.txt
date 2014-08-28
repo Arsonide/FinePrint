@@ -1,4 +1,4 @@
-Fine Print v0.57a
+Fine Print v0.58b
 
 -- SUMMARY --
 
@@ -103,15 +103,5 @@ work of others. For this reason I have chosen the GNU GPLv3, and I have a list
 of people to thank, basically comprising a lot of people on IRC willing to deal 
 with my questions, as well as others for their great mods I learned from:
 
-* Frontier
-* regex
-* Rokker
-* NathanKell
-* r4m0n
-* Sarbian
-* Cilph
-* Xaiier
-* taniwha
-* Burkitt
-* TaranisElsu
-* blizzy
+Frontier, regex, Rokker, NathanKell, r4m0n, Sarbian, Cilph, Xaiier, taniwha,
+Burkitt, TaranisElsu, blizzy, Eleven, Renegrade, Apoffys, Tivec
