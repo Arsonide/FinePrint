@@ -143,19 +143,19 @@ namespace FinePrint.Contracts.Parameters
                             {
                                 distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > 2000 && outerWarning)
+                                if (distanceToWP > FPConfig.Rover.TriggerRange * 2 && outerWarning)
                                 {
                                     outerWarning = false;
                                     ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP <= 2000 && !outerWarning)
+                                if (distanceToWP <= FPConfig.Rover.TriggerRange * 2 && !outerWarning)
                                 {
                                     outerWarning = true;
                                     ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP < 1000)
+                                if (distanceToWP < FPConfig.Rover.TriggerRange)
                                 {
                                     if (Util.hasWheelsOnGround())
                                     {

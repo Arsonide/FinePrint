@@ -154,55 +154,18 @@ namespace FinePrint.Contracts
                 this.AddParameter(new StationaryPointParameter(targetBody, longitude), null);
             }
 
-            if (generator.Next(0, 101) <= partChance)
-            {
-                if (Util.haveTechnology("GooExperiment"))
-                {
-                    this.AddParameter(new PartNameParameter("Have a goo container on the satellite", "GooExperiment"));
-                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
-                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
-                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
-                }
-            }
+            List<string> partList = FPConfig.Satellite.PartRequests.Replace(" ", "").Split(',').ToList();
 
-            if (generator.Next(0, 101) <= partChance)
+            while (partList.Count > 0 && generator.Next(0, 101) <= partChance)
             {
-                if (Util.haveTechnology("sensorThermometer"))
-                {
-                    this.AddParameter(new PartNameParameter("Have a thermometer on the satellite", "sensorThermometer"));
-                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
-                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
-                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
-                }
-            }
+                int element = generator.Next(partList.Count);
+                string part = partList[element];
+                partList.RemoveAt(element);
 
-            if (generator.Next(0, 101) <= partChance)
-            {
-                if (Util.haveTechnology("sensorBarometer"))
+                if (Util.haveTechnology(part))
                 {
-                    this.AddParameter(new PartNameParameter("Have a barometer on the satellite", "sensorBarometer"));
-                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
-                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
-                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
-                }
-            }
-
-            if (generator.Next(0, 101) <= partChance)
-            {
-                if (Util.haveTechnology("sensorGravimeter"))
-                {
-                    this.AddParameter(new PartNameParameter("Have a gravimeter on the satellite", "sensorGravimeter"));
-                    fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
-                    scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
-                    reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;
-                }
-            }
-
-            if (generator.Next(0, 101) <= partChance)
-            {
-                if (Util.haveTechnology("sensorAccelerometer"))
-                {
-                    this.AddParameter(new PartNameParameter("Have an accelerometer on the satellite", "sensorAccelerometer"));
+                    AvailablePart ap = PartLoader.getPartInfoByName(part);
+                    this.AddParameter(new PartNameParameter("Have a " + ap.title + " on the satellite", part));
                     fundsMultiplier *= FPConfig.Satellite.Funds.PartMultiplier;
                     scienceMultiplier *= FPConfig.Satellite.Science.PartMultiplier;
                     reputationMultiplier *= FPConfig.Satellite.Reputation.PartMultiplier;

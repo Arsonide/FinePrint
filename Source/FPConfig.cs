@@ -73,9 +73,10 @@ namespace FinePrint
             public static int TrivialWaypoints = 1;
             public static int SignificantWaypoints = 2;
             public static int ExceptionalWaypoints = 3;
-            public static double TrivialRange = 100000.0;
-            public static double SignificantRange = 200000.0;
-            public static double ExceptionalRange = 300000.0;
+            public static double TrivialRange = 100000;
+            public static double SignificantRange = 200000;
+            public static double ExceptionalRange = 300000;
+            public static double TriggerRange = 15000;
 
             public static class Expire
             {
@@ -86,46 +87,46 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 4000;
-                public static float BaseReward = 17500;
+                public static float BaseAdvance = 15000;
+                public static float BaseReward = 60000;
                 public static float BaseFailure = 0;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
-                public static float WaypointBaseReward = 3750;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float WaypointBaseReward = 9000;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 0;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
-                public static float WaypointBaseReward = 7.5f;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
+                public static float BaseReward = 40;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float WaypointBaseReward = 20;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
 
             public static class Reputation
             {
-                public static float BaseReward = 50;
-                public static float BaseFailure = 25;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
+                public static float BaseReward = 80;
+                public static float BaseFailure = 40;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
                 public static float WaypointBaseReward = 7.5f;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
         }
 
         public static class ARM
         {
             public static int MaximumExistent = 2;
+            public static float SignificantSolarEjectionChance = 10;
+            public static float ExceptionalSolarEjectionChance = 20;
+            public static float HomeLandingChance = 20;
             public static bool AllowSolarEjections = true;
             public static bool AllowHomeLandings = true;
-            public static float SignificantSolarEjectionChance = 10;
-            public static float ExceptionalSolarEjectionChance = 30;
-            public static float HomeLandingChance = 20;
 
             public static class Expire
             {
@@ -136,47 +137,47 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 50000;
-                public static float BaseReward = 90000;
+                public static float BaseAdvance = 100000;
+                public static float BaseReward = 125000;
                 public static float BaseFailure = 0;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
-                public static float SolarEjectionMultiplier = 1;
+                public static float SignificantMultiplier = 1.5f;
+                public static float ExceptionalMultiplier = 2;
+                public static float SolarEjectionMultiplier = 1.25f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 225;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
+                public static float BaseReward = 175;
+                public static float SignificantMultiplier = 1.5f;
+                public static float ExceptionalMultiplier = 2.5f;
                 public static float SolarEjectionMultiplier = 1;
             }
 
             public static class Reputation
             {
-                public static float BaseReward = 450;
-                public static float BaseFailure = 225;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
-                public static float SolarEjectionMultiplier = 1;
+                public static float BaseReward = 225;
+                public static float BaseFailure = 112.5f;
+                public static float SignificantMultiplier = 1.5f;
+                public static float ExceptionalMultiplier = 2.5f;
+                public static float SolarEjectionMultiplier = 1.25f;
             }
         }
 
         public static class Base
         {
             public static int MaximumExistent = 2;
-            public static bool AllowMobile = true;
+            public static float TrivialCupolaChance = 20;
+            public static float SignificantCupolaChance = 30;
+            public static float ExceptionalCupolaChance = 40;
+            public static float TrivialLabChance = 20;
+            public static float SignificantLabChance = 30;
+            public static float ExceptionalLabChance = 40;
+            public static float TrivialMobileChance = 0;
+            public static float SignificantMobileChance = 10;
+            public static float ExceptionalMobileChance = 30;
             public static bool AllowCupola = true;
             public static bool AllowLab = true;
-            public static float TrivialMobileChance = 1;
-            public static float TrivialCupolaChance = 1;
-            public static float TrivialLabChance = 1;
-            public static float SignificantMobileChance = 1;
-            public static float SignificantCupolaChance = 1;
-            public static float SignificantLabChance = 1;
-            public static float ExceptionalMobileChance = 1;
-            public static float ExceptionalCupolaChance = 1;
-            public static float ExceptionalLabChance = 1;
+            public static bool AllowMobile = true;
 
             public static class Expire
             {
@@ -187,35 +188,35 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 2;
-                public static float BaseReward = 2;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float MobileMultiplier = 2;
+                public static float BaseAdvance = 45000;
+                public static float BaseReward = 90000;
+                public static float BaseFailure = 0;
+                public static float SignificantMultiplier = 1.15f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float CupolaMultiplier = 1.25f;
+                public static float LabMultiplier = 1.15f;
+                public static float MobileMultiplier = 1.5f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float MobileMultiplier = 2;
+                public static float BaseReward = 100;
+                public static float SignificantMultiplier = 1.15f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float CupolaMultiplier = 1;
+                public static float LabMultiplier = 1.5f;
+                public static float MobileMultiplier = 1.25f;
             }
 
             public static class Reputation
             {
-                public static float BaseReward = 2;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float MobileMultiplier = 2;
+                public static float BaseReward = 90;
+                public static float BaseFailure = 60;
+                public static float SignificantMultiplier = 1.15f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float CupolaMultiplier = 1.25f;
+                public static float LabMultiplier = 1;
+                public static float MobileMultiplier = 1.5f;
             }
         }
 
@@ -229,6 +230,7 @@ namespace FinePrint
             public static double TrivialRange = 2000;
             public static double SignificantRange = 4000;
             public static double ExceptionalRange = 6000;
+            public static double TriggerRange = 500;
 
             public static class Expire
             {
@@ -239,35 +241,35 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 4000;
-                public static float BaseReward = 17500;
+                public static float BaseAdvance = 15000;
+                public static float BaseReward = 60000;
                 public static float BaseFailure = 0;
-                public static float WaypointBaseReward = 5000;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float WaypointBaseReward = 6000;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 0;
-                public static float WaypointBaseReward = 10;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
+                public static float BaseReward = 25;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float WaypointBaseReward = 8;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
 
             public static class Reputation
             {
                 public static float BaseReward = 50;
                 public static float BaseFailure = 25;
-                public static float SignificantMultiplier = 1;
-                public static float ExceptionalMultiplier = 1;
-                public static float WaypointBaseReward = 10;
-                public static float WaypointSignificantMultiplier = 1;
-                public static float WaypointExceptionalMultiplier = 1;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float WaypointBaseReward = 6;
+                public static float WaypointSignificantMultiplier = 1.1f;
+                public static float WaypointExceptionalMultiplier = 1.2f;
             }
         }
 
@@ -281,23 +283,24 @@ namespace FinePrint
             public static float TrivialDifficulty = 0.2f;
             public static float SignificantDifficulty = 0.4f;
             public static float ExceptionalDifficulty = 0.8f;
+            public static float TrivialHomeOverrideChance = 50;
+            public static float SignificantHomeOverrideChance = 30;
+            public static float ExceptionalHomeOverrideChance = 10;
             public static float TrivialPartChance = 20;
-            public static float SignificantPartChance = 40;
-            public static float ExceptionalPartChance = 25;
-            public static float TrivialHomeOverrideChance = 20;
-            public static float SignificantHomeOverrideChance = 40;
-            public static float ExceptionalHomeOverrideChance = 25;
-            public static float TrivialSolarChance = 20;
-            public static float SignificantSolarChance = 40;
-            public static float ExceptionalSolarChance = 25;
+            public static float SignificantPartChance = 25;
+            public static float ExceptionalPartChance = 30;
+            public static float TrivialSolarChance = 0;
+            public static float SignificantSolarChance = 10;
+            public static float ExceptionalSolarChance = 20;
             public static bool PreferHome = true;
             public static bool AllowSolar = true;
             public static bool AllowEquatorial = true;
             public static bool AllowPolar = true;
             public static bool AllowSynchronous = true;
             public static bool AllowStationary = true;
-            public static bool AllowKolniya = true;
             public static bool AllowTundra = true;
+            public static bool AllowKolniya = true;
+            public static string PartRequests = "GooExperiment,sensorThermometer,sensorBarometer,sensorGravimeter,sensorAccelerometer";
 
             public static class Expire
             {
@@ -308,66 +311,66 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 3000;
-                public static float BaseReward = 15000;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float PolarMultiplier = 2;
-                public static float SynchronousMultiplier = 2;
-                public static float StationaryMultiplier = 2;
-                public static float KolniyaMultiplier = 2;
-                public static float TundraMultiplier = 2;
-                public static float PartMultiplier = 2;
+                public static float BaseAdvance = 9000;
+                public static float BaseReward = 45000;
+                public static float BaseFailure = 0;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
                 public static float HomeMultiplier = 2;
+                public static float PartMultiplier = 1.05f;
+                public static float PolarMultiplier = 1;
+                public static float SynchronousMultiplier = 1.1f;
+                public static float StationaryMultiplier = 1.2f;
+                public static float TundraMultiplier = 1.2f;
+                public static float KolniyaMultiplier = 1.2f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float PolarMultiplier = 2;
-                public static float SynchronousMultiplier = 2;
-                public static float StationaryMultiplier = 2;
-                public static float KolniyaMultiplier = 2;
-                public static float TundraMultiplier = 2;
-                public static float PartMultiplier = 2;
-                public static float HomeMultiplier = 2;
+                public static float BaseReward = 25;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float HomeMultiplier = 0.5f;
+                public static float PartMultiplier = 1.25f;
+                public static float PolarMultiplier = 1;
+                public static float SynchronousMultiplier = 1.1f;
+                public static float StationaryMultiplier = 1.2f;
+                public static float TundraMultiplier = 1.2f;
+                public static float KolniyaMultiplier = 1.2f;
             }
 
             public static class Reputation
             {
-                public static float BaseReward = 2;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float PolarMultiplier = 2;
-                public static float SynchronousMultiplier = 2;
-                public static float StationaryMultiplier = 2;
-                public static float KolniyaMultiplier = 2;
-                public static float TundraMultiplier = 2;
-                public static float PartMultiplier = 2;
-                public static float HomeMultiplier = 2;
+                public static float BaseReward = 35;
+                public static float BaseFailure = 17.5f;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.2f;
+                public static float HomeMultiplier = 1.25f;
+                public static float PartMultiplier = 1.05f;
+                public static float PolarMultiplier = 1;
+                public static float SynchronousMultiplier = 1.1f;
+                public static float StationaryMultiplier = 1.2f;
+                public static float TundraMultiplier = 1.2f;
+                public static float KolniyaMultiplier = 1.2f;
             }
         }
 
         public static class Station
         {
             public static int MaximumExistent = 2;
-            public static bool AllowAsteroid = true;
+            public static float TrivialCupolaChance = 20;
+            public static float SignificantCupolaChance = 30;
+            public static float ExceptionalCupolaChance = 40;
+            public static float TrivialLabChance = 20;
+            public static float SignificantLabChance = 30;
+            public static float ExceptionalLabChance = 40;
+            public static float TrivialAsteroidChance = 0;
+            public static float SignificantAsteroidChance = 10;
+            public static float ExceptionalAsteroidChance = 20;
             public static bool AllowCupola = true;
             public static bool AllowLab = true;
+            public static bool AllowAsteroid = true;
             public static bool AllowSolar = true;
-            public static float TrivialAsteroidChance = 1;
-            public static float TrivialCupolaChance = 1;
-            public static float TrivialLabChance = 1;
-            public static float SignificantAsteroidChance = 1;
-            public static float SignificantCupolaChance = 1;
-            public static float SignificantLabChance = 1;
-            public static float ExceptionalAsteroidChance = 1;
-            public static float ExceptionalCupolaChance = 1;
-            public static float ExceptionalLabChance = 1;
 
             public static class Expire
             {
@@ -378,35 +381,35 @@ namespace FinePrint
 
             public static class Funds
             {
-                public static float BaseAdvance = 2;
-                public static float BaseReward = 2;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float AsteroidMultiplier = 2;
+                public static float BaseAdvance = 30000;
+                public static float BaseReward = 60000;
+                public static float BaseFailure = 0;
+                public static float SignificantMultiplier = 1;
+                public static float ExceptionalMultiplier = 1;
+                public static float CupolaMultiplier = 1.1f;
+                public static float LabMultiplier = 1.15f;
+                public static float AsteroidMultiplier = 1.2f;
             }
 
             public static class Science
             {
-                public static float BaseReward = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float AsteroidMultiplier = 2;
+                public static float BaseReward = 80;
+                public static float SignificantMultiplier = 1;
+                public static float ExceptionalMultiplier = 1;
+                public static float CupolaMultiplier = 1;
+                public static float LabMultiplier = 1.3f;
+                public static float AsteroidMultiplier = 1.3f;
             }
 
             public static class Reputation
             {
-                public static float BaseReward = 2;
-                public static float BaseFailure = 2;
-                public static float SignificantMultiplier = 2;
-                public static float ExceptionalMultiplier = 2;
-                public static float CupolaMultiplier = 2;
-                public static float LabMultiplier = 2;
-                public static float AsteroidMultiplier = 2;
+                public static float BaseReward = 60;
+                public static float BaseFailure = 30;
+                public static float SignificantMultiplier = 1;
+                public static float ExceptionalMultiplier = 1;
+                public static float CupolaMultiplier = 1.3f;
+                public static float LabMultiplier = 1;
+                public static float AsteroidMultiplier = 1.3f;
             }
         }
 
@@ -475,6 +478,7 @@ namespace FinePrint
             aerialNode.AddValue("TrivialRange", FPConfig.Aerial.TrivialRange);
             aerialNode.AddValue("SignificantRange", FPConfig.Aerial.SignificantRange);
             aerialNode.AddValue("ExceptionalRange", FPConfig.Aerial.ExceptionalRange);
+            aerialNode.AddValue("TriggerRange", FPConfig.Aerial.TriggerRange);
             aerialExpire.AddValue("MinimumExpireDays", FPConfig.Aerial.Expire.MinimumExpireDays);
             aerialExpire.AddValue("MaximumExpireDays", FPConfig.Aerial.Expire.MaximumExpireDays);
             aerialExpire.AddValue("DeadlineDays", FPConfig.Aerial.Expire.DeadlineDays);
@@ -501,11 +505,11 @@ namespace FinePrint
             aerialReputation.AddValue("WaypointExceptionalMultiplier", FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier);
 
             armNode.AddValue("MaximumExistent", FPConfig.ARM.MaximumExistent);
-            armNode.AddValue("AllowSolarEjections", FPConfig.ARM.AllowSolarEjections);
-            armNode.AddValue("AllowHomeLandings", FPConfig.ARM.AllowHomeLandings);
             armNode.AddValue("SignificantSolarEjectionChance", FPConfig.ARM.SignificantSolarEjectionChance);
             armNode.AddValue("ExceptionalSolarEjectionChance", FPConfig.ARM.ExceptionalSolarEjectionChance);
             armNode.AddValue("HomeLandingChance", FPConfig.ARM.HomeLandingChance);
+            armNode.AddValue("AllowSolarEjections", FPConfig.ARM.AllowSolarEjections);
+            armNode.AddValue("AllowHomeLandings", FPConfig.ARM.AllowHomeLandings);
             armExpire.AddValue("MinimumExpireDays", FPConfig.ARM.Expire.MinimumExpireDays);
             armExpire.AddValue("MaximumExpireDays", FPConfig.ARM.Expire.MaximumExpireDays);
             armExpire.AddValue("DeadlineDays", FPConfig.ARM.Expire.DeadlineDays);
@@ -526,18 +530,18 @@ namespace FinePrint
             armReputation.AddValue("SolarEjectionMultiplier", FPConfig.ARM.Reputation.SolarEjectionMultiplier);
 
             baseNode.AddValue("MaximumExistent", FPConfig.Base.MaximumExistent);
-            baseNode.AddValue("AllowMobile", FPConfig.Base.AllowMobile);
-            baseNode.AddValue("AllowCupola", FPConfig.Base.AllowCupola);
-            baseNode.AddValue("AllowLab", FPConfig.Base.AllowLab);
-            baseNode.AddValue("TrivialMobileChance", FPConfig.Base.TrivialMobileChance);
-            baseNode.AddValue("SignificantMobileChance", FPConfig.Base.SignificantMobileChance);
-            baseNode.AddValue("ExceptionalMobileChance", FPConfig.Base.ExceptionalMobileChance);
             baseNode.AddValue("TrivialCupolaChance", FPConfig.Base.TrivialCupolaChance);
             baseNode.AddValue("SignificantCupolaChance", FPConfig.Base.SignificantCupolaChance);
             baseNode.AddValue("ExceptionalCupolaChance", FPConfig.Base.ExceptionalCupolaChance);
             baseNode.AddValue("TrivialLabChance", FPConfig.Base.TrivialLabChance);
             baseNode.AddValue("SignificantLabChance", FPConfig.Base.SignificantLabChance);
             baseNode.AddValue("ExceptionalLabChance", FPConfig.Base.ExceptionalLabChance);
+            baseNode.AddValue("TrivialMobileChance", FPConfig.Base.TrivialMobileChance);
+            baseNode.AddValue("SignificantMobileChance", FPConfig.Base.SignificantMobileChance);
+            baseNode.AddValue("ExceptionalMobileChance", FPConfig.Base.ExceptionalMobileChance);
+            baseNode.AddValue("AllowCupola", FPConfig.Base.AllowCupola);
+            baseNode.AddValue("AllowLab", FPConfig.Base.AllowLab);
+            baseNode.AddValue("AllowMobile", FPConfig.Base.AllowMobile);
             baseExpire.AddValue("MinimumExpireDays", FPConfig.Base.Expire.MinimumExpireDays);
             baseExpire.AddValue("MaximumExpireDays", FPConfig.Base.Expire.MaximumExpireDays);
             baseExpire.AddValue("DeadlineDays", FPConfig.Base.Expire.DeadlineDays);
@@ -571,23 +575,24 @@ namespace FinePrint
             roverNode.AddValue("TrivialRange", FPConfig.Rover.TrivialRange);
             roverNode.AddValue("SignificantRange", FPConfig.Rover.SignificantRange);
             roverNode.AddValue("ExceptionalRange", FPConfig.Rover.ExceptionalRange);
+            roverNode.AddValue("TriggerRange", FPConfig.Rover.TriggerRange);
             roverExpire.AddValue("MinimumExpireDays", FPConfig.Rover.Expire.MinimumExpireDays);
             roverExpire.AddValue("MaximumExpireDays", FPConfig.Rover.Expire.MaximumExpireDays);
             roverExpire.AddValue("DeadlineDays", FPConfig.Rover.Expire.DeadlineDays);
             roverFunds.AddValue("BaseAdvance", FPConfig.Rover.Funds.BaseAdvance);
             roverFunds.AddValue("BaseReward", FPConfig.Rover.Funds.BaseReward);
             roverFunds.AddValue("BaseFailure", FPConfig.Rover.Funds.BaseFailure);
+            roverFunds.AddValue("SignificantMultiplier", FPConfig.Rover.Funds.SignificantMultiplier);
+            roverFunds.AddValue("ExceptionalMultiplier", FPConfig.Rover.Funds.ExceptionalMultiplier);
             roverFunds.AddValue("WaypointBaseReward", FPConfig.Rover.Funds.WaypointBaseReward);
             roverFunds.AddValue("WaypointSignificantMultiplier", FPConfig.Rover.Funds.WaypointSignificantMultiplier);
             roverFunds.AddValue("WaypointExceptionalMultiplier", FPConfig.Rover.Funds.WaypointExceptionalMultiplier);
-            roverFunds.AddValue("SignificantMultiplier", FPConfig.Rover.Funds.SignificantMultiplier);
-            roverFunds.AddValue("ExceptionalMultiplier", FPConfig.Rover.Funds.ExceptionalMultiplier);
             roverScience.AddValue("BaseReward", FPConfig.Rover.Science.BaseReward);
+            roverScience.AddValue("SignificantMultiplier", FPConfig.Rover.Science.SignificantMultiplier);
+            roverScience.AddValue("ExceptionalMultiplier", FPConfig.Rover.Science.ExceptionalMultiplier);
             roverScience.AddValue("WaypointBaseReward", FPConfig.Rover.Science.WaypointBaseReward);
             roverScience.AddValue("WaypointSignificantMultiplier", FPConfig.Rover.Science.WaypointSignificantMultiplier);
             roverScience.AddValue("WaypointExceptionalMultiplier", FPConfig.Rover.Science.WaypointExceptionalMultiplier);
-            roverScience.AddValue("SignificantMultiplier", FPConfig.Rover.Science.SignificantMultiplier);
-            roverScience.AddValue("ExceptionalMultiplier", FPConfig.Rover.Science.ExceptionalMultiplier);
             roverReputation.AddValue("BaseReward", FPConfig.Rover.Reputation.BaseReward);
             roverReputation.AddValue("BaseFailure", FPConfig.Rover.Reputation.BaseFailure);
             roverReputation.AddValue("SignificantMultiplier", FPConfig.Rover.Reputation.SignificantMultiplier);
@@ -604,12 +609,12 @@ namespace FinePrint
             satelliteNode.AddValue("TrivialDifficulty", FPConfig.Satellite.TrivialDifficulty);
             satelliteNode.AddValue("SignificantDifficulty", FPConfig.Satellite.SignificantDifficulty);
             satelliteNode.AddValue("ExceptionalDifficulty", FPConfig.Satellite.ExceptionalDifficulty);
-            satelliteNode.AddValue("TrivialPartChance", FPConfig.Satellite.TrivialPartChance);
-            satelliteNode.AddValue("SignificantPartChance", FPConfig.Satellite.SignificantPartChance);
-            satelliteNode.AddValue("ExceptionalPartChance", FPConfig.Satellite.ExceptionalPartChance);
             satelliteNode.AddValue("TrivialHomeOverrideChance", FPConfig.Satellite.TrivialHomeOverrideChance);
             satelliteNode.AddValue("SignificantHomeOverrideChance", FPConfig.Satellite.SignificantHomeOverrideChance);
             satelliteNode.AddValue("ExceptionalHomeOverrideChance", FPConfig.Satellite.ExceptionalHomeOverrideChance);
+            satelliteNode.AddValue("TrivialPartChance", FPConfig.Satellite.TrivialPartChance);
+            satelliteNode.AddValue("SignificantPartChance", FPConfig.Satellite.SignificantPartChance);
+            satelliteNode.AddValue("ExceptionalPartChance", FPConfig.Satellite.ExceptionalPartChance);
             satelliteNode.AddValue("TrivialSolarChance", FPConfig.Satellite.TrivialSolarChance);
             satelliteNode.AddValue("SignificantSolarChance", FPConfig.Satellite.SignificantSolarChance);
             satelliteNode.AddValue("ExceptionalSolarChance", FPConfig.Satellite.ExceptionalSolarChance);
@@ -619,8 +624,9 @@ namespace FinePrint
             satelliteNode.AddValue("AllowPolar", FPConfig.Satellite.AllowPolar);
             satelliteNode.AddValue("AllowSynchronous", FPConfig.Satellite.AllowSynchronous);
             satelliteNode.AddValue("AllowStationary", FPConfig.Satellite.AllowStationary);
-            satelliteNode.AddValue("AllowKolniya", FPConfig.Satellite.AllowKolniya);
             satelliteNode.AddValue("AllowTundra", FPConfig.Satellite.AllowTundra);
+            satelliteNode.AddValue("AllowKolniya", FPConfig.Satellite.AllowKolniya);
+            satelliteNode.AddValue("PartRequests", FPConfig.Satellite.PartRequests);
             satelliteExpire.AddValue("MinimumExpireDays", FPConfig.Satellite.Expire.MinimumExpireDays);
             satelliteExpire.AddValue("MaximumExpireDays", FPConfig.Satellite.Expire.MaximumExpireDays);
             satelliteExpire.AddValue("DeadlineDays", FPConfig.Satellite.Expire.DeadlineDays);
@@ -629,49 +635,49 @@ namespace FinePrint
             satelliteFunds.AddValue("BaseFailure", FPConfig.Satellite.Funds.BaseFailure);
             satelliteFunds.AddValue("SignificantMultiplier", FPConfig.Satellite.Funds.SignificantMultiplier);
             satelliteFunds.AddValue("ExceptionalMultiplier", FPConfig.Satellite.Funds.ExceptionalMultiplier);
+            satelliteFunds.AddValue("HomeMultiplier", FPConfig.Satellite.Funds.HomeMultiplier);
+            satelliteFunds.AddValue("PartMultiplier", FPConfig.Satellite.Funds.PartMultiplier);
             satelliteFunds.AddValue("PolarMultiplier", FPConfig.Satellite.Funds.PolarMultiplier);
             satelliteFunds.AddValue("SynchronousMultiplier", FPConfig.Satellite.Funds.SynchronousMultiplier);
             satelliteFunds.AddValue("StationaryMultiplier", FPConfig.Satellite.Funds.StationaryMultiplier);
-            satelliteFunds.AddValue("KolniyaMultiplier", FPConfig.Satellite.Funds.KolniyaMultiplier);
             satelliteFunds.AddValue("TundraMultiplier", FPConfig.Satellite.Funds.TundraMultiplier);
-            satelliteFunds.AddValue("PartMultiplier", FPConfig.Satellite.Funds.PartMultiplier);
-            satelliteFunds.AddValue("HomeMultiplier", FPConfig.Satellite.Funds.HomeMultiplier);
+            satelliteFunds.AddValue("KolniyaMultiplier", FPConfig.Satellite.Funds.KolniyaMultiplier);
             satelliteScience.AddValue("BaseReward", FPConfig.Satellite.Science.BaseReward);
             satelliteScience.AddValue("SignificantMultiplier", FPConfig.Satellite.Science.SignificantMultiplier);
             satelliteScience.AddValue("ExceptionalMultiplier", FPConfig.Satellite.Science.ExceptionalMultiplier);
+            satelliteScience.AddValue("HomeMultiplier", FPConfig.Satellite.Science.HomeMultiplier);
+            satelliteScience.AddValue("PartMultiplier", FPConfig.Satellite.Science.PartMultiplier);
             satelliteScience.AddValue("PolarMultiplier", FPConfig.Satellite.Science.PolarMultiplier);
             satelliteScience.AddValue("SynchronousMultiplier", FPConfig.Satellite.Science.SynchronousMultiplier);
             satelliteScience.AddValue("StationaryMultiplier", FPConfig.Satellite.Science.StationaryMultiplier);
-            satelliteScience.AddValue("KolniyaMultiplier", FPConfig.Satellite.Science.KolniyaMultiplier);
             satelliteScience.AddValue("TundraMultiplier", FPConfig.Satellite.Science.TundraMultiplier);
-            satelliteScience.AddValue("PartMultiplier", FPConfig.Satellite.Science.PartMultiplier);
-            satelliteScience.AddValue("HomeMultiplier", FPConfig.Satellite.Science.HomeMultiplier);
+            satelliteScience.AddValue("KolniyaMultiplier", FPConfig.Satellite.Science.KolniyaMultiplier);
             satelliteReputation.AddValue("BaseReward", FPConfig.Satellite.Reputation.BaseReward);
             satelliteReputation.AddValue("BaseFailure", FPConfig.Satellite.Reputation.BaseFailure);
             satelliteReputation.AddValue("SignificantMultiplier", FPConfig.Satellite.Reputation.SignificantMultiplier);
             satelliteReputation.AddValue("ExceptionalMultiplier", FPConfig.Satellite.Reputation.ExceptionalMultiplier);
+            satelliteReputation.AddValue("HomeMultiplier", FPConfig.Satellite.Reputation.HomeMultiplier);
+            satelliteReputation.AddValue("PartMultiplier", FPConfig.Satellite.Reputation.PartMultiplier);
             satelliteReputation.AddValue("PolarMultiplier", FPConfig.Satellite.Reputation.PolarMultiplier);
             satelliteReputation.AddValue("SynchronousMultiplier", FPConfig.Satellite.Reputation.SynchronousMultiplier);
             satelliteReputation.AddValue("StationaryMultiplier", FPConfig.Satellite.Reputation.StationaryMultiplier);
-            satelliteReputation.AddValue("KolniyaMultiplier", FPConfig.Satellite.Reputation.KolniyaMultiplier);
             satelliteReputation.AddValue("TundraMultiplier", FPConfig.Satellite.Reputation.TundraMultiplier);
-            satelliteReputation.AddValue("PartMultiplier", FPConfig.Satellite.Reputation.PartMultiplier);
-            satelliteReputation.AddValue("HomeMultiplier", FPConfig.Satellite.Reputation.HomeMultiplier);
+            satelliteReputation.AddValue("KolniyaMultiplier", FPConfig.Satellite.Reputation.KolniyaMultiplier);
 
             stationNode.AddValue("MaximumExistent", FPConfig.Station.MaximumExistent);
-            stationNode.AddValue("AllowAsteroid", FPConfig.Station.AllowAsteroid);
-            stationNode.AddValue("AllowCupola", FPConfig.Station.AllowCupola);
-            stationNode.AddValue("AllowLab", FPConfig.Station.AllowLab);
-            stationNode.AddValue("AllowSolar", FPConfig.Station.AllowSolar);
-            stationNode.AddValue("TrivialAsteroidChance", FPConfig.Station.TrivialAsteroidChance);
-            stationNode.AddValue("SignificantAsteroidChance", FPConfig.Station.SignificantAsteroidChance);
-            stationNode.AddValue("ExceptionalAsteroidChance", FPConfig.Station.ExceptionalAsteroidChance);
             stationNode.AddValue("TrivialCupolaChance", FPConfig.Station.TrivialCupolaChance);
             stationNode.AddValue("SignificantCupolaChance", FPConfig.Station.SignificantCupolaChance);
             stationNode.AddValue("ExceptionalCupolaChance", FPConfig.Station.ExceptionalCupolaChance);
             stationNode.AddValue("TrivialLabChance", FPConfig.Station.TrivialLabChance);
             stationNode.AddValue("SignificantLabChance", FPConfig.Station.SignificantLabChance);
             stationNode.AddValue("ExceptionalLabChance", FPConfig.Station.ExceptionalLabChance);
+            stationNode.AddValue("TrivialAsteroidChance", FPConfig.Station.TrivialAsteroidChance);
+            stationNode.AddValue("SignificantAsteroidChance", FPConfig.Station.SignificantAsteroidChance);
+            stationNode.AddValue("ExceptionalAsteroidChance", FPConfig.Station.ExceptionalAsteroidChance);
+            stationNode.AddValue("AllowCupola", FPConfig.Station.AllowCupola);
+            stationNode.AddValue("AllowLab", FPConfig.Station.AllowLab);
+            stationNode.AddValue("AllowAsteroid", FPConfig.Station.AllowAsteroid);
+            stationNode.AddValue("AllowSolar", FPConfig.Station.AllowSolar);
             stationExpire.AddValue("MinimumExpireDays", FPConfig.Station.Expire.MinimumExpireDays);
             stationExpire.AddValue("MaximumExpireDays", FPConfig.Station.Expire.MaximumExpireDays);
             stationExpire.AddValue("DeadlineDays", FPConfig.Station.Expire.DeadlineDays);
@@ -753,77 +759,78 @@ namespace FinePrint
             Util.LoadNode(topNode, "FPConfig", "OtherSynchronousName", ref FPConfig.OtherSynchronousName, FPConfig.OtherSynchronousName);
             Util.LoadNode(topNode, "FPConfig", "MolniyaName", ref FPConfig.MolniyaName, FPConfig.MolniyaName);
 
-            Util.LoadNode(aerialNode, "FPConfig", "MaximumAvailable", ref FPConfig.Aerial.MaximumAvailable, FPConfig.Aerial.MaximumAvailable);
-            Util.LoadNode(aerialNode, "FPConfig", "MaximumActive", ref FPConfig.Aerial.MaximumActive, FPConfig.Aerial.MaximumActive);
-            Util.LoadNode(aerialNode, "FPConfig", "TrivialWaypoints", ref FPConfig.Aerial.TrivialWaypoints, FPConfig.Aerial.TrivialWaypoints);
-            Util.LoadNode(aerialNode, "FPConfig", "SignificantWaypoints", ref FPConfig.Aerial.SignificantWaypoints, FPConfig.Aerial.SignificantWaypoints);
-            Util.LoadNode(aerialNode, "FPConfig", "ExceptionalWaypoints", ref FPConfig.Aerial.ExceptionalWaypoints, FPConfig.Aerial.ExceptionalWaypoints);
-            Util.LoadNode(aerialNode, "FPConfig", "TrivialRange", ref FPConfig.Aerial.TrivialRange, FPConfig.Aerial.TrivialRange);
-            Util.LoadNode(aerialNode, "FPConfig", "SignificantRange", ref FPConfig.Aerial.SignificantRange, FPConfig.Aerial.SignificantRange);
-            Util.LoadNode(aerialNode, "FPConfig", "ExceptionalRange", ref FPConfig.Aerial.ExceptionalRange, FPConfig.Aerial.ExceptionalRange);
-            Util.LoadNode(aerialExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.Aerial.Expire.MinimumExpireDays, FPConfig.Aerial.Expire.MinimumExpireDays);
-            Util.LoadNode(aerialExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.Aerial.Expire.MaximumExpireDays, FPConfig.Aerial.Expire.MaximumExpireDays);
-            Util.LoadNode(aerialExpire, "FPConfig", "DeadlineDays", ref FPConfig.Aerial.Expire.DeadlineDays, FPConfig.Aerial.Expire.DeadlineDays);
-            Util.LoadNode(aerialFunds, "FPConfig", "BaseAdvance", ref FPConfig.Aerial.Funds.BaseAdvance, FPConfig.Aerial.Funds.BaseAdvance);
-            Util.LoadNode(aerialFunds, "FPConfig", "BaseReward", ref FPConfig.Aerial.Funds.BaseReward, FPConfig.Aerial.Funds.BaseReward);
-            Util.LoadNode(aerialFunds, "FPConfig", "BaseFailure", ref FPConfig.Aerial.Funds.BaseFailure, FPConfig.Aerial.Funds.BaseFailure);
-            Util.LoadNode(aerialFunds, "FPConfig", "SignificantMultiplier", ref FPConfig.Aerial.Funds.SignificantMultiplier, FPConfig.Aerial.Funds.SignificantMultiplier);
-            Util.LoadNode(aerialFunds, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Aerial.Funds.ExceptionalMultiplier, FPConfig.Aerial.Funds.ExceptionalMultiplier);
-            Util.LoadNode(aerialFunds, "FPConfig", "WaypointBaseReward", ref FPConfig.Aerial.Funds.WaypointBaseReward, FPConfig.Aerial.Funds.WaypointBaseReward);
-            Util.LoadNode(aerialFunds, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Aerial.Funds.WaypointSignificantMultiplier, FPConfig.Aerial.Funds.WaypointSignificantMultiplier);
-            Util.LoadNode(aerialFunds, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Aerial.Funds.WaypointExceptionalMultiplier, FPConfig.Aerial.Funds.WaypointExceptionalMultiplier);
-            Util.LoadNode(aerialScience, "FPConfig", "BaseReward", ref FPConfig.Aerial.Science.BaseReward, FPConfig.Aerial.Science.BaseReward);
-            Util.LoadNode(aerialScience, "FPConfig", "SignificantMultiplier", ref FPConfig.Aerial.Science.SignificantMultiplier, FPConfig.Aerial.Science.SignificantMultiplier);
-            Util.LoadNode(aerialScience, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Aerial.Science.ExceptionalMultiplier, FPConfig.Aerial.Science.ExceptionalMultiplier);
-            Util.LoadNode(aerialScience, "FPConfig", "WaypointBaseReward", ref FPConfig.Aerial.Science.WaypointBaseReward, FPConfig.Aerial.Science.WaypointBaseReward);
-            Util.LoadNode(aerialScience, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Aerial.Science.WaypointSignificantMultiplier, FPConfig.Aerial.Science.WaypointSignificantMultiplier);
-            Util.LoadNode(aerialScience, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Aerial.Science.WaypointExceptionalMultiplier, FPConfig.Aerial.Science.WaypointExceptionalMultiplier);
-            Util.LoadNode(aerialReputation, "FPConfig", "BaseReward", ref FPConfig.Aerial.Reputation.BaseReward, FPConfig.Aerial.Reputation.BaseReward);
-            Util.LoadNode(aerialReputation, "FPConfig", "BaseFailure", ref FPConfig.Aerial.Reputation.BaseFailure, FPConfig.Aerial.Reputation.BaseFailure);
-            Util.LoadNode(aerialReputation, "FPConfig", "SignificantMultiplier", ref FPConfig.Aerial.Reputation.SignificantMultiplier, FPConfig.Aerial.Reputation.SignificantMultiplier);
-            Util.LoadNode(aerialReputation, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Aerial.Reputation.ExceptionalMultiplier, FPConfig.Aerial.Reputation.ExceptionalMultiplier);
-            Util.LoadNode(aerialReputation, "FPConfig", "WaypointBaseReward", ref FPConfig.Aerial.Reputation.WaypointBaseReward, FPConfig.Aerial.Reputation.WaypointBaseReward);
-            Util.LoadNode(aerialReputation, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Aerial.Reputation.WaypointSignificantMultiplier, FPConfig.Aerial.Reputation.WaypointSignificantMultiplier);
-            Util.LoadNode(aerialReputation, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier, FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.MaximumAvailable", ref FPConfig.Aerial.MaximumAvailable, FPConfig.Aerial.MaximumAvailable);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.MaximumActive", ref FPConfig.Aerial.MaximumActive, FPConfig.Aerial.MaximumActive);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialWaypoints", ref FPConfig.Aerial.TrivialWaypoints, FPConfig.Aerial.TrivialWaypoints);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantWaypoints", ref FPConfig.Aerial.SignificantWaypoints, FPConfig.Aerial.SignificantWaypoints);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalWaypoints", ref FPConfig.Aerial.ExceptionalWaypoints, FPConfig.Aerial.ExceptionalWaypoints);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialRange", ref FPConfig.Aerial.TrivialRange, FPConfig.Aerial.TrivialRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantRange", ref FPConfig.Aerial.SignificantRange, FPConfig.Aerial.SignificantRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalRange", ref FPConfig.Aerial.ExceptionalRange, FPConfig.Aerial.ExceptionalRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TriggerRange", ref FPConfig.Aerial.TriggerRange, FPConfig.Aerial.TriggerRange);
+            Util.LoadNode(aerialExpire, "FPConfig", "Aerial.Expire.MinimumExpireDays", ref FPConfig.Aerial.Expire.MinimumExpireDays, FPConfig.Aerial.Expire.MinimumExpireDays);
+            Util.LoadNode(aerialExpire, "FPConfig", "Aerial.Expire.MaximumExpireDays", ref FPConfig.Aerial.Expire.MaximumExpireDays, FPConfig.Aerial.Expire.MaximumExpireDays);
+            Util.LoadNode(aerialExpire, "FPConfig", "Aerial.Expire.DeadlineDays", ref FPConfig.Aerial.Expire.DeadlineDays, FPConfig.Aerial.Expire.DeadlineDays);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.BaseAdvance", ref FPConfig.Aerial.Funds.BaseAdvance, FPConfig.Aerial.Funds.BaseAdvance);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.BaseReward", ref FPConfig.Aerial.Funds.BaseReward, FPConfig.Aerial.Funds.BaseReward);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.BaseFailure", ref FPConfig.Aerial.Funds.BaseFailure, FPConfig.Aerial.Funds.BaseFailure);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.SignificantMultiplier", ref FPConfig.Aerial.Funds.SignificantMultiplier, FPConfig.Aerial.Funds.SignificantMultiplier);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.ExceptionalMultiplier", ref FPConfig.Aerial.Funds.ExceptionalMultiplier, FPConfig.Aerial.Funds.ExceptionalMultiplier);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.WaypointBaseReward", ref FPConfig.Aerial.Funds.WaypointBaseReward, FPConfig.Aerial.Funds.WaypointBaseReward);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.WaypointSignificantMultiplier", ref FPConfig.Aerial.Funds.WaypointSignificantMultiplier, FPConfig.Aerial.Funds.WaypointSignificantMultiplier);
+            Util.LoadNode(aerialFunds, "FPConfig", "Aerial.Funds.WaypointExceptionalMultiplier", ref FPConfig.Aerial.Funds.WaypointExceptionalMultiplier, FPConfig.Aerial.Funds.WaypointExceptionalMultiplier);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.BaseReward", ref FPConfig.Aerial.Science.BaseReward, FPConfig.Aerial.Science.BaseReward);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.SignificantMultiplier", ref FPConfig.Aerial.Science.SignificantMultiplier, FPConfig.Aerial.Science.SignificantMultiplier);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.ExceptionalMultiplier", ref FPConfig.Aerial.Science.ExceptionalMultiplier, FPConfig.Aerial.Science.ExceptionalMultiplier);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.WaypointBaseReward", ref FPConfig.Aerial.Science.WaypointBaseReward, FPConfig.Aerial.Science.WaypointBaseReward);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.WaypointSignificantMultiplier", ref FPConfig.Aerial.Science.WaypointSignificantMultiplier, FPConfig.Aerial.Science.WaypointSignificantMultiplier);
+            Util.LoadNode(aerialScience, "FPConfig", "Aerial.Science.WaypointExceptionalMultiplier", ref FPConfig.Aerial.Science.WaypointExceptionalMultiplier, FPConfig.Aerial.Science.WaypointExceptionalMultiplier);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.BaseReward", ref FPConfig.Aerial.Reputation.BaseReward, FPConfig.Aerial.Reputation.BaseReward);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.BaseFailure", ref FPConfig.Aerial.Reputation.BaseFailure, FPConfig.Aerial.Reputation.BaseFailure);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.SignificantMultiplier", ref FPConfig.Aerial.Reputation.SignificantMultiplier, FPConfig.Aerial.Reputation.SignificantMultiplier);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.ExceptionalMultiplier", ref FPConfig.Aerial.Reputation.ExceptionalMultiplier, FPConfig.Aerial.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.WaypointBaseReward", ref FPConfig.Aerial.Reputation.WaypointBaseReward, FPConfig.Aerial.Reputation.WaypointBaseReward);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.WaypointSignificantMultiplier", ref FPConfig.Aerial.Reputation.WaypointSignificantMultiplier, FPConfig.Aerial.Reputation.WaypointSignificantMultiplier);
+            Util.LoadNode(aerialReputation, "FPConfig", "Aerial.Reputation.WaypointExceptionalMultiplier", ref FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier, FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier);
 
-            Util.LoadNode(armNode, "FPConfig", "MaximumExistent", ref FPConfig.ARM.MaximumExistent, FPConfig.ARM.MaximumExistent);
-            Util.LoadNode(armNode, "FPConfig", "AllowSolarEjections", ref FPConfig.ARM.AllowSolarEjections, FPConfig.ARM.AllowSolarEjections);
-            Util.LoadNode(armNode, "FPConfig", "AllowHomeLandings", ref FPConfig.ARM.AllowHomeLandings, FPConfig.ARM.AllowHomeLandings);
-            Util.LoadNode(armNode, "FPConfig", "SignificantSolarEjectionChance", ref FPConfig.ARM.SignificantSolarEjectionChance, FPConfig.ARM.SignificantSolarEjectionChance);
-            Util.LoadNode(armNode, "FPConfig", "ExceptionalSolarEjectionChance", ref FPConfig.ARM.ExceptionalSolarEjectionChance, FPConfig.ARM.ExceptionalSolarEjectionChance);
-            Util.LoadNode(armNode, "FPConfig", "HomeLandingChance", ref FPConfig.ARM.HomeLandingChance, FPConfig.ARM.HomeLandingChance);
-            Util.LoadNode(armExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.ARM.Expire.MinimumExpireDays, FPConfig.ARM.Expire.MinimumExpireDays);
-            Util.LoadNode(armExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.ARM.Expire.MaximumExpireDays, FPConfig.ARM.Expire.MaximumExpireDays);
-            Util.LoadNode(armExpire, "FPConfig", "DeadlineDays", ref FPConfig.ARM.Expire.DeadlineDays, FPConfig.ARM.Expire.DeadlineDays);
-            Util.LoadNode(armFunds, "FPConfig", "BaseAdvance", ref FPConfig.ARM.Funds.BaseAdvance, FPConfig.ARM.Funds.BaseAdvance);
-            Util.LoadNode(armFunds, "FPConfig", "BaseReward", ref FPConfig.ARM.Funds.BaseReward, FPConfig.ARM.Funds.BaseReward);
-            Util.LoadNode(armFunds, "FPConfig", "BaseFailure", ref FPConfig.ARM.Funds.BaseFailure, FPConfig.ARM.Funds.BaseFailure);
-            Util.LoadNode(armFunds, "FPConfig", "SignificantMultiplier", ref FPConfig.ARM.Funds.SignificantMultiplier, FPConfig.ARM.Funds.SignificantMultiplier);
-            Util.LoadNode(armFunds, "FPConfig", "ExceptionalMultiplier", ref FPConfig.ARM.Funds.ExceptionalMultiplier, FPConfig.ARM.Funds.ExceptionalMultiplier);
-            Util.LoadNode(armFunds, "FPConfig", "SolarEjectionMultiplier", ref FPConfig.ARM.Funds.SolarEjectionMultiplier, FPConfig.ARM.Funds.SolarEjectionMultiplier);
-            Util.LoadNode(armScience, "FPConfig", "BaseReward", ref FPConfig.ARM.Science.BaseReward, FPConfig.ARM.Science.BaseReward);
-            Util.LoadNode(armScience, "FPConfig", "SignificantMultiplier", ref FPConfig.ARM.Science.SignificantMultiplier, FPConfig.ARM.Science.SignificantMultiplier);
-            Util.LoadNode(armScience, "FPConfig", "ExceptionalMultiplier", ref FPConfig.ARM.Science.ExceptionalMultiplier, FPConfig.ARM.Science.ExceptionalMultiplier);
-            Util.LoadNode(armScience, "FPConfig", "SolarEjectionMultiplier", ref FPConfig.ARM.Science.SolarEjectionMultiplier, FPConfig.ARM.Science.SolarEjectionMultiplier);
-            Util.LoadNode(armReputation, "FPConfig", "BaseReward", ref FPConfig.ARM.Reputation.BaseReward, FPConfig.ARM.Reputation.BaseReward);
-            Util.LoadNode(armReputation, "FPConfig", "BaseFailure", ref FPConfig.ARM.Reputation.BaseFailure, FPConfig.ARM.Reputation.BaseFailure);
-            Util.LoadNode(armReputation, "FPConfig", "SignificantMultiplier", ref FPConfig.ARM.Reputation.SignificantMultiplier, FPConfig.ARM.Reputation.SignificantMultiplier);
-            Util.LoadNode(armReputation, "FPConfig", "ExceptionalMultiplier", ref FPConfig.ARM.Reputation.ExceptionalMultiplier, FPConfig.ARM.Reputation.ExceptionalMultiplier);
-            Util.LoadNode(armReputation, "FPConfig", "SolarEjectionMultiplier", ref FPConfig.ARM.Reputation.SolarEjectionMultiplier, FPConfig.ARM.Reputation.SolarEjectionMultiplier);
+            Util.LoadNode(armNode, "FPConfig", "ARM.MaximumExistent", ref FPConfig.ARM.MaximumExistent, FPConfig.ARM.MaximumExistent);
+            Util.LoadNode(armNode, "FPConfig", "ARM.SignificantSolarEjectionChance", ref FPConfig.ARM.SignificantSolarEjectionChance, FPConfig.ARM.SignificantSolarEjectionChance);
+            Util.LoadNode(armNode, "FPConfig", "ARM.ExceptionalSolarEjectionChance", ref FPConfig.ARM.ExceptionalSolarEjectionChance, FPConfig.ARM.ExceptionalSolarEjectionChance);
+            Util.LoadNode(armNode, "FPConfig", "ARM.HomeLandingChance", ref FPConfig.ARM.HomeLandingChance, FPConfig.ARM.HomeLandingChance);
+            Util.LoadNode(armNode, "FPConfig", "ARM.AllowSolarEjections", ref FPConfig.ARM.AllowSolarEjections, FPConfig.ARM.AllowSolarEjections);
+            Util.LoadNode(armNode, "FPConfig", "ARM.AllowHomeLandings", ref FPConfig.ARM.AllowHomeLandings, FPConfig.ARM.AllowHomeLandings);
+            Util.LoadNode(armExpire, "FPConfig", "ARM.Expire.MinimumExpireDays", ref FPConfig.ARM.Expire.MinimumExpireDays, FPConfig.ARM.Expire.MinimumExpireDays);
+            Util.LoadNode(armExpire, "FPConfig", "ARM.Expire.MaximumExpireDays", ref FPConfig.ARM.Expire.MaximumExpireDays, FPConfig.ARM.Expire.MaximumExpireDays);
+            Util.LoadNode(armExpire, "FPConfig", "ARM.Expire.DeadlineDays", ref FPConfig.ARM.Expire.DeadlineDays, FPConfig.ARM.Expire.DeadlineDays);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.BaseAdvance", ref FPConfig.ARM.Funds.BaseAdvance, FPConfig.ARM.Funds.BaseAdvance);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.BaseReward", ref FPConfig.ARM.Funds.BaseReward, FPConfig.ARM.Funds.BaseReward);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.BaseFailure", ref FPConfig.ARM.Funds.BaseFailure, FPConfig.ARM.Funds.BaseFailure);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.SignificantMultiplier", ref FPConfig.ARM.Funds.SignificantMultiplier, FPConfig.ARM.Funds.SignificantMultiplier);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.ExceptionalMultiplier", ref FPConfig.ARM.Funds.ExceptionalMultiplier, FPConfig.ARM.Funds.ExceptionalMultiplier);
+            Util.LoadNode(armFunds, "FPConfig", "ARM.Funds.SolarEjectionMultiplier", ref FPConfig.ARM.Funds.SolarEjectionMultiplier, FPConfig.ARM.Funds.SolarEjectionMultiplier);
+            Util.LoadNode(armScience, "FPConfig", "ARM.Science.BaseReward", ref FPConfig.ARM.Science.BaseReward, FPConfig.ARM.Science.BaseReward);
+            Util.LoadNode(armScience, "FPConfig", "ARM.Science.SignificantMultiplier", ref FPConfig.ARM.Science.SignificantMultiplier, FPConfig.ARM.Science.SignificantMultiplier);
+            Util.LoadNode(armScience, "FPConfig", "ARM.Science.ExceptionalMultiplier", ref FPConfig.ARM.Science.ExceptionalMultiplier, FPConfig.ARM.Science.ExceptionalMultiplier);
+            Util.LoadNode(armScience, "FPConfig", "ARM.Science.SolarEjectionMultiplier", ref FPConfig.ARM.Science.SolarEjectionMultiplier, FPConfig.ARM.Science.SolarEjectionMultiplier);
+            Util.LoadNode(armReputation, "FPConfig", "ARM.Reputation.BaseReward", ref FPConfig.ARM.Reputation.BaseReward, FPConfig.ARM.Reputation.BaseReward);
+            Util.LoadNode(armReputation, "FPConfig", "ARM.Reputation.BaseFailure", ref FPConfig.ARM.Reputation.BaseFailure, FPConfig.ARM.Reputation.BaseFailure);
+            Util.LoadNode(armReputation, "FPConfig", "ARM.Reputation.SignificantMultiplier", ref FPConfig.ARM.Reputation.SignificantMultiplier, FPConfig.ARM.Reputation.SignificantMultiplier);
+            Util.LoadNode(armReputation, "FPConfig", "ARM.Reputation.ExceptionalMultiplier", ref FPConfig.ARM.Reputation.ExceptionalMultiplier, FPConfig.ARM.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(armReputation, "FPConfig", "ARM.Reputation.SolarEjectionMultiplier", ref FPConfig.ARM.Reputation.SolarEjectionMultiplier, FPConfig.ARM.Reputation.SolarEjectionMultiplier);
 
             Util.LoadNode(baseNode, "FPConfig", "MaximumExistent", ref FPConfig.Base.MaximumExistent, FPConfig.Base.MaximumExistent);
-            Util.LoadNode(baseNode, "FPConfig", "AllowMobile", ref FPConfig.Base.AllowMobile, FPConfig.Base.AllowMobile);
+            Util.LoadNode(baseNode, "FPConfig", "TrivialCupolaChance", ref FPConfig.Base.TrivialCupolaChance, FPConfig.Base.TrivialCupolaChance);
+            Util.LoadNode(baseNode, "FPConfig", "SignificantCupolaChance", ref FPConfig.Base.SignificantCupolaChance, FPConfig.Base.SignificantCupolaChance);
+            Util.LoadNode(baseNode, "FPConfig", "ExceptionalCupolaChance", ref FPConfig.Base.ExceptionalCupolaChance, FPConfig.Base.ExceptionalCupolaChance);
+            Util.LoadNode(baseNode, "FPConfig", "TrivialLabChance", ref FPConfig.Base.TrivialLabChance, FPConfig.Base.TrivialLabChance);
+            Util.LoadNode(baseNode, "FPConfig", "SignificantLabChance", ref FPConfig.Base.SignificantLabChance, FPConfig.Base.SignificantLabChance);
+            Util.LoadNode(baseNode, "FPConfig", "ExceptionalLabChance", ref FPConfig.Base.ExceptionalLabChance, FPConfig.Base.ExceptionalLabChance);
+            Util.LoadNode(baseNode, "FPConfig", "TrivialMobileChance", ref FPConfig.Base.TrivialMobileChance, FPConfig.Base.TrivialMobileChance);
+            Util.LoadNode(baseNode, "FPConfig", "SignificantMobileChance", ref FPConfig.Base.SignificantMobileChance, FPConfig.Base.SignificantMobileChance);
+            Util.LoadNode(baseNode, "FPConfig", "ExceptionalMobileChance", ref FPConfig.Base.ExceptionalMobileChance, FPConfig.Base.ExceptionalMobileChance);
             Util.LoadNode(baseNode, "FPConfig", "AllowCupola", ref FPConfig.Base.AllowCupola, FPConfig.Base.AllowCupola);
             Util.LoadNode(baseNode, "FPConfig", "AllowLab", ref FPConfig.Base.AllowLab, FPConfig.Base.AllowLab);
-            Util.LoadNode(baseNode, "FPConfig", "TrivialMobileChance", ref FPConfig.Base.TrivialMobileChance, FPConfig.Base.TrivialMobileChance);
-            Util.LoadNode(baseNode, "FPConfig", "TrivialCupolaChance", ref FPConfig.Base.TrivialCupolaChance, FPConfig.Base.TrivialCupolaChance);
-            Util.LoadNode(baseNode, "FPConfig", "TrivialLabChance", ref FPConfig.Base.TrivialLabChance, FPConfig.Base.TrivialLabChance);
-            Util.LoadNode(baseNode, "FPConfig", "SignificantMobileChance", ref FPConfig.Base.SignificantMobileChance, FPConfig.Base.SignificantMobileChance);
-            Util.LoadNode(baseNode, "FPConfig", "SignificantCupolaChance", ref FPConfig.Base.SignificantCupolaChance, FPConfig.Base.SignificantCupolaChance);
-            Util.LoadNode(baseNode, "FPConfig", "SignificantLabChance", ref FPConfig.Base.SignificantLabChance, FPConfig.Base.SignificantLabChance);
-            Util.LoadNode(baseNode, "FPConfig", "ExceptionalMobileChance", ref FPConfig.Base.ExceptionalMobileChance, FPConfig.Base.ExceptionalMobileChance);
-            Util.LoadNode(baseNode, "FPConfig", "ExceptionalCupolaChance", ref FPConfig.Base.ExceptionalCupolaChance, FPConfig.Base.ExceptionalCupolaChance);
-            Util.LoadNode(baseNode, "FPConfig", "ExceptionalLabChance", ref FPConfig.Base.ExceptionalLabChance, FPConfig.Base.ExceptionalLabChance);
+            Util.LoadNode(baseNode, "FPConfig", "AllowMobile", ref FPConfig.Base.AllowMobile, FPConfig.Base.AllowMobile);
             Util.LoadNode(baseExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.Base.Expire.MinimumExpireDays, FPConfig.Base.Expire.MinimumExpireDays);
             Util.LoadNode(baseExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.Base.Expire.MaximumExpireDays, FPConfig.Base.Expire.MaximumExpireDays);
             Util.LoadNode(baseExpire, "FPConfig", "DeadlineDays", ref FPConfig.Base.Expire.DeadlineDays, FPConfig.Base.Expire.DeadlineDays);
@@ -849,139 +856,141 @@ namespace FinePrint
             Util.LoadNode(baseReputation, "FPConfig", "LabMultiplier", ref FPConfig.Base.Reputation.LabMultiplier, FPConfig.Base.Reputation.LabMultiplier);
             Util.LoadNode(baseReputation, "FPConfig", "MobileMultiplier", ref FPConfig.Base.Reputation.MobileMultiplier, FPConfig.Base.Reputation.MobileMultiplier);
 
-            Util.LoadNode(roverNode, "FPConfig", "MaximumAvailable", ref FPConfig.Rover.MaximumAvailable, FPConfig.Rover.MaximumAvailable);
-            Util.LoadNode(roverNode, "FPConfig", "MaximumActive", ref FPConfig.Rover.MaximumActive, FPConfig.Rover.MaximumActive);
-            Util.LoadNode(roverNode, "FPConfig", "TrivialWaypoints", ref FPConfig.Rover.TrivialWaypoints, FPConfig.Rover.TrivialWaypoints);
-            Util.LoadNode(roverNode, "FPConfig", "SignificantWaypoints", ref FPConfig.Rover.SignificantWaypoints, FPConfig.Rover.SignificantWaypoints);
-            Util.LoadNode(roverNode, "FPConfig", "ExceptionalWaypoints", ref FPConfig.Rover.ExceptionalWaypoints, FPConfig.Rover.ExceptionalWaypoints);
-            Util.LoadNode(roverNode, "FPConfig", "TrivialRange", ref FPConfig.Rover.TrivialRange, FPConfig.Rover.TrivialRange);
-            Util.LoadNode(roverNode, "FPConfig", "SignificantRange", ref FPConfig.Rover.SignificantRange, FPConfig.Rover.SignificantRange);
-            Util.LoadNode(roverNode, "FPConfig", "ExceptionalRange", ref FPConfig.Rover.ExceptionalRange, FPConfig.Rover.ExceptionalRange);
-            Util.LoadNode(roverExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.Rover.Expire.MinimumExpireDays, FPConfig.Rover.Expire.MinimumExpireDays);
-            Util.LoadNode(roverExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.Rover.Expire.MaximumExpireDays, FPConfig.Rover.Expire.MaximumExpireDays);
-            Util.LoadNode(roverExpire, "FPConfig", "DeadlineDays", ref FPConfig.Rover.Expire.DeadlineDays, FPConfig.Rover.Expire.DeadlineDays);
-            Util.LoadNode(roverFunds, "FPConfig", "BaseAdvance", ref FPConfig.Rover.Funds.BaseAdvance, FPConfig.Rover.Funds.BaseAdvance);
-            Util.LoadNode(roverFunds, "FPConfig", "BaseReward", ref FPConfig.Rover.Funds.BaseReward, FPConfig.Rover.Funds.BaseReward);
-            Util.LoadNode(roverFunds, "FPConfig", "BaseFailure", ref FPConfig.Rover.Funds.BaseFailure, FPConfig.Rover.Funds.BaseFailure);
-            Util.LoadNode(roverFunds, "FPConfig", "SignificantMultiplier", ref FPConfig.Rover.Funds.SignificantMultiplier, FPConfig.Rover.Funds.SignificantMultiplier);
-            Util.LoadNode(roverFunds, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Rover.Funds.ExceptionalMultiplier, FPConfig.Rover.Funds.ExceptionalMultiplier);
-            Util.LoadNode(roverFunds, "FPConfig", "WaypointBaseReward", ref FPConfig.Rover.Funds.WaypointBaseReward, FPConfig.Rover.Funds.WaypointBaseReward);
-            Util.LoadNode(roverFunds, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Rover.Funds.WaypointSignificantMultiplier, FPConfig.Rover.Funds.WaypointSignificantMultiplier);
-            Util.LoadNode(roverFunds, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Rover.Funds.WaypointExceptionalMultiplier, FPConfig.Rover.Funds.WaypointExceptionalMultiplier);
-            Util.LoadNode(roverScience, "FPConfig", "BaseReward", ref FPConfig.Rover.Science.BaseReward, FPConfig.Rover.Science.BaseReward);
-            Util.LoadNode(roverScience, "FPConfig", "SignificantMultiplier", ref FPConfig.Rover.Science.SignificantMultiplier, FPConfig.Rover.Science.SignificantMultiplier);
-            Util.LoadNode(roverScience, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Rover.Science.ExceptionalMultiplier, FPConfig.Rover.Science.ExceptionalMultiplier);
-            Util.LoadNode(roverScience, "FPConfig", "WaypointBaseReward", ref FPConfig.Rover.Science.WaypointBaseReward, FPConfig.Rover.Science.WaypointBaseReward);
-            Util.LoadNode(roverScience, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Rover.Science.WaypointSignificantMultiplier, FPConfig.Rover.Science.WaypointSignificantMultiplier);
-            Util.LoadNode(roverScience, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Rover.Science.WaypointExceptionalMultiplier, FPConfig.Rover.Science.WaypointExceptionalMultiplier);
-            Util.LoadNode(roverReputation, "FPConfig", "BaseReward", ref FPConfig.Rover.Reputation.BaseReward, FPConfig.Rover.Reputation.BaseReward);
-            Util.LoadNode(roverReputation, "FPConfig", "BaseFailure", ref FPConfig.Rover.Reputation.BaseFailure, FPConfig.Rover.Reputation.BaseFailure);
-            Util.LoadNode(roverReputation, "FPConfig", "SignificantMultiplier", ref FPConfig.Rover.Reputation.SignificantMultiplier, FPConfig.Rover.Reputation.SignificantMultiplier);
-            Util.LoadNode(roverReputation, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Rover.Reputation.ExceptionalMultiplier, FPConfig.Rover.Reputation.ExceptionalMultiplier);
-            Util.LoadNode(roverReputation, "FPConfig", "WaypointBaseReward", ref FPConfig.Rover.Reputation.WaypointBaseReward, FPConfig.Rover.Reputation.WaypointBaseReward);
-            Util.LoadNode(roverReputation, "FPConfig", "WaypointSignificantMultiplier", ref FPConfig.Rover.Reputation.WaypointSignificantMultiplier, FPConfig.Rover.Reputation.WaypointSignificantMultiplier);
-            Util.LoadNode(roverReputation, "FPConfig", "WaypointExceptionalMultiplier", ref FPConfig.Rover.Reputation.WaypointExceptionalMultiplier, FPConfig.Rover.Reputation.WaypointExceptionalMultiplier);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.MaximumAvailable", ref FPConfig.Rover.MaximumAvailable, FPConfig.Rover.MaximumAvailable);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.MaximumActive", ref FPConfig.Rover.MaximumActive, FPConfig.Rover.MaximumActive);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialWaypoints", ref FPConfig.Rover.TrivialWaypoints, FPConfig.Rover.TrivialWaypoints);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantWaypoints", ref FPConfig.Rover.SignificantWaypoints, FPConfig.Rover.SignificantWaypoints);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalWaypoints", ref FPConfig.Rover.ExceptionalWaypoints, FPConfig.Rover.ExceptionalWaypoints);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialRange", ref FPConfig.Rover.TrivialRange, FPConfig.Rover.TrivialRange);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantRange", ref FPConfig.Rover.SignificantRange, FPConfig.Rover.SignificantRange);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalRange", ref FPConfig.Rover.ExceptionalRange, FPConfig.Rover.ExceptionalRange);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.TriggerRange", ref FPConfig.Rover.TriggerRange, FPConfig.Rover.TriggerRange);
+            Util.LoadNode(roverExpire, "FPConfig", "Rover.Expire.MinimumExpireDays", ref FPConfig.Rover.Expire.MinimumExpireDays, FPConfig.Rover.Expire.MinimumExpireDays);
+            Util.LoadNode(roverExpire, "FPConfig", "Rover.Expire.MaximumExpireDays", ref FPConfig.Rover.Expire.MaximumExpireDays, FPConfig.Rover.Expire.MaximumExpireDays);
+            Util.LoadNode(roverExpire, "FPConfig", "Rover.Expire.DeadlineDays", ref FPConfig.Rover.Expire.DeadlineDays, FPConfig.Rover.Expire.DeadlineDays);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.BaseAdvance", ref FPConfig.Rover.Funds.BaseAdvance, FPConfig.Rover.Funds.BaseAdvance);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.BaseReward", ref FPConfig.Rover.Funds.BaseReward, FPConfig.Rover.Funds.BaseReward);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.BaseFailure", ref FPConfig.Rover.Funds.BaseFailure, FPConfig.Rover.Funds.BaseFailure);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.SignificantMultiplier", ref FPConfig.Rover.Funds.SignificantMultiplier, FPConfig.Rover.Funds.SignificantMultiplier);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.ExceptionalMultiplier", ref FPConfig.Rover.Funds.ExceptionalMultiplier, FPConfig.Rover.Funds.ExceptionalMultiplier);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.WaypointBaseReward", ref FPConfig.Rover.Funds.WaypointBaseReward, FPConfig.Rover.Funds.WaypointBaseReward);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.WaypointSignificantMultiplier", ref FPConfig.Rover.Funds.WaypointSignificantMultiplier, FPConfig.Rover.Funds.WaypointSignificantMultiplier);
+            Util.LoadNode(roverFunds, "FPConfig", "Rover.Funds.WaypointExceptionalMultiplier", ref FPConfig.Rover.Funds.WaypointExceptionalMultiplier, FPConfig.Rover.Funds.WaypointExceptionalMultiplier);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.BaseReward", ref FPConfig.Rover.Science.BaseReward, FPConfig.Rover.Science.BaseReward);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.SignificantMultiplier", ref FPConfig.Rover.Science.SignificantMultiplier, FPConfig.Rover.Science.SignificantMultiplier);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.ExceptionalMultiplier", ref FPConfig.Rover.Science.ExceptionalMultiplier, FPConfig.Rover.Science.ExceptionalMultiplier);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.WaypointBaseReward", ref FPConfig.Rover.Science.WaypointBaseReward, FPConfig.Rover.Science.WaypointBaseReward);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.WaypointSignificantMultiplier", ref FPConfig.Rover.Science.WaypointSignificantMultiplier, FPConfig.Rover.Science.WaypointSignificantMultiplier);
+            Util.LoadNode(roverScience, "FPConfig", "Rover.Science.WaypointExceptionalMultiplier", ref FPConfig.Rover.Science.WaypointExceptionalMultiplier, FPConfig.Rover.Science.WaypointExceptionalMultiplier);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.BaseReward", ref FPConfig.Rover.Reputation.BaseReward, FPConfig.Rover.Reputation.BaseReward);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.BaseFailure", ref FPConfig.Rover.Reputation.BaseFailure, FPConfig.Rover.Reputation.BaseFailure);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.SignificantMultiplier", ref FPConfig.Rover.Reputation.SignificantMultiplier, FPConfig.Rover.Reputation.SignificantMultiplier);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.ExceptionalMultiplier", ref FPConfig.Rover.Reputation.ExceptionalMultiplier, FPConfig.Rover.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.WaypointBaseReward", ref FPConfig.Rover.Reputation.WaypointBaseReward, FPConfig.Rover.Reputation.WaypointBaseReward);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.WaypointSignificantMultiplier", ref FPConfig.Rover.Reputation.WaypointSignificantMultiplier, FPConfig.Rover.Reputation.WaypointSignificantMultiplier);
+            Util.LoadNode(roverReputation, "FPConfig", "Rover.Reputation.WaypointExceptionalMultiplier", ref FPConfig.Rover.Reputation.WaypointExceptionalMultiplier, FPConfig.Rover.Reputation.WaypointExceptionalMultiplier);
 
-            Util.LoadNode(satelliteNode, "FPConfig", "MaximumAvailable", ref FPConfig.Satellite.MaximumAvailable, FPConfig.Satellite.MaximumAvailable);
-            Util.LoadNode(satelliteNode, "FPConfig", "MaximumActive", ref FPConfig.Satellite.MaximumActive, FPConfig.Satellite.MaximumActive);
-            Util.LoadNode(satelliteNode, "FPConfig", "TrivialDeviation", ref FPConfig.Satellite.TrivialDeviation, FPConfig.Satellite.TrivialDeviation);
-            Util.LoadNode(satelliteNode, "FPConfig", "SignificantDeviation", ref FPConfig.Satellite.SignificantDeviation, FPConfig.Satellite.SignificantDeviation);
-            Util.LoadNode(satelliteNode, "FPConfig", "ExceptionalDeviation", ref FPConfig.Satellite.ExceptionalDeviation, FPConfig.Satellite.ExceptionalDeviation);
-            Util.LoadNode(satelliteNode, "FPConfig", "TrivialDifficulty", ref FPConfig.Satellite.TrivialDifficulty, FPConfig.Satellite.TrivialDifficulty);
-            Util.LoadNode(satelliteNode, "FPConfig", "SignificantDifficulty", ref FPConfig.Satellite.SignificantDifficulty, FPConfig.Satellite.SignificantDifficulty);
-            Util.LoadNode(satelliteNode, "FPConfig", "ExceptionalDifficulty", ref FPConfig.Satellite.ExceptionalDifficulty, FPConfig.Satellite.ExceptionalDifficulty);
-            Util.LoadNode(satelliteNode, "FPConfig", "TrivialPartChance", ref FPConfig.Satellite.TrivialPartChance, FPConfig.Satellite.TrivialPartChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "SignificantPartChance", ref FPConfig.Satellite.SignificantPartChance, FPConfig.Satellite.SignificantPartChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "ExceptionalPartChance", ref FPConfig.Satellite.ExceptionalPartChance, FPConfig.Satellite.ExceptionalPartChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "TrivialHomeOverrideChance", ref FPConfig.Satellite.TrivialHomeOverrideChance, FPConfig.Satellite.TrivialHomeOverrideChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "SignificantHomeOverrideChance", ref FPConfig.Satellite.SignificantHomeOverrideChance, FPConfig.Satellite.SignificantHomeOverrideChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "ExceptionalHomeOverrideChance", ref FPConfig.Satellite.ExceptionalHomeOverrideChance, FPConfig.Satellite.ExceptionalHomeOverrideChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "TrivialSolarChance", ref FPConfig.Satellite.TrivialSolarChance, FPConfig.Satellite.TrivialSolarChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "SignificantSolarChance", ref FPConfig.Satellite.SignificantSolarChance, FPConfig.Satellite.SignificantSolarChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "ExceptionalSolarChance", ref FPConfig.Satellite.ExceptionalSolarChance, FPConfig.Satellite.ExceptionalSolarChance);
-            Util.LoadNode(satelliteNode, "FPConfig", "PreferHome", ref FPConfig.Satellite.PreferHome, FPConfig.Satellite.PreferHome);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowSolar", ref FPConfig.Satellite.AllowSolar, FPConfig.Satellite.AllowSolar);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowEquatorial", ref FPConfig.Satellite.AllowEquatorial, FPConfig.Satellite.AllowEquatorial);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowPolar", ref FPConfig.Satellite.AllowPolar, FPConfig.Satellite.AllowPolar);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowSynchronous", ref FPConfig.Satellite.AllowSynchronous, FPConfig.Satellite.AllowSynchronous);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowStationary", ref FPConfig.Satellite.AllowStationary, FPConfig.Satellite.AllowStationary);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowKolniya", ref FPConfig.Satellite.AllowKolniya, FPConfig.Satellite.AllowKolniya);
-            Util.LoadNode(satelliteNode, "FPConfig", "AllowTundra", ref FPConfig.Satellite.AllowTundra, FPConfig.Satellite.AllowTundra);
-            Util.LoadNode(satelliteExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.Satellite.Expire.MinimumExpireDays, FPConfig.Satellite.Expire.MinimumExpireDays);
-            Util.LoadNode(satelliteExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.Satellite.Expire.MaximumExpireDays, FPConfig.Satellite.Expire.MaximumExpireDays);
-            Util.LoadNode(satelliteExpire, "FPConfig", "DeadlineDays", ref FPConfig.Satellite.Expire.DeadlineDays, FPConfig.Satellite.Expire.DeadlineDays);
-            Util.LoadNode(satelliteFunds, "FPConfig", "BaseAdvance", ref FPConfig.Satellite.Funds.BaseAdvance, FPConfig.Satellite.Funds.BaseAdvance);
-            Util.LoadNode(satelliteFunds, "FPConfig", "BaseReward", ref FPConfig.Satellite.Funds.BaseReward, FPConfig.Satellite.Funds.BaseReward);
-            Util.LoadNode(satelliteFunds, "FPConfig", "BaseFailure", ref FPConfig.Satellite.Funds.BaseFailure, FPConfig.Satellite.Funds.BaseFailure);
-            Util.LoadNode(satelliteFunds, "FPConfig", "SignificantMultiplier", ref FPConfig.Satellite.Funds.SignificantMultiplier, FPConfig.Satellite.Funds.SignificantMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Satellite.Funds.ExceptionalMultiplier, FPConfig.Satellite.Funds.ExceptionalMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "PolarMultiplier", ref FPConfig.Satellite.Funds.PolarMultiplier, FPConfig.Satellite.Funds.PolarMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "SynchronousMultiplier", ref FPConfig.Satellite.Funds.SynchronousMultiplier, FPConfig.Satellite.Funds.SynchronousMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "StationaryMultiplier", ref FPConfig.Satellite.Funds.StationaryMultiplier, FPConfig.Satellite.Funds.StationaryMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "KolniyaMultiplier", ref FPConfig.Satellite.Funds.KolniyaMultiplier, FPConfig.Satellite.Funds.KolniyaMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "TundraMultiplier", ref FPConfig.Satellite.Funds.TundraMultiplier, FPConfig.Satellite.Funds.TundraMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "PartMultiplier", ref FPConfig.Satellite.Funds.PartMultiplier, FPConfig.Satellite.Funds.PartMultiplier);
-            Util.LoadNode(satelliteFunds, "FPConfig", "HomeMultiplier", ref FPConfig.Satellite.Funds.HomeMultiplier, FPConfig.Satellite.Funds.HomeMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "BaseReward", ref FPConfig.Satellite.Science.BaseReward, FPConfig.Satellite.Science.BaseReward);
-            Util.LoadNode(satelliteScience, "FPConfig", "SignificantMultiplier", ref FPConfig.Satellite.Science.SignificantMultiplier, FPConfig.Satellite.Science.SignificantMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Satellite.Science.ExceptionalMultiplier, FPConfig.Satellite.Science.ExceptionalMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "PolarMultiplier", ref FPConfig.Satellite.Science.PolarMultiplier, FPConfig.Satellite.Science.PolarMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "SynchronousMultiplier", ref FPConfig.Satellite.Science.SynchronousMultiplier, FPConfig.Satellite.Science.SynchronousMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "StationaryMultiplier", ref FPConfig.Satellite.Science.StationaryMultiplier, FPConfig.Satellite.Science.StationaryMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "KolniyaMultiplier", ref FPConfig.Satellite.Science.KolniyaMultiplier, FPConfig.Satellite.Science.KolniyaMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "TundraMultiplier", ref FPConfig.Satellite.Science.TundraMultiplier, FPConfig.Satellite.Science.TundraMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "PartMultiplier", ref FPConfig.Satellite.Science.PartMultiplier, FPConfig.Satellite.Science.PartMultiplier);
-            Util.LoadNode(satelliteScience, "FPConfig", "HomeMultiplier", ref FPConfig.Satellite.Science.HomeMultiplier, FPConfig.Satellite.Science.HomeMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "BaseReward", ref FPConfig.Satellite.Reputation.BaseReward, FPConfig.Satellite.Reputation.BaseReward);
-            Util.LoadNode(satelliteReputation, "FPConfig", "BaseFailure", ref FPConfig.Satellite.Reputation.BaseFailure, FPConfig.Satellite.Reputation.BaseFailure);
-            Util.LoadNode(satelliteReputation, "FPConfig", "SignificantMultiplier", ref FPConfig.Satellite.Reputation.SignificantMultiplier, FPConfig.Satellite.Reputation.SignificantMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Satellite.Reputation.ExceptionalMultiplier, FPConfig.Satellite.Reputation.ExceptionalMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "PolarMultiplier", ref FPConfig.Satellite.Reputation.PolarMultiplier, FPConfig.Satellite.Reputation.PolarMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "SynchronousMultiplier", ref FPConfig.Satellite.Reputation.SynchronousMultiplier, FPConfig.Satellite.Reputation.SynchronousMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "StationaryMultiplier", ref FPConfig.Satellite.Reputation.StationaryMultiplier, FPConfig.Satellite.Reputation.StationaryMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "KolniyaMultiplier", ref FPConfig.Satellite.Reputation.KolniyaMultiplier, FPConfig.Satellite.Reputation.KolniyaMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "TundraMultiplier", ref FPConfig.Satellite.Reputation.TundraMultiplier, FPConfig.Satellite.Reputation.TundraMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "PartMultiplier", ref FPConfig.Satellite.Reputation.PartMultiplier, FPConfig.Satellite.Reputation.PartMultiplier);
-            Util.LoadNode(satelliteReputation, "FPConfig", "HomeMultiplier", ref FPConfig.Satellite.Reputation.HomeMultiplier, FPConfig.Satellite.Reputation.HomeMultiplier);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.MaximumAvailable", ref FPConfig.Satellite.MaximumAvailable, FPConfig.Satellite.MaximumAvailable);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.MaximumActive", ref FPConfig.Satellite.MaximumActive, FPConfig.Satellite.MaximumActive);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.TrivialDeviation", ref FPConfig.Satellite.TrivialDeviation, FPConfig.Satellite.TrivialDeviation);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.SignificantDeviation", ref FPConfig.Satellite.SignificantDeviation, FPConfig.Satellite.SignificantDeviation);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.ExceptionalDeviation", ref FPConfig.Satellite.ExceptionalDeviation, FPConfig.Satellite.ExceptionalDeviation);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.TrivialDifficulty", ref FPConfig.Satellite.TrivialDifficulty, FPConfig.Satellite.TrivialDifficulty);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.SignificantDifficulty", ref FPConfig.Satellite.SignificantDifficulty, FPConfig.Satellite.SignificantDifficulty);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.ExceptionalDifficulty", ref FPConfig.Satellite.ExceptionalDifficulty, FPConfig.Satellite.ExceptionalDifficulty);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.TrivialHomeOverrideChance", ref FPConfig.Satellite.TrivialHomeOverrideChance, FPConfig.Satellite.TrivialHomeOverrideChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.SignificantHomeOverrideChance", ref FPConfig.Satellite.SignificantHomeOverrideChance, FPConfig.Satellite.SignificantHomeOverrideChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.ExceptionalHomeOverrideChance", ref FPConfig.Satellite.ExceptionalHomeOverrideChance, FPConfig.Satellite.ExceptionalHomeOverrideChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.TrivialPartChance", ref FPConfig.Satellite.TrivialPartChance, FPConfig.Satellite.TrivialPartChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.SignificantPartChance", ref FPConfig.Satellite.SignificantPartChance, FPConfig.Satellite.SignificantPartChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.ExceptionalPartChance", ref FPConfig.Satellite.ExceptionalPartChance, FPConfig.Satellite.ExceptionalPartChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.TrivialSolarChance", ref FPConfig.Satellite.TrivialSolarChance, FPConfig.Satellite.TrivialSolarChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.SignificantSolarChance", ref FPConfig.Satellite.SignificantSolarChance, FPConfig.Satellite.SignificantSolarChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.ExceptionalSolarChance", ref FPConfig.Satellite.ExceptionalSolarChance, FPConfig.Satellite.ExceptionalSolarChance);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.PreferHome", ref FPConfig.Satellite.PreferHome, FPConfig.Satellite.PreferHome);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowSolar", ref FPConfig.Satellite.AllowSolar, FPConfig.Satellite.AllowSolar);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowEquatorial", ref FPConfig.Satellite.AllowEquatorial, FPConfig.Satellite.AllowEquatorial);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowPolar", ref FPConfig.Satellite.AllowPolar, FPConfig.Satellite.AllowPolar);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowSynchronous", ref FPConfig.Satellite.AllowSynchronous, FPConfig.Satellite.AllowSynchronous);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowStationary", ref FPConfig.Satellite.AllowStationary, FPConfig.Satellite.AllowStationary);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowTundra", ref FPConfig.Satellite.AllowTundra, FPConfig.Satellite.AllowTundra);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.AllowKolniya", ref FPConfig.Satellite.AllowKolniya, FPConfig.Satellite.AllowKolniya);
+            Util.LoadNode(satelliteNode, "FPConfig", "Satellite.PartRequests", ref FPConfig.Satellite.PartRequests, FPConfig.Satellite.PartRequests);
+            Util.LoadNode(satelliteExpire, "FPConfig", "Satellite.Expire.MinimumExpireDays", ref FPConfig.Satellite.Expire.MinimumExpireDays, FPConfig.Satellite.Expire.MinimumExpireDays);
+            Util.LoadNode(satelliteExpire, "FPConfig", "Satellite.Expire.MaximumExpireDays", ref FPConfig.Satellite.Expire.MaximumExpireDays, FPConfig.Satellite.Expire.MaximumExpireDays);
+            Util.LoadNode(satelliteExpire, "FPConfig", "Satellite.Expire.DeadlineDays", ref FPConfig.Satellite.Expire.DeadlineDays, FPConfig.Satellite.Expire.DeadlineDays);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.BaseAdvance", ref FPConfig.Satellite.Funds.BaseAdvance, FPConfig.Satellite.Funds.BaseAdvance);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.BaseReward", ref FPConfig.Satellite.Funds.BaseReward, FPConfig.Satellite.Funds.BaseReward);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.BaseFailure", ref FPConfig.Satellite.Funds.BaseFailure, FPConfig.Satellite.Funds.BaseFailure);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.SignificantMultiplier", ref FPConfig.Satellite.Funds.SignificantMultiplier, FPConfig.Satellite.Funds.SignificantMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.ExceptionalMultiplier", ref FPConfig.Satellite.Funds.ExceptionalMultiplier, FPConfig.Satellite.Funds.ExceptionalMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.HomeMultiplier", ref FPConfig.Satellite.Funds.HomeMultiplier, FPConfig.Satellite.Funds.HomeMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.PartMultiplier", ref FPConfig.Satellite.Funds.PartMultiplier, FPConfig.Satellite.Funds.PartMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.PolarMultiplier", ref FPConfig.Satellite.Funds.PolarMultiplier, FPConfig.Satellite.Funds.PolarMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.SynchronousMultiplier", ref FPConfig.Satellite.Funds.SynchronousMultiplier, FPConfig.Satellite.Funds.SynchronousMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.StationaryMultiplier", ref FPConfig.Satellite.Funds.StationaryMultiplier, FPConfig.Satellite.Funds.StationaryMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.TundraMultiplier", ref FPConfig.Satellite.Funds.TundraMultiplier, FPConfig.Satellite.Funds.TundraMultiplier);
+            Util.LoadNode(satelliteFunds, "FPConfig", "Satellite.Funds.KolniyaMultiplier", ref FPConfig.Satellite.Funds.KolniyaMultiplier, FPConfig.Satellite.Funds.KolniyaMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.BaseReward", ref FPConfig.Satellite.Science.BaseReward, FPConfig.Satellite.Science.BaseReward);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.SignificantMultiplier", ref FPConfig.Satellite.Science.SignificantMultiplier, FPConfig.Satellite.Science.SignificantMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.ExceptionalMultiplier", ref FPConfig.Satellite.Science.ExceptionalMultiplier, FPConfig.Satellite.Science.ExceptionalMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.HomeMultiplier", ref FPConfig.Satellite.Science.HomeMultiplier, FPConfig.Satellite.Science.HomeMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.PartMultiplier", ref FPConfig.Satellite.Science.PartMultiplier, FPConfig.Satellite.Science.PartMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.PolarMultiplier", ref FPConfig.Satellite.Science.PolarMultiplier, FPConfig.Satellite.Science.PolarMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.SynchronousMultiplier", ref FPConfig.Satellite.Science.SynchronousMultiplier, FPConfig.Satellite.Science.SynchronousMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.StationaryMultiplier", ref FPConfig.Satellite.Science.StationaryMultiplier, FPConfig.Satellite.Science.StationaryMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.TundraMultiplier", ref FPConfig.Satellite.Science.TundraMultiplier, FPConfig.Satellite.Science.TundraMultiplier);
+            Util.LoadNode(satelliteScience, "FPConfig", "Satellite.Science.KolniyaMultiplier", ref FPConfig.Satellite.Science.KolniyaMultiplier, FPConfig.Satellite.Science.KolniyaMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.BaseReward", ref FPConfig.Satellite.Reputation.BaseReward, FPConfig.Satellite.Reputation.BaseReward);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.BaseFailure", ref FPConfig.Satellite.Reputation.BaseFailure, FPConfig.Satellite.Reputation.BaseFailure);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.SignificantMultiplier", ref FPConfig.Satellite.Reputation.SignificantMultiplier, FPConfig.Satellite.Reputation.SignificantMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.ExceptionalMultiplier", ref FPConfig.Satellite.Reputation.ExceptionalMultiplier, FPConfig.Satellite.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.HomeMultiplier", ref FPConfig.Satellite.Reputation.HomeMultiplier, FPConfig.Satellite.Reputation.HomeMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.PartMultiplier", ref FPConfig.Satellite.Reputation.PartMultiplier, FPConfig.Satellite.Reputation.PartMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.PolarMultiplier", ref FPConfig.Satellite.Reputation.PolarMultiplier, FPConfig.Satellite.Reputation.PolarMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.SynchronousMultiplier", ref FPConfig.Satellite.Reputation.SynchronousMultiplier, FPConfig.Satellite.Reputation.SynchronousMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.StationaryMultiplier", ref FPConfig.Satellite.Reputation.StationaryMultiplier, FPConfig.Satellite.Reputation.StationaryMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.TundraMultiplier", ref FPConfig.Satellite.Reputation.TundraMultiplier, FPConfig.Satellite.Reputation.TundraMultiplier);
+            Util.LoadNode(satelliteReputation, "FPConfig", "Satellite.Reputation.KolniyaMultiplier", ref FPConfig.Satellite.Reputation.KolniyaMultiplier, FPConfig.Satellite.Reputation.KolniyaMultiplier);
 
-            Util.LoadNode(stationNode, "FPConfig", "MaximumExistent", ref FPConfig.Station.MaximumExistent, FPConfig.Station.MaximumExistent);
-            Util.LoadNode(stationNode, "FPConfig", "AllowAsteroid", ref FPConfig.Station.AllowAsteroid, FPConfig.Station.AllowAsteroid);
-            Util.LoadNode(stationNode, "FPConfig", "AllowCupola", ref FPConfig.Station.AllowCupola, FPConfig.Station.AllowCupola);
-            Util.LoadNode(stationNode, "FPConfig", "AllowLab", ref FPConfig.Station.AllowLab, FPConfig.Station.AllowLab);
-            Util.LoadNode(stationNode, "FPConfig", "AllowSolar", ref FPConfig.Station.AllowSolar, FPConfig.Station.AllowSolar);
-            Util.LoadNode(stationNode, "FPConfig", "TrivialAsteroidChance", ref FPConfig.Station.TrivialAsteroidChance, FPConfig.Station.TrivialAsteroidChance);
-            Util.LoadNode(stationNode, "FPConfig", "TrivialCupolaChance", ref FPConfig.Station.TrivialCupolaChance, FPConfig.Station.TrivialCupolaChance);
-            Util.LoadNode(stationNode, "FPConfig", "TrivialLabChance", ref FPConfig.Station.TrivialLabChance, FPConfig.Station.TrivialLabChance);
-            Util.LoadNode(stationNode, "FPConfig", "SignificantAsteroidChance", ref FPConfig.Station.SignificantAsteroidChance, FPConfig.Station.SignificantAsteroidChance);
-            Util.LoadNode(stationNode, "FPConfig", "SignificantCupolaChance", ref FPConfig.Station.SignificantCupolaChance, FPConfig.Station.SignificantCupolaChance);
-            Util.LoadNode(stationNode, "FPConfig", "SignificantLabChance", ref FPConfig.Station.SignificantLabChance, FPConfig.Station.SignificantLabChance);
-            Util.LoadNode(stationNode, "FPConfig", "ExceptionalAsteroidChance", ref FPConfig.Station.ExceptionalAsteroidChance, FPConfig.Station.ExceptionalAsteroidChance);
-            Util.LoadNode(stationNode, "FPConfig", "ExceptionalCupolaChance", ref FPConfig.Station.ExceptionalCupolaChance, FPConfig.Station.ExceptionalCupolaChance);
-            Util.LoadNode(stationNode, "FPConfig", "ExceptionalLabChance", ref FPConfig.Station.ExceptionalLabChance, FPConfig.Station.ExceptionalLabChance);
-            Util.LoadNode(stationExpire, "FPConfig", "MinimumExpireDays", ref FPConfig.Station.Expire.MinimumExpireDays, FPConfig.Station.Expire.MinimumExpireDays);
-            Util.LoadNode(stationExpire, "FPConfig", "MaximumExpireDays", ref FPConfig.Station.Expire.MaximumExpireDays, FPConfig.Station.Expire.MaximumExpireDays);
-            Util.LoadNode(stationExpire, "FPConfig", "DeadlineDays", ref FPConfig.Station.Expire.DeadlineDays, FPConfig.Station.Expire.DeadlineDays);
-            Util.LoadNode(stationFunds, "FPConfig", "BaseAdvance", ref FPConfig.Station.Funds.BaseAdvance, FPConfig.Station.Funds.BaseAdvance);
-            Util.LoadNode(stationFunds, "FPConfig", "BaseReward", ref FPConfig.Station.Funds.BaseReward, FPConfig.Station.Funds.BaseReward);
-            Util.LoadNode(stationFunds, "FPConfig", "BaseFailure", ref FPConfig.Station.Funds.BaseFailure, FPConfig.Station.Funds.BaseFailure);
-            Util.LoadNode(stationFunds, "FPConfig", "SignificantMultiplier", ref FPConfig.Station.Funds.SignificantMultiplier, FPConfig.Station.Funds.SignificantMultiplier);
-            Util.LoadNode(stationFunds, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Station.Funds.ExceptionalMultiplier, FPConfig.Station.Funds.ExceptionalMultiplier);
-            Util.LoadNode(stationFunds, "FPConfig", "CupolaMultiplier", ref FPConfig.Station.Funds.CupolaMultiplier, FPConfig.Station.Funds.CupolaMultiplier);
-            Util.LoadNode(stationFunds, "FPConfig", "LabMultiplier", ref FPConfig.Station.Funds.LabMultiplier, FPConfig.Station.Funds.LabMultiplier);
-            Util.LoadNode(stationFunds, "FPConfig", "AsteroidMultiplier", ref FPConfig.Station.Funds.AsteroidMultiplier, FPConfig.Station.Funds.AsteroidMultiplier);
-            Util.LoadNode(stationScience, "FPConfig", "BaseReward", ref FPConfig.Station.Science.BaseReward, FPConfig.Station.Science.BaseReward);
-            Util.LoadNode(stationScience, "FPConfig", "SignificantMultiplier", ref FPConfig.Station.Science.SignificantMultiplier, FPConfig.Station.Science.SignificantMultiplier);
-            Util.LoadNode(stationScience, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Station.Science.ExceptionalMultiplier, FPConfig.Station.Science.ExceptionalMultiplier);
-            Util.LoadNode(stationScience, "FPConfig", "CupolaMultiplier", ref FPConfig.Station.Science.CupolaMultiplier, FPConfig.Station.Science.CupolaMultiplier);
-            Util.LoadNode(stationScience, "FPConfig", "LabMultiplier", ref FPConfig.Station.Science.LabMultiplier, FPConfig.Station.Science.LabMultiplier);
-            Util.LoadNode(stationScience, "FPConfig", "AsteroidMultiplier", ref FPConfig.Station.Science.AsteroidMultiplier, FPConfig.Station.Science.AsteroidMultiplier);
-            Util.LoadNode(stationReputation, "FPConfig", "BaseReward", ref FPConfig.Station.Reputation.BaseReward, FPConfig.Station.Reputation.BaseReward);
-            Util.LoadNode(stationReputation, "FPConfig", "BaseFailure", ref FPConfig.Station.Reputation.BaseFailure, FPConfig.Station.Reputation.BaseFailure);
-            Util.LoadNode(stationReputation, "FPConfig", "SignificantMultiplier", ref FPConfig.Station.Reputation.SignificantMultiplier, FPConfig.Station.Reputation.SignificantMultiplier);
-            Util.LoadNode(stationReputation, "FPConfig", "ExceptionalMultiplier", ref FPConfig.Station.Reputation.ExceptionalMultiplier, FPConfig.Station.Reputation.ExceptionalMultiplier);
-            Util.LoadNode(stationReputation, "FPConfig", "CupolaMultiplier", ref FPConfig.Station.Reputation.CupolaMultiplier, FPConfig.Station.Reputation.CupolaMultiplier);
-            Util.LoadNode(stationReputation, "FPConfig", "LabMultiplier", ref FPConfig.Station.Reputation.LabMultiplier, FPConfig.Station.Reputation.LabMultiplier);
-            Util.LoadNode(stationReputation, "FPConfig", "AsteroidMultiplier", ref FPConfig.Station.Reputation.AsteroidMultiplier, FPConfig.Station.Reputation.AsteroidMultiplier);
+            Util.LoadNode(stationNode, "FPConfig", "Station.MaximumExistent", ref FPConfig.Station.MaximumExistent, FPConfig.Station.MaximumExistent);
+            Util.LoadNode(stationNode, "FPConfig", "Station.TrivialCupolaChance", ref FPConfig.Station.TrivialCupolaChance, FPConfig.Station.TrivialCupolaChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.SignificantCupolaChance", ref FPConfig.Station.SignificantCupolaChance, FPConfig.Station.SignificantCupolaChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.ExceptionalCupolaChance", ref FPConfig.Station.ExceptionalCupolaChance, FPConfig.Station.ExceptionalCupolaChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.TrivialLabChance", ref FPConfig.Station.TrivialLabChance, FPConfig.Station.TrivialLabChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.SignificantLabChance", ref FPConfig.Station.SignificantLabChance, FPConfig.Station.SignificantLabChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.ExceptionalLabChance", ref FPConfig.Station.ExceptionalLabChance, FPConfig.Station.ExceptionalLabChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.TrivialAsteroidChance", ref FPConfig.Station.TrivialAsteroidChance, FPConfig.Station.TrivialAsteroidChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.SignificantAsteroidChance", ref FPConfig.Station.SignificantAsteroidChance, FPConfig.Station.SignificantAsteroidChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.ExceptionalAsteroidChance", ref FPConfig.Station.ExceptionalAsteroidChance, FPConfig.Station.ExceptionalAsteroidChance);
+            Util.LoadNode(stationNode, "FPConfig", "Station.AllowCupola", ref FPConfig.Station.AllowCupola, FPConfig.Station.AllowCupola);
+            Util.LoadNode(stationNode, "FPConfig", "Station.AllowLab", ref FPConfig.Station.AllowLab, FPConfig.Station.AllowLab);
+            Util.LoadNode(stationNode, "FPConfig", "Station.AllowAsteroid", ref FPConfig.Station.AllowAsteroid, FPConfig.Station.AllowAsteroid);
+            Util.LoadNode(stationNode, "FPConfig", "Station.AllowSolar", ref FPConfig.Station.AllowSolar, FPConfig.Station.AllowSolar);
+            Util.LoadNode(stationExpire, "FPConfig", "Station.Expire.MinimumExpireDays", ref FPConfig.Station.Expire.MinimumExpireDays, FPConfig.Station.Expire.MinimumExpireDays);
+            Util.LoadNode(stationExpire, "FPConfig", "Station.Expire.MaximumExpireDays", ref FPConfig.Station.Expire.MaximumExpireDays, FPConfig.Station.Expire.MaximumExpireDays);
+            Util.LoadNode(stationExpire, "FPConfig", "Station.Expire.DeadlineDays", ref FPConfig.Station.Expire.DeadlineDays, FPConfig.Station.Expire.DeadlineDays);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.BaseAdvance", ref FPConfig.Station.Funds.BaseAdvance, FPConfig.Station.Funds.BaseAdvance);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.BaseReward", ref FPConfig.Station.Funds.BaseReward, FPConfig.Station.Funds.BaseReward);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.BaseFailure", ref FPConfig.Station.Funds.BaseFailure, FPConfig.Station.Funds.BaseFailure);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.SignificantMultiplier", ref FPConfig.Station.Funds.SignificantMultiplier, FPConfig.Station.Funds.SignificantMultiplier);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.ExceptionalMultiplier", ref FPConfig.Station.Funds.ExceptionalMultiplier, FPConfig.Station.Funds.ExceptionalMultiplier);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.CupolaMultiplier", ref FPConfig.Station.Funds.CupolaMultiplier, FPConfig.Station.Funds.CupolaMultiplier);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.LabMultiplier", ref FPConfig.Station.Funds.LabMultiplier, FPConfig.Station.Funds.LabMultiplier);
+            Util.LoadNode(stationFunds, "FPConfig", "Station.Funds.AsteroidMultiplier", ref FPConfig.Station.Funds.AsteroidMultiplier, FPConfig.Station.Funds.AsteroidMultiplier);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.BaseReward", ref FPConfig.Station.Science.BaseReward, FPConfig.Station.Science.BaseReward);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.SignificantMultiplier", ref FPConfig.Station.Science.SignificantMultiplier, FPConfig.Station.Science.SignificantMultiplier);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.ExceptionalMultiplier", ref FPConfig.Station.Science.ExceptionalMultiplier, FPConfig.Station.Science.ExceptionalMultiplier);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.CupolaMultiplier", ref FPConfig.Station.Science.CupolaMultiplier, FPConfig.Station.Science.CupolaMultiplier);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.LabMultiplier", ref FPConfig.Station.Science.LabMultiplier, FPConfig.Station.Science.LabMultiplier);
+            Util.LoadNode(stationScience, "FPConfig", "Station.Science.AsteroidMultiplier", ref FPConfig.Station.Science.AsteroidMultiplier, FPConfig.Station.Science.AsteroidMultiplier);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.BaseReward", ref FPConfig.Station.Reputation.BaseReward, FPConfig.Station.Reputation.BaseReward);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.BaseFailure", ref FPConfig.Station.Reputation.BaseFailure, FPConfig.Station.Reputation.BaseFailure);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.SignificantMultiplier", ref FPConfig.Station.Reputation.SignificantMultiplier, FPConfig.Station.Reputation.SignificantMultiplier);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.ExceptionalMultiplier", ref FPConfig.Station.Reputation.ExceptionalMultiplier, FPConfig.Station.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.CupolaMultiplier", ref FPConfig.Station.Reputation.CupolaMultiplier, FPConfig.Station.Reputation.CupolaMultiplier);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.LabMultiplier", ref FPConfig.Station.Reputation.LabMultiplier, FPConfig.Station.Reputation.LabMultiplier);
+            Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.AsteroidMultiplier", ref FPConfig.Station.Reputation.AsteroidMultiplier, FPConfig.Station.Reputation.AsteroidMultiplier);
         }
     }
 }
