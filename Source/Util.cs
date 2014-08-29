@@ -14,6 +14,14 @@ using FinePrint.Contracts;
 
 namespace FinePrint
 {
+    public enum LoadResult
+    {
+        NULL,
+        NOVALUE,
+        INVALID,
+        SUCCESS
+    }
+
 	public class Util
     {
         public const int frameSuccessDelay = 5;
@@ -387,209 +395,110 @@ namespace FinePrint
 			return greekMap[x];
 		}
 
-        #region LoadNode Overloads
-        // LoadNode does a variety of things. It fixes broken saves, for one. It keeps consistency and helps me root out bugs, for two.
-		// It could be implemented as a template, but then I'd need to do a bunch of reflection, so instead I have a lot of overloads.
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref double value, double defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = double.TryParse(node.GetValue(nameOfValue), out value);
-
-            if (!hasValue)
-                Debug.LogWarning("Fine Print" + nameOfClass + " does not have " + nameOfValue + "!");
-
-            if (!parsed)
-                Debug.LogWarning("Fine Print" + nameOfClass + " could not parse " + nameOfValue +"! String: " + node.GetValue(nameOfValue));
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref float value, float defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = float.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref int value, int defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = int.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref bool value, bool defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = bool.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref string value, string defaultValue)
-		{
-			if (node.HasValue(nameOfValue))
-				value = node.GetValue(nameOfValue);
-			else
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref CelestialBody body, CelestialBody defaultBody)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-			{
-				int bodyID = 0;
-				parsed = int.TryParse(node.GetValue(nameOfValue), out bodyID);
-
-				if (parsed)
-				{
-					foreach (var cb in FlightGlobals.Bodies)
-					{
-						if (cb.flightGlobalsIndex == bodyID)
-							body = cb;
-					}
-				}
-			}
-
-			if (!hasValue || !parsed)
-			{
-				body = Planetarium.fetch.Home;
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultBody.GetName() + "!");
-            }
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref Vessel.Situations situation, Vessel.Situations defaultSituation)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-			{
-				int loadedSituationInteger = 0;
-				parsed = int.TryParse(node.GetValue(nameOfValue), out loadedSituationInteger);
-				situation = (Vessel.Situations)loadedSituationInteger;
-			}
-
-			if (!hasValue || !parsed)
-			{
-				switch (defaultSituation)
-				{
-					case Vessel.Situations.PRELAUNCH:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of PRELAUNCH!");
-						break;
-					case Vessel.Situations.SPLASHED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SPLASHED!");
-						break;
-					case Vessel.Situations.SUB_ORBITAL:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SUB_ORBITAL!");
-						break;
-					case Vessel.Situations.ORBITING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of ORBITING!");
-						break;
-					case Vessel.Situations.LANDED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of LANDED!");
-						break;
-					case Vessel.Situations.FLYING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of FLYING!");
-						break;
-					case Vessel.Situations.ESCAPING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of ESCAPING!");
-						break;
-					case Vessel.Situations.DOCKED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of DOCKED!");
-						break;
-					default:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
-						break;
-				}
-
-				situation = defaultSituation;
-			}
+        private static string ShortName(string verbose)
+        {
+            //Aerial.Funds.BaseComplete => BaseComplete
+            return verbose.Substring(verbose.LastIndexOf(".") + 1);
         }
 
-        public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref OrbitType orbitType, OrbitType defaultOrbitType)
+        public static bool TryConvert<T>(string input, out T value)
         {
-            bool hasValue = node.HasValue(nameOfValue);
-            bool parsed = false;
-
-            if (hasValue)
+            if (typeof(T).IsEnum)
             {
-                int loadedOrbitTypeInteger = 0;
-                parsed = int.TryParse(node.GetValue(nameOfValue), out loadedOrbitTypeInteger);
-                orbitType = (OrbitType)loadedOrbitTypeInteger;
+                try
+                {
+                    value = (T)Enum.Parse(typeof(T), input);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    value = default(T);
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    value = (T)System.Convert.ChangeType(input, typeof(T));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    value = default(T);
+                    return false;
+                }
+            }
+        }
+
+        public static void LoadNode<T>(ConfigNode node, string className, string valueName, ref T value, T defaultValue)
+        {
+            LoadResult result = LoadResult.NULL;
+
+            if (node == null)
+                result = LoadResult.NULL;
+            else
+            {
+                string shortName = ShortName(valueName);
+
+                if (node.HasValue(shortName))
+                {
+                    if (typeof(T) == typeof(CelestialBody))
+                    {
+                        int bodyIndex = 0;
+                        if (!TryConvert<int>(node.GetValue(shortName), out bodyIndex))
+                            result = LoadResult.INVALID;
+                        else
+                        {
+                            CelestialBody body = null;
+
+                            foreach (var cb in FlightGlobals.Bodies)
+                            {
+                                if (cb.flightGlobalsIndex == bodyIndex)
+                                    body = cb;
+                            }
+
+                            if (body == null)
+                            {
+                                result = LoadResult.INVALID;
+                            }
+                            else
+                            {
+                                value = (T)(object)body;
+                                result = LoadResult.SUCCESS;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!TryConvert<T>(node.GetValue(shortName), out value))
+                            result = LoadResult.INVALID;
+                        else
+                            result = LoadResult.SUCCESS;
+                    }
+                }
+                else
+                    result = LoadResult.NOVALUE;
             }
 
-            if (!hasValue || !parsed)
+            if (result != LoadResult.SUCCESS)
             {
-                switch (defaultOrbitType)
+                switch (result)
                 {
-                    case OrbitType.EQUATORIAL:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of EQUATORIAL!");
-						break;
-                    case OrbitType.POLAR:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of POLAR!");
-						break;
-                    case OrbitType.RANDOM:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of RANDOM!");
-						break;
-                    case OrbitType.STATIONARY:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of STATIONARY!");
-						break;
-                    case OrbitType.SYNCHRONOUS:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SYNCHRONOUS!");
-						break;
-                    case OrbitType.KOLNIYA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of KOLNIYA!");
+                    case LoadResult.NULL:
+                        Debug.LogWarning("Fine Print: " + className + " loaded a null value from " + valueName + ", initializing with default of " + defaultValue + "!");
                         break;
-                    case OrbitType.TUNDRA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of TUNDRA!");
+                    case LoadResult.NOVALUE:
+                        Debug.LogWarning("Fine Print: " + className + " could not locate the value of " + valueName + ", initializing with default of " + defaultValue + "!");
                         break;
-                    default:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
+                    case LoadResult.INVALID:
+                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value from " + valueName + ", initializing with default of " + defaultValue + "!");
                         break;
                 }
 
-                orbitType = defaultOrbitType;
+                value = defaultValue;
             }
         }
-        #endregion
 
         public static void CheckForPatchReset()
         {
@@ -598,8 +507,8 @@ namespace FinePrint
 
             FPConfig.PatchReset = false;
 
-            FPConfig.config.GetNode("FinePrint").AddValue("PatchReset", FPConfig.PatchReset);
-            FPConfig.config.Save(FPConfig.ConfigFileName());
+            FPConfig.config.GetNode("FinePrint").SetValue("PatchReset", FPConfig.PatchReset.ToString());
+            FPConfig.config.Save(FPConfig.ConfigFileName);
 
             Debug.LogError("Fine Print has been patched and will now reset all Fine Print contracts.");
 
