@@ -56,9 +56,9 @@ namespace FinePrint
             instance = this;
             DontDestroyOnLoad(this);
 
-            if (System.IO.File.Exists(ConfigFileName()))
+            if (System.IO.File.Exists(ConfigFileName))
             {
-                config = ConfigNode.Load(ConfigFileName());
+                config = ConfigNode.Load(ConfigFileName);
                 LoadConfig();
             }
 
@@ -73,6 +73,18 @@ namespace FinePrint
             public static int TrivialWaypoints = 1;
             public static int SignificantWaypoints = 2;
             public static int ExceptionalWaypoints = 3;
+            public static float TrivialHomeNearbyChance = 70;
+            public static float SignificantHomeNearbyChance = 35;
+            public static float ExceptionalHomeNearbyChance = 0;
+            public static float TrivialLowAltitudeChance = 70;
+            public static float SignificantLowAltitudeChance = 35;
+            public static float ExceptionalLowAltitudeChance = 0;
+            public static double TrivialHomeNearbyRange = 100000;
+            public static double SignificantHomeNearbyRange = 200000;
+            public static double ExceptionalHomeNearbyRange = 300000;
+            public static double TrivialLowAltitudeMultiplier = 0.1;
+            public static double SignificantLowAltitudeMultiplier = 0.3;
+            public static double ExceptionalLowAltitudeMultiplier = 0.5;
             public static double TrivialRange = 100000;
             public static double SignificantRange = 200000;
             public static double ExceptionalRange = 300000;
@@ -227,6 +239,12 @@ namespace FinePrint
             public static int TrivialWaypoints = 3;
             public static int SignificantWaypoints = 5;
             public static int ExceptionalWaypoints = 7;
+            public static float TrivialHomeNearbyChance = 70;
+            public static float SignificantHomeNearbyChance = 35;
+            public static float ExceptionalHomeNearbyChance = 0;
+            public static double TrivialHomeNearbyRange = 10000;
+            public static double SignificantHomeNearbyRange = 20000;
+            public static double ExceptionalHomeNearbyRange = 30000;
             public static double TrivialRange = 2000;
             public static double SignificantRange = 4000;
             public static double ExceptionalRange = 6000;
@@ -413,9 +431,9 @@ namespace FinePrint
             }
         }
 
-        public static string ConfigFileName()
+        public static String ConfigFileName
         {
-            return Path.GetFullPath(KSPUtil.ApplicationRootPath) + "GameData/FinePrint/FinePrint.cfg";
+            get { return KSPUtil.ApplicationRootPath + "/GameData/FinePrint/FinePrint.cfg"; }
         }
 
         private static void CreateDefaultConfig()
@@ -475,6 +493,18 @@ namespace FinePrint
             aerialNode.AddValue("TrivialWaypoints", FPConfig.Aerial.TrivialWaypoints);
             aerialNode.AddValue("SignificantWaypoints", FPConfig.Aerial.SignificantWaypoints);
             aerialNode.AddValue("ExceptionalWaypoints", FPConfig.Aerial.ExceptionalWaypoints);
+            aerialNode.AddValue("TrivialHomeNearbyChance", FPConfig.Aerial.TrivialHomeNearbyChance);
+            aerialNode.AddValue("SignificantHomeNearbyChance", FPConfig.Aerial.SignificantHomeNearbyChance);
+            aerialNode.AddValue("ExceptionalHomeNearbyChance", FPConfig.Aerial.ExceptionalHomeNearbyChance);
+            aerialNode.AddValue("TrivialLowAltitudeChance", FPConfig.Aerial.TrivialLowAltitudeChance);
+            aerialNode.AddValue("SignificantLowAltitudeChance", FPConfig.Aerial.SignificantLowAltitudeChance);
+            aerialNode.AddValue("ExceptionalLowAltitudeChance", FPConfig.Aerial.ExceptionalLowAltitudeChance);
+            aerialNode.AddValue("TrivialHomeNearbyRange", FPConfig.Aerial.TrivialHomeNearbyRange);
+            aerialNode.AddValue("SignificantHomeNearbyRange", FPConfig.Aerial.SignificantHomeNearbyRange);
+            aerialNode.AddValue("ExceptionalHomeNearbyRange", FPConfig.Aerial.ExceptionalHomeNearbyRange);
+            aerialNode.AddValue("TrivialLowAltitudeMultiplier", FPConfig.Aerial.TrivialLowAltitudeMultiplier);
+            aerialNode.AddValue("SignificantLowAltitudeMultiplier", FPConfig.Aerial.SignificantLowAltitudeMultiplier);
+            aerialNode.AddValue("ExceptionalLowAltitudeMultiplier", FPConfig.Aerial.ExceptionalLowAltitudeMultiplier);
             aerialNode.AddValue("TrivialRange", FPConfig.Aerial.TrivialRange);
             aerialNode.AddValue("SignificantRange", FPConfig.Aerial.SignificantRange);
             aerialNode.AddValue("ExceptionalRange", FPConfig.Aerial.ExceptionalRange);
@@ -572,6 +602,12 @@ namespace FinePrint
             roverNode.AddValue("TrivialWaypoints", FPConfig.Rover.TrivialWaypoints);
             roverNode.AddValue("SignificantWaypoints", FPConfig.Rover.SignificantWaypoints);
             roverNode.AddValue("ExceptionalWaypoints", FPConfig.Rover.ExceptionalWaypoints);
+            roverNode.AddValue("TrivialHomeNearbyChance", FPConfig.Rover.TrivialHomeNearbyChance);
+            roverNode.AddValue("SignificantHomeNearbyChance", FPConfig.Rover.SignificantHomeNearbyChance);
+            roverNode.AddValue("ExceptionalHomeNearbyChance", FPConfig.Rover.ExceptionalHomeNearbyChance);
+            roverNode.AddValue("TrivialHomeNearbyRange", FPConfig.Rover.TrivialHomeNearbyRange);
+            roverNode.AddValue("SignificantHomeNearbyRange", FPConfig.Rover.SignificantHomeNearbyRange);
+            roverNode.AddValue("ExceptionalHomeNearbyRange", FPConfig.Rover.ExceptionalHomeNearbyRange);
             roverNode.AddValue("TrivialRange", FPConfig.Rover.TrivialRange);
             roverNode.AddValue("SignificantRange", FPConfig.Rover.SignificantRange);
             roverNode.AddValue("ExceptionalRange", FPConfig.Rover.ExceptionalRange);
@@ -703,7 +739,7 @@ namespace FinePrint
             stationReputation.AddValue("LabMultiplier", FPConfig.Station.Reputation.LabMultiplier);
             stationReputation.AddValue("AsteroidMultiplier", FPConfig.Station.Reputation.AsteroidMultiplier);
 
-            config.Save(ConfigFileName());
+            config.Save(ConfigFileName);
         }
 
         private static void LoadConfig()
@@ -764,6 +800,18 @@ namespace FinePrint
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialWaypoints", ref FPConfig.Aerial.TrivialWaypoints, FPConfig.Aerial.TrivialWaypoints);
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantWaypoints", ref FPConfig.Aerial.SignificantWaypoints, FPConfig.Aerial.SignificantWaypoints);
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalWaypoints", ref FPConfig.Aerial.ExceptionalWaypoints, FPConfig.Aerial.ExceptionalWaypoints);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialHomeNearbyChance", ref FPConfig.Aerial.TrivialHomeNearbyChance, FPConfig.Aerial.TrivialHomeNearbyChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantHomeNearbyChance", ref FPConfig.Aerial.SignificantHomeNearbyChance, FPConfig.Aerial.SignificantHomeNearbyChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalHomeNearbyChance", ref FPConfig.Aerial.ExceptionalHomeNearbyChance, FPConfig.Aerial.ExceptionalHomeNearbyChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialLowAltitudeChance", ref FPConfig.Aerial.TrivialLowAltitudeChance, FPConfig.Aerial.TrivialLowAltitudeChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantLowAltitudeChance", ref FPConfig.Aerial.SignificantLowAltitudeChance, FPConfig.Aerial.SignificantLowAltitudeChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalLowAltitudeChance", ref FPConfig.Aerial.ExceptionalLowAltitudeChance, FPConfig.Aerial.ExceptionalLowAltitudeChance);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialHomeNearbyRange", ref FPConfig.Aerial.TrivialHomeNearbyRange, FPConfig.Aerial.TrivialHomeNearbyRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantHomeNearbyRange", ref FPConfig.Aerial.SignificantHomeNearbyRange, FPConfig.Aerial.SignificantHomeNearbyRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalHomeNearbyRange", ref FPConfig.Aerial.ExceptionalHomeNearbyRange, FPConfig.Aerial.ExceptionalHomeNearbyRange);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialLowAltitudeMultiplier", ref FPConfig.Aerial.TrivialLowAltitudeMultiplier, FPConfig.Aerial.TrivialLowAltitudeMultiplier);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantLowAltitudeMultiplier", ref FPConfig.Aerial.SignificantLowAltitudeMultiplier, FPConfig.Aerial.SignificantLowAltitudeMultiplier);
+            Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalLowAltitudeMultiplier", ref FPConfig.Aerial.ExceptionalLowAltitudeMultiplier, FPConfig.Aerial.ExceptionalLowAltitudeMultiplier);
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.TrivialRange", ref FPConfig.Aerial.TrivialRange, FPConfig.Aerial.TrivialRange);
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.SignificantRange", ref FPConfig.Aerial.SignificantRange, FPConfig.Aerial.SignificantRange);
             Util.LoadNode(aerialNode, "FPConfig", "Aerial.ExceptionalRange", ref FPConfig.Aerial.ExceptionalRange, FPConfig.Aerial.ExceptionalRange);
@@ -861,6 +909,12 @@ namespace FinePrint
             Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialWaypoints", ref FPConfig.Rover.TrivialWaypoints, FPConfig.Rover.TrivialWaypoints);
             Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantWaypoints", ref FPConfig.Rover.SignificantWaypoints, FPConfig.Rover.SignificantWaypoints);
             Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalWaypoints", ref FPConfig.Rover.ExceptionalWaypoints, FPConfig.Rover.ExceptionalWaypoints);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialHomeNearbyChance", ref FPConfig.Rover.TrivialHomeNearbyChance, FPConfig.Rover.TrivialHomeNearbyChance);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantHomeNearbyChance", ref FPConfig.Rover.SignificantHomeNearbyChance, FPConfig.Rover.SignificantHomeNearbyChance);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalHomeNearbyChance", ref FPConfig.Rover.ExceptionalHomeNearbyChance, FPConfig.Rover.ExceptionalHomeNearbyChance);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialHomeNearbyRange", ref FPConfig.Rover.TrivialHomeNearbyRange, FPConfig.Rover.TrivialHomeNearbyRange);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantHomeNearbyRange", ref FPConfig.Rover.SignificantHomeNearbyRange, FPConfig.Rover.SignificantHomeNearbyRange);
+            Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalHomeNearbyRange", ref FPConfig.Rover.ExceptionalHomeNearbyRange, FPConfig.Rover.ExceptionalHomeNearbyRange);
             Util.LoadNode(roverNode, "FPConfig", "Rover.TrivialRange", ref FPConfig.Rover.TrivialRange, FPConfig.Rover.TrivialRange);
             Util.LoadNode(roverNode, "FPConfig", "Rover.SignificantRange", ref FPConfig.Rover.SignificantRange, FPConfig.Rover.SignificantRange);
             Util.LoadNode(roverNode, "FPConfig", "Rover.ExceptionalRange", ref FPConfig.Rover.ExceptionalRange, FPConfig.Rover.ExceptionalRange);

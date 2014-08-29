@@ -163,11 +163,9 @@ namespace FinePrint.Contracts.Parameters
                                         {
                                             ScreenMessages.PostScreenMessage("This is the source of the anomalous data that we've been looking for in " + wp.tooltip + "!", 5.0f, ScreenMessageStyle.UPPER_LEFT);
 
-                                            base.SetComplete();
-
                                             foreach (RoverWaypointParameter parameter in Root.AllParameters)
                                             {
-                                                if (parameter != null)
+                                                if (parameter != null && parameter != this)
                                                 {
                                                     if (parameter.State != ParameterState.Complete)
                                                     {
@@ -175,10 +173,12 @@ namespace FinePrint.Contracts.Parameters
                                                         WaypointManager.deactivateNavPoint(wp);
                                                         WaypointManager.RemoveWaypoint(parameter.wp);
                                                         parameter.submittedWaypoint = false;
+                                                        parameter.SetComplete();
                                                     }
                                                 }
                                             }
 
+                                            base.SetComplete();
                                             Root.Complete();
                                         }
                                         else

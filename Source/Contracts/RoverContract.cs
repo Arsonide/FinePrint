@@ -67,6 +67,15 @@ namespace FinePrint.Contracts
                 case ContractPrestige.Trivial:
                     waypointCount = FPConfig.Rover.TrivialWaypoints;
                     range = FPConfig.Rover.TrivialRange;
+
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.TrivialHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.TrivialHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
                     break;
                 case ContractPrestige.Significant:
                     waypointCount = FPConfig.Rover.SignificantWaypoints;
@@ -77,6 +86,15 @@ namespace FinePrint.Contracts
                     wpFundsMultiplier = FPConfig.Rover.Funds.WaypointSignificantMultiplier;
                     wpScienceMultiplier = FPConfig.Rover.Science.WaypointSignificantMultiplier;
                     wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointSignificantMultiplier;
+
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.SignificantHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.SignificantHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
                     break;
                 case ContractPrestige.Exceptional:
                     waypointCount = FPConfig.Rover.ExceptionalWaypoints;
@@ -87,15 +105,19 @@ namespace FinePrint.Contracts
                     wpFundsMultiplier = FPConfig.Rover.Funds.WaypointExceptionalMultiplier;
                     wpScienceMultiplier = FPConfig.Rover.Science.WaypointExceptionalMultiplier;
                     wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointExceptionalMultiplier;
+
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.ExceptionalHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.ExceptionalHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
                     break;
             }
 
-            //The range provided is halved, and the greater half is lowered (or raised) based on the gravity of the target body.
-            range /= 2;
-            range = range + range * targetBody.GeeASL;
-
-			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
-			int secret = UnityEngine.Random.Range(0, waypointCount);
+            int secret = generator.Next(0, waypointCount);
 
 			for (int x = 0; x < waypointCount; x++)
 			{

@@ -53,7 +53,7 @@ namespace FinePrint.Contracts
 			if (atmosphereBodies.Count == 0)
 				return false;
 
-			targetBody = atmosphereBodies[UnityEngine.Random.Range(0, atmosphereBodies.Count)];
+			targetBody = atmosphereBodies[generator.Next(0, atmosphereBodies.Count)];
 
 			switch (targetBody.GetName())
 			{
@@ -110,6 +110,18 @@ namespace FinePrint.Contracts
 				    waypointCount = FPConfig.Aerial.TrivialWaypoints;
 				    waypointCount += additionalWaypoints;
                     range = FPConfig.Aerial.TrivialRange;
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.TrivialLowAltitudeChance)
+                    {
+                        minAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                        maxAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                    }
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.TrivialHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.TrivialHomeNearbyRange, true);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+
                     break;
                 case ContractPrestige.Significant:
                     waypointCount = FPConfig.Aerial.SignificantWaypoints;
@@ -121,6 +133,18 @@ namespace FinePrint.Contracts
                     wpFundsMultiplier = FPConfig.Aerial.Funds.WaypointSignificantMultiplier;
                     wpScienceMultiplier = FPConfig.Aerial.Science.WaypointSignificantMultiplier;
                     wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointSignificantMultiplier;
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.SignificantLowAltitudeChance)
+                    {
+                        minAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                        maxAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                    }
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.SignificantHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.SignificantHomeNearbyRange, true);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+
                     break;
                 case ContractPrestige.Exceptional:
                     waypointCount = FPConfig.Aerial.ExceptionalWaypoints;
@@ -132,10 +156,20 @@ namespace FinePrint.Contracts
                     wpFundsMultiplier = FPConfig.Aerial.Funds.WaypointExceptionalMultiplier;
                     wpScienceMultiplier = FPConfig.Aerial.Science.WaypointExceptionalMultiplier;
                     wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier;
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalLowAltitudeChance)
+                    {
+                        minAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                        maxAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                    }
+
+                    if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.ExceptionalHomeNearbyRange, true);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+
                     break;
             }
-
-            WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
 
 			for (int x = 0; x < waypointCount; x++)
 			{
