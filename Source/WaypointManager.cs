@@ -502,6 +502,8 @@ namespace FinePrint
 
         public static void ChooseRandomPosition(out double latitude, out double longitude, string celestialName, bool waterAllowed = true, bool equatorial = false)
         {
+            System.Random generator = new System.Random();
+
             latitude = 0.0;
             longitude = 0.0;
             CelestialBody myPlanet = null;
@@ -522,14 +524,14 @@ namespace FinePrint
                         {
                             if (!equatorial)
                             {
-                                double rand = UnityEngine.Random.value;
+                                double rand = generator.NextDouble();
                                 rand = 1.0 - (rand * 2);
                                 latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                             }
                             else
                                 latitude = 0.0;
 
-                            longitude = UnityEngine.Random.value * 360 - 180;
+                            longitude = generator.NextDouble() * 360 - 180;
                             Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
                             double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
 
@@ -544,14 +546,14 @@ namespace FinePrint
                 {
                     if (!equatorial)
                     {
-                        double rand = UnityEngine.Random.value;
+                        double rand = generator.NextDouble();
                         rand = 1.0 - (rand * 2);
                         latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                     }
                     else
                         latitude = 0.0;
 
-                    longitude = UnityEngine.Random.value * 360 - 180;
+                    longitude = generator.NextDouble() * 360 - 180;
                 }
             }
         }

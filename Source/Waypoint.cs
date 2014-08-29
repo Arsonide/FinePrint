@@ -64,6 +64,8 @@ namespace FinePrint
 
 		public void RandomizePosition(bool waterAllowed = true)
 		{
+            System.Random generator = new System.Random(seed + id);
+
 			CelestialBody myPlanet = null;
 
 			foreach (CelestialBody body in FlightGlobals.Bodies)
@@ -80,10 +82,10 @@ namespace FinePrint
 					{
 						while (true)
 						{
-                            double rand = UnityEngine.Random.value;
+                            double rand = generator.NextDouble();
                             rand = 1.0 - (rand * 2);
                             latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
-							longitude = UnityEngine.Random.value * 360 - 180;
+                            longitude = generator.NextDouble() * 360 - 180;
 							Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
 							double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
 
@@ -96,10 +98,10 @@ namespace FinePrint
 				}
 				else
 				{
-                    double rand = UnityEngine.Random.value;
+                    double rand = generator.NextDouble();
                     rand = 1.0 - (rand * 2);
                     latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
-					longitude = UnityEngine.Random.value * 360 - 180;
+                    longitude = generator.NextDouble() * 360 - 180;
 				}
 			}
 		}

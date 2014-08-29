@@ -51,7 +51,7 @@ namespace FinePrint.Contracts
 				if (bodies.Count == 0)
 					return false;
 
-				targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+				targetBody = bodies[generator.Next(0, bodies.Count)];
 
                 fundsMultiplier = FPConfig.ARM.Funds.SignificantMultiplier;
                 scienceMultiplier = FPConfig.ARM.Science.SignificantMultiplier;
@@ -76,7 +76,7 @@ namespace FinePrint.Contracts
                     if (bodies.Count == 0)
                         return false;
 
-                    targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                    targetBody = bodies[generator.Next(0, bodies.Count)];
                 }
 
                 fundsMultiplier = FPConfig.ARM.Funds.ExceptionalMultiplier;
@@ -166,6 +166,8 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
+            System.Random generator = new System.Random(MissionSeed);
+
 			if (targetBody != Planetarium.fetch.Sun)
             {
                 if (isLanding)
@@ -174,7 +176,7 @@ namespace FinePrint.Contracts
                 }
                 else
                 {
-                    switch (UnityEngine.Random.Range(0, 3))
+                    switch (generator.Next(0, 3))
                     {
                         case 0:
                             return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + " to test our capabilities.";
@@ -187,7 +189,7 @@ namespace FinePrint.Contracts
 			}
 			else
 			{
-				switch (UnityEngine.Random.Range(0, 3))
+				switch (generator.Next(0, 3))
 				{
 					case 0:
                         return "Capture a new Class " + asteroidClass + " asteroid, then put it on an extrasolar trajectory. The less of these things orbiting the sun, the better.";
@@ -201,11 +203,13 @@ namespace FinePrint.Contracts
 
 		protected override string MessageCompleted()
 		{
+            System.Random generator = new System.Random(MissionSeed);
+
             if (targetBody != Planetarium.fetch.Sun)
                 return "You successfully captured an asteroid and brought it to " + targetBody.theName + ".";
 			else
 			{
-				switch (UnityEngine.Random.Range(0, 3))
+				switch (generator.Next(0, 3))
 				{
 					case 0:
 						return "You successfuly flung a rock out of the solar system.";
@@ -240,6 +244,8 @@ namespace FinePrint.Contracts
 
 		protected static CelestialBody GetNextUnreachedTarget(int depth, bool removeSun, bool removeKerbin)
 		{
+            System.Random generator = new System.Random();
+
 			var bodies = Contract.GetBodies_NextUnreached(depth, null);
 			if (bodies != null)
 			{
@@ -250,7 +256,7 @@ namespace FinePrint.Contracts
 					bodies.Remove(Planetarium.fetch.Home);
 
 				if (bodies.Count > 0)
-					return bodies[UnityEngine.Random.Range(0, bodies.Count - 1)];
+					return bodies[generator.Next(0, bodies.Count - 1)];
 			}
 			return null;
 		}

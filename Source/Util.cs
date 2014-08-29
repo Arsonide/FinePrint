@@ -344,7 +344,9 @@ namespace FinePrint
 
 		public static CelestialBody RandomJoolianMoon()
 		{
-			int randomMoon = UnityEngine.Random.Range(0, 5);
+            System.Random generator = new System.Random();
+
+			int randomMoon = generator.Next(0, 5);
 			string targetMoon = "Laythe";
 
 			switch (randomMoon)
@@ -845,14 +847,7 @@ namespace FinePrint
             if (HighLogic.LoadedSceneHasPlanetarium)
             {
                 //These values can only be set in an appropriate scene. Setting them when the contract is generated is meaningless and will cause bad things to happen.
-                Vector3d pos = o.getRelativePositionAtUT(0.0);
-                Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
-                o.h = Vector3d.Cross(pos, vel);
-                o.eccVec = Vector3d.Cross(vel, o.h) / o.referenceBody.gravParameter - pos / pos.magnitude;
-
-                //The argument of periapsis here is two dimensional.
-                if (o.an == Vector3d.zero)
-                    o.argumentOfPeriapsis = Math.Acos(o.eccVec.x / o.eccentricity);
+                o.UpdateFromStateVectors(o.getRelativePositionAtUT(0.0), o.getOrbitalVelocityAtUT(0.0), o.referenceBody, 0.0);
             }
         }
 

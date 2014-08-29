@@ -53,7 +53,7 @@ namespace FinePrint.Contracts
                 if (bodies.Count == 0)
                     return false;
 
-                targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                targetBody = bodies[generator.Next(0, bodies.Count)];
 
                 if (generator.Next(0, 100) < FPConfig.Satellite.TrivialSolarChance && FPConfig.Satellite.AllowSolar)
                     targetBody = Planetarium.fetch.Sun;
@@ -75,7 +75,7 @@ namespace FinePrint.Contracts
                 if (bodies.Count == 0)
                     return false;
 
-                targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                targetBody = bodies[generator.Next(0, bodies.Count)];
 
                 if (generator.Next(0, 100) < FPConfig.Satellite.SignificantSolarChance && FPConfig.Satellite.AllowSolar)
                     targetBody = Planetarium.fetch.Sun;
@@ -104,7 +104,7 @@ namespace FinePrint.Contracts
                     if (bodies.Count == 0)
                         return false;
 
-                    targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                    targetBody = bodies[generator.Next(0, bodies.Count)];
                 }
 
                 if (generator.Next(0, 100) < FPConfig.Satellite.ExceptionalSolarChance && FPConfig.Satellite.AllowSolar)
@@ -430,6 +430,8 @@ namespace FinePrint.Contracts
 
         protected static CelestialBody GetNextUnreachedTarget(int depth, bool removeSun, bool removeKerbin)
         {
+            System.Random generator = new System.Random();
+
             var bodies = Contract.GetBodies_NextUnreached(depth, null);
             if (bodies != null)
             {
@@ -440,7 +442,7 @@ namespace FinePrint.Contracts
                     bodies.Remove(Planetarium.fetch.Home);
 
                 if (bodies.Count > 0)
-                    return bodies[UnityEngine.Random.Range(0, bodies.Count - 1)];
+                    return bodies[generator.Next(0, bodies.Count - 1)];
             }
             return null;
         }
