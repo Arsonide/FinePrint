@@ -224,9 +224,9 @@ namespace FinePrint.Contracts
             base.AddKeywords(new string[] { "groundbase" });
             base.SetExpiry(FPConfig.Base.Expire.MinimumExpireDays, FPConfig.Base.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.Base.Expire.DeadlineDays, targetBody);
-            base.SetFunds(FPConfig.Base.Funds.BaseAdvance * fundsMultiplier, FPConfig.Base.Funds.BaseReward * fundsMultiplier, FPConfig.Base.Funds.BaseFailure * fundsMultiplier, this.targetBody);
-            base.SetScience(FPConfig.Base.Science.BaseReward * scienceMultiplier, this.targetBody);
-            base.SetReputation(FPConfig.Base.Reputation.BaseReward * reputationMultiplier, FPConfig.Base.Reputation.BaseFailure * reputationMultiplier, this.targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Base.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Base.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Base.Funds.BaseFailure * fundsMultiplier), this.targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Base.Science.BaseReward * scienceMultiplier), this.targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.Base.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Base.Reputation.BaseFailure * reputationMultiplier), this.targetBody);
 
             //Prevent duplicate contracts shortly before finishing up.
             foreach (BaseContract active in ContractSystem.Instance.GetCurrentContracts<BaseContract>())

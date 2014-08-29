@@ -128,17 +128,17 @@ namespace FinePrint.Contracts
 				else
 					newParameter = this.AddParameter(new RoverWaypointParameter(x, targetBody, centerLatitude, centerLongitude, range, false), null);
 
-				newParameter.SetFunds(FPConfig.Rover.Funds.WaypointBaseReward * wpFundsMultiplier, targetBody);
-                newParameter.SetScience(FPConfig.Rover.Science.WaypointBaseReward * wpScienceMultiplier, targetBody);
-                newParameter.SetReputation(FPConfig.Rover.Reputation.WaypointBaseReward * wpReputationMultiplier, targetBody);
+				newParameter.SetFunds(Mathf.Round(FPConfig.Rover.Funds.WaypointBaseReward * wpFundsMultiplier), targetBody);
+                newParameter.SetScience(Mathf.Round(FPConfig.Rover.Science.WaypointBaseReward * wpScienceMultiplier), targetBody);
+                newParameter.SetReputation(Mathf.Round(FPConfig.Rover.Reputation.WaypointBaseReward * wpReputationMultiplier), targetBody);
 			}
 
 			base.AddKeywords(new string[] { "roversearch" });
             base.SetExpiry(FPConfig.Rover.Expire.MinimumExpireDays, FPConfig.Rover.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.Rover.Expire.DeadlineDays, targetBody);
-            base.SetFunds(FPConfig.Rover.Funds.BaseAdvance * fundsMultiplier, FPConfig.Rover.Funds.BaseReward * fundsMultiplier, FPConfig.Rover.Funds.BaseFailure * fundsMultiplier, targetBody);
-            base.SetScience(FPConfig.Rover.Science.BaseReward * scienceMultiplier, targetBody);
-			base.SetReputation(FPConfig.Rover.Reputation.BaseReward * reputationMultiplier, FPConfig.Rover.Reputation.BaseFailure * reputationMultiplier, targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Rover.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Rover.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Rover.Funds.BaseFailure * fundsMultiplier), targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Rover.Science.BaseReward * scienceMultiplier), targetBody);
+			base.SetReputation(Mathf.Round(FPConfig.Rover.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Rover.Reputation.BaseFailure * reputationMultiplier), targetBody);
             return true;
 		}
 

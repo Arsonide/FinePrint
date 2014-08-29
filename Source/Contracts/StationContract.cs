@@ -222,9 +222,9 @@ namespace FinePrint.Contracts
 
             base.SetExpiry(FPConfig.Station.Expire.MinimumExpireDays, FPConfig.Station.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.Station.Expire.DeadlineDays, targetBody);
-            base.SetFunds(FPConfig.Station.Funds.BaseAdvance * fundsMultiplier, FPConfig.Station.Funds.BaseReward * fundsMultiplier, FPConfig.Station.Funds.BaseFailure * fundsMultiplier, this.targetBody);
-            base.SetScience(FPConfig.Station.Science.BaseReward * scienceMultiplier, this.targetBody);
-            base.SetReputation(FPConfig.Station.Reputation.BaseReward * reputationMultiplier, FPConfig.Station.Reputation.BaseFailure * reputationMultiplier, this.targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Station.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Station.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Station.Funds.BaseFailure * fundsMultiplier), this.targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Station.Science.BaseReward * scienceMultiplier), this.targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.Station.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Station.Reputation.BaseFailure * reputationMultiplier), this.targetBody);
 
             //Prevent duplicate contracts shortly before finishing up.
             foreach (StationContract active in ContractSystem.Instance.GetCurrentContracts<StationContract>())

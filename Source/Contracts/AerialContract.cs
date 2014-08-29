@@ -175,17 +175,17 @@ namespace FinePrint.Contracts
 			{
 				ContractParameter newParameter;
 				newParameter = this.AddParameter(new FlightWaypointParameter(x, targetBody, minAltitude, maxAltitude, centerLatitude, centerLongitude, range), null);
-				newParameter.SetFunds(FPConfig.Aerial.Funds.WaypointBaseReward * wpFundsMultiplier, targetBody);
-                newParameter.SetReputation(FPConfig.Aerial.Reputation.WaypointBaseReward * wpReputationMultiplier, targetBody);
-                newParameter.SetScience(FPConfig.Aerial.Science.WaypointBaseReward * wpScienceMultiplier, targetBody);
+				newParameter.SetFunds(Mathf.Round(FPConfig.Aerial.Funds.WaypointBaseReward * wpFundsMultiplier), targetBody);
+                newParameter.SetReputation(Mathf.Round(FPConfig.Aerial.Reputation.WaypointBaseReward * wpReputationMultiplier), targetBody);
+                newParameter.SetScience(Mathf.Round(FPConfig.Aerial.Science.WaypointBaseReward * wpScienceMultiplier), targetBody);
 			}
 
 			base.AddKeywords(new string[] { "surveyflight" });
             base.SetExpiry(FPConfig.Aerial.Expire.MinimumExpireDays, FPConfig.Aerial.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.Aerial.Expire.DeadlineDays, targetBody);
-            base.SetFunds(FPConfig.Aerial.Funds.BaseAdvance * fundsMultiplier, FPConfig.Aerial.Funds.BaseReward * fundsMultiplier, FPConfig.Aerial.Funds.BaseFailure * fundsMultiplier, targetBody);
-            base.SetScience(FPConfig.Aerial.Science.BaseReward * scienceMultiplier, targetBody);
-            base.SetReputation(FPConfig.Aerial.Reputation.BaseReward * reputationMultiplier, FPConfig.Aerial.Reputation.BaseFailure * reputationMultiplier, targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Aerial.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Aerial.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Aerial.Funds.BaseFailure * fundsMultiplier), targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Aerial.Science.BaseReward * scienceMultiplier), targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.Aerial.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Aerial.Reputation.BaseFailure * reputationMultiplier), targetBody);
 			return true;
 		}
 

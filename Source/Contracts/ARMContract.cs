@@ -114,9 +114,9 @@ namespace FinePrint.Contracts
 			base.SetExpiry(FPConfig.ARM.Expire.MinimumExpireDays, FPConfig.ARM.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.ARM.Expire.DeadlineDays, targetBody);
 
-            base.SetFunds(FPConfig.ARM.Funds.BaseAdvance * fundsMultiplier, FPConfig.ARM.Funds.BaseReward * fundsMultiplier, FPConfig.ARM.Funds.BaseFailure * fundsMultiplier, this.targetBody);
-            base.SetScience(FPConfig.ARM.Science.BaseReward * scienceMultiplier, this.targetBody);
-            base.SetReputation(FPConfig.ARM.Reputation.BaseReward * reputationMultiplier, FPConfig.ARM.Reputation.BaseFailure * reputationMultiplier, this.targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.ARM.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.ARM.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.ARM.Funds.BaseFailure * fundsMultiplier), this.targetBody);
+            base.SetScience(Mathf.Round(FPConfig.ARM.Science.BaseReward * scienceMultiplier), this.targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.ARM.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.ARM.Reputation.BaseFailure * reputationMultiplier), this.targetBody);
 
             //Prevent duplicate contracts shortly before finishing up.
             foreach (ARMContract active in ContractSystem.Instance.GetCurrentContracts<ARMContract>())

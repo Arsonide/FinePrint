@@ -213,9 +213,9 @@ namespace FinePrint.Contracts
             base.AddKeywords(new string[] { "deploysatellite" });
             base.SetExpiry(FPConfig.Satellite.Expire.MinimumExpireDays, FPConfig.Satellite.Expire.MaximumExpireDays);
             base.SetDeadlineDays(FPConfig.Satellite.Expire.DeadlineDays, targetBody);
-            base.SetFunds(FPConfig.Satellite.Funds.BaseAdvance * fundsMultiplier, FPConfig.Satellite.Funds.BaseReward * fundsMultiplier, FPConfig.Satellite.Funds.BaseFailure * fundsMultiplier, this.targetBody);
-            base.SetScience(FPConfig.Satellite.Science.BaseReward * scienceMultiplier, this.targetBody);
-            base.SetReputation(FPConfig.Satellite.Reputation.BaseReward * reputationMultiplier, FPConfig.Satellite.Reputation.BaseFailure * reputationMultiplier, targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Satellite.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Satellite.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Satellite.Funds.BaseFailure * fundsMultiplier), this.targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Satellite.Science.BaseReward * scienceMultiplier), this.targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.Satellite.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Satellite.Reputation.BaseFailure * reputationMultiplier), targetBody);
             return true;
         }
 
