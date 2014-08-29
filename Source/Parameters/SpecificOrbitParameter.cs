@@ -44,6 +44,12 @@ namespace FinePrint.Contracts.Parameters
         public CelestialBody targetBody;
         private const int numSpinners = 8;
         bool eventsAdded;
+        bool horizontal = false;
+        bool APOMatch = false;
+        bool PERMatch = false;
+        bool INCMatch = false;
+        bool LANMatch = false;
+        bool ARGMatch = false;
 
         public SpecificOrbitParameter()
         {
@@ -126,7 +132,16 @@ namespace FinePrint.Contracts.Parameters
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
                 notes += "\n";
 
-            notes += "Orbit Specifics:\nApoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + " meters\nPeriapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + " meters\nInclination: " + Math.Round(inclination, 1) + " degrees\nLongitude of Ascending Node: " + Math.Round(lan, 1) + " degrees";
+            string lanString = "Undefined";
+            string argString = "Undefined";
+
+            if (Math.Abs(inclination) % 180 >= 1)
+                lanString = Math.Round(lan, 1).ToString() + " degrees";
+
+            if (eccentricity > 0.05)
+                argString = Math.Round(argumentOfPeriapsis, 1).ToString() + " degrees";
+
+            notes += "Orbit Specifics:\nApoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + " meters\nPeriapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + " meters\nInclination: " + Math.Round(inclination, 1) + " degrees\nLongitude of Ascending Node: " + lanString + "\nArgument of Periapsis: " + argString;
 
             return notes;
         }
@@ -432,13 +447,13 @@ namespace FinePrint.Contracts.Parameters
                 return false;
 
             //Apoapsis and periapsis account for eccentricity and semi major axis, but are more reliable.
-            bool APOMatch = withinDeviation(v.orbit.PeA, orbitDriver.orbit.PeA, deviationWindow);
-            bool PERMatch = withinDeviation(v.orbit.ApA, orbitDriver.orbit.ApA, deviationWindow);
+            PERMatch = withinDeviation(v.orbit.PeA, orbitDriver.orbit.PeA, deviationWindow);
+            APOMatch = withinDeviation(v.orbit.ApA, orbitDriver.orbit.ApA, deviationWindow);
             //Sometimes inclinations go negative in KSP.
-            bool INCMatch = Math.Abs(Math.Abs(v.orbit.inclination) - Math.Abs(orbitDriver.orbit.inclination)) <= (deviationWindow / 100) * 90;
-            bool horizontal = (Math.Abs(orbitDriver.orbit.inclination) % 180 < 1);
-            bool LANMatch = false;
-            bool ARGMatch = false;
+            INCMatch = Math.Abs(Math.Abs(v.orbit.inclination) - Math.Abs(orbitDriver.orbit.inclination)) <= (deviationWindow / 100) * 90;
+            horizontal = (Math.Abs(orbitDriver.orbit.inclination) % 180 < 1);
+            LANMatch = false;
+            ARGMatch = false;
 
             float argDifference = 0f;
             
@@ -484,7 +499,6 @@ namespace FinePrint.Contracts.Parameters
             else
                 LANMatch = true;
 
-            Debug.Log(APOMatch + "," + PERMatch + "," + INCMatch + "," + LANMatch + "," + ARGMatch);
             if (APOMatch && PERMatch && INCMatch && LANMatch && ARGMatch)
                 return true;
             else
