@@ -367,7 +367,7 @@ namespace FinePrint
             return verbose.Substring(verbose.LastIndexOf(".") + 1);
         }
 
-        public static bool TryConvert<T>(string input, out T value)
+        public static bool TryConvert<T>(string input, out T value, ref string error)
         {
             if (typeof(T).IsEnum)
             {
@@ -378,6 +378,7 @@ namespace FinePrint
                 }
                 catch (Exception e)
                 {
+                    error = e.ToString();
                     value = default(T);
                     return false;
                 }
@@ -391,6 +392,7 @@ namespace FinePrint
                 }
                 catch (Exception e)
                 {
+                    error = e.ToString();
                     value = default(T);
                     return false;
                 }
@@ -400,6 +402,7 @@ namespace FinePrint
         public static void LoadNode<T>(ConfigNode node, string className, string valueName, ref T value, T defaultValue)
         {
             LoadResult result = LoadResult.NULL;
+            string error = "";
 
             if (node == null)
                 result = LoadResult.NULL;
@@ -412,7 +415,7 @@ namespace FinePrint
                     if (typeof(T) == typeof(CelestialBody))
                     {
                         int bodyIndex = 0;
-                        if (!TryConvert<int>(node.GetValue(shortName), out bodyIndex))
+                        if (!TryConvert<int>(node.GetValue(shortName), out bodyIndex, ref error))
                             result = LoadResult.INVALID;
                         else
                         {
@@ -426,6 +429,7 @@ namespace FinePrint
 
                             if (body == null)
                             {
+                                error = "CelestialException: Celestial body is out of range.";
                                 result = LoadResult.INVALID;
                             }
                             else
@@ -437,7 +441,7 @@ namespace FinePrint
                     }
                     else
                     {
-                        if (!TryConvert<T>(node.GetValue(shortName), out value))
+                        if (!TryConvert<T>(node.GetValue(shortName), out value, ref error))
                             result = LoadResult.INVALID;
                         else
                             result = LoadResult.SUCCESS;
@@ -452,13 +456,13 @@ namespace FinePrint
                 switch (result)
                 {
                     case LoadResult.NULL:
-                        Debug.LogWarning("Fine Print: " + className + " loaded a null value from " + valueName + ", initializing with default of " + defaultValue + "!");
+                        Debug.LogWarning("Fine Print: " + className + " cannot load " + valueName + " from a null node. Initializing with default of " + defaultValue + "!");
                         break;
                     case LoadResult.NOVALUE:
-                        Debug.LogWarning("Fine Print: " + className + " could not locate the value of " + valueName + ", initializing with default of " + defaultValue + "!");
+                        Debug.LogWarning("Fine Print: " + className + " cannot load " + valueName + ", it is not in the node. Initializing with default of " + defaultValue + "!");
                         break;
                     case LoadResult.INVALID:
-                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value from " + valueName + ", initializing with default of " + defaultValue + "!");
+                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value from " + valueName + ". (" + error + "). Initializing with default of " + defaultValue + "!");
                         break;
                 }
 
