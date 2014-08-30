@@ -857,10 +857,10 @@ namespace FinePrint
 
         public static bool IsGasGiant(CelestialBody body)
         {
-            if (!body.atmosphere)
+            if (body == null)
                 return false;
 
-            return (body.staticPressureASL > 400.0);
+            return (body.pqsController == null);
         }
 
         public static Vessel.Situations ApplicableSituation(int seed, CelestialBody body)
