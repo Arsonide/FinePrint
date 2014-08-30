@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Contracts\BaseContract.cs" />
+    <Compile Include="Contracts\ISRUContract.cs" />
     <Compile Include="Contracts\StationContract.cs" />
     <Compile Include="FPConfig.cs" />
     <Compile Include="Contracts\AerialContract.cs" />
@@ -58,6 +59,8 @@
     <Compile Include="Contracts\SatelliteContract.cs" />
     <Compile Include="Parameters\AsteroidParameter.cs" />
     <Compile Include="Parameters\EVAParameter.cs" />
+    <Compile Include="Parameters\ResourceExtractionParameter.cs" />
+    <Compile Include="Parameters\ResourcePossessionParameter.cs" />
     <Compile Include="Parameters\PartNameParameter.cs" />
     <Compile Include="Parameters\FacilityLabParameter.cs" />
     <Compile Include="Parameters\CrewCapacityParameter.cs" />

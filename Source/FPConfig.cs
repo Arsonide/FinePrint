@@ -431,6 +431,54 @@ namespace FinePrint
             }
         }
 
+        public static class ISRU
+        {
+            public static int MaximumExistent = 0;
+            public static float TrivialExtractAmount = 500;
+            public static float SignificantExtractAmount = 1000;
+            public static float ExceptionalExtractAmount = 2500;
+            public static float TrivialDeliveryChance = 50;
+            public static float SignificantDeliveryChance = 65;
+            public static float ExceptionalDeliveryChance = 80;
+            public static string AllowableResources = "Karbonite";
+            public static string TechnologyUnlocks = "KA_DetectionArray_01,KA_Drill_Radial_01,KA_Drill_125_01,KA_Engine_250_01,KA_Engine_125_01,KA_AtmScoop_125_01,KA_AtmScoop_250_01,KA_ParticleCollector_250_01,KA_Tank_VTS_01,KA_Tank_Radial_01,KA_Tank_250_01,KA_Tank_125_04,KA_Tank_125_03,KA_Tank_125_02,KA_Tank_125_01,KA_Jet_Stack_01,LFKA_Jet_Stack_01,KA_Jet_Radial_01,LFKA_Jet_Radial_01,KA_Jet_PropFan_01,LFKA_Jet_PropFan_01,KA_Distiller_125_01,KA_Distiller_250_01,KA_Converter_250_01,KA_Generator_250_01,kaRadialLeg,KA_LandingFrame_4,KA_LandingFrame";
+            public static string ForbiddenCelestials = "Sun";
+
+            public static class Expire
+            {
+                public static int MinimumExpireDays = 1;
+                public static int MaximumExpireDays = 7;
+                public static int DeadlineDays = 2982;
+            }
+
+            public static class Funds
+            {
+                public static float BaseAdvance = 16250;
+                public static float BaseReward = 32500;
+                public static float BaseFailure = 0;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float DeliveryMultiplier = 1.8f;
+            }
+
+            public static class Science
+            {
+                public static float BaseReward = 5;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float DeliveryMultiplier = 1.8f;
+            }
+
+            public static class Reputation
+            {
+                public static float BaseReward = 60;
+                public static float BaseFailure = 30;
+                public static float SignificantMultiplier = 1.1f;
+                public static float ExceptionalMultiplier = 1.3f;
+                public static float DeliveryMultiplier = 1.8f;
+            }
+        }
+
         public static String ConfigFileName
         {
             get { return KSPUtil.ApplicationRootPath + "/GameData/FinePrint/FinePrint.cfg"; }
@@ -478,6 +526,12 @@ namespace FinePrint
             ConfigNode stationFunds = stationNode.AddNode(new ConfigNode("Funds"));
             ConfigNode stationScience = stationNode.AddNode(new ConfigNode("Science"));
             ConfigNode stationReputation = stationNode.AddNode(new ConfigNode("Reputation"));
+
+            ConfigNode isruNode = topNode.AddNode(new ConfigNode("ISRU"));
+            ConfigNode isruExpire = isruNode.AddNode(new ConfigNode("Expiration"));
+            ConfigNode isruFunds = isruNode.AddNode(new ConfigNode("Funds"));
+            ConfigNode isruScience = isruNode.AddNode(new ConfigNode("Science"));
+            ConfigNode isruReputation = isruNode.AddNode(new ConfigNode("Reputation"));
 
             topNode.AddValue("PatchReset", FPConfig.PatchReset);
             topNode.AddValue("SunStationaryName", FPConfig.SunStationaryName);
@@ -739,6 +793,35 @@ namespace FinePrint
             stationReputation.AddValue("LabMultiplier", FPConfig.Station.Reputation.LabMultiplier);
             stationReputation.AddValue("AsteroidMultiplier", FPConfig.Station.Reputation.AsteroidMultiplier);
 
+            isruNode.AddValue("MaximumExistent", FPConfig.ISRU.MaximumExistent);
+            isruNode.AddValue("TrivialExtractAmount", FPConfig.ISRU.TrivialExtractAmount);
+            isruNode.AddValue("SignificantExtractAmount", FPConfig.ISRU.SignificantExtractAmount);
+            isruNode.AddValue("ExceptionalExtractAmount", FPConfig.ISRU.ExceptionalExtractAmount);
+            isruNode.AddValue("TrivialDeliveryChance", FPConfig.ISRU.TrivialDeliveryChance);
+            isruNode.AddValue("SignificantDeliveryChance", FPConfig.ISRU.SignificantDeliveryChance);
+            isruNode.AddValue("ExceptionalDeliveryChance", FPConfig.ISRU.ExceptionalDeliveryChance);
+            isruNode.AddValue("AllowableResources", FPConfig.ISRU.AllowableResources);
+            isruNode.AddValue("TechnologyUnlocks", FPConfig.ISRU.TechnologyUnlocks);
+            isruNode.AddValue("ForbiddenCelestials", FPConfig.ISRU.ForbiddenCelestials);
+            isruExpire.AddValue("MinimumExpireDays", FPConfig.ISRU.Expire.MinimumExpireDays);
+            isruExpire.AddValue("MaximumExpireDays", FPConfig.ISRU.Expire.MaximumExpireDays);
+            isruExpire.AddValue("DeadlineDays", FPConfig.ISRU.Expire.DeadlineDays);
+            isruFunds.AddValue("BaseAdvance", FPConfig.ISRU.Funds.BaseAdvance);
+            isruFunds.AddValue("BaseReward", FPConfig.ISRU.Funds.BaseReward);
+            isruFunds.AddValue("BaseFailure", FPConfig.ISRU.Funds.BaseFailure);
+            isruFunds.AddValue("SignificantMultiplier", FPConfig.ISRU.Funds.SignificantMultiplier);
+            isruFunds.AddValue("ExceptionalMultiplier", FPConfig.ISRU.Funds.ExceptionalMultiplier);
+            isruFunds.AddValue("DeliveryMultiplier", FPConfig.ISRU.Funds.DeliveryMultiplier);
+            isruScience.AddValue("BaseReward", FPConfig.ISRU.Science.BaseReward);
+            isruScience.AddValue("SignificantMultiplier", FPConfig.ISRU.Science.SignificantMultiplier);
+            isruScience.AddValue("ExceptionalMultiplier", FPConfig.ISRU.Science.ExceptionalMultiplier);
+            isruScience.AddValue("DeliveryMultiplier", FPConfig.ISRU.Science.DeliveryMultiplier);
+            isruReputation.AddValue("BaseReward", FPConfig.ISRU.Reputation.BaseReward);
+            isruReputation.AddValue("BaseFailure", FPConfig.ISRU.Reputation.BaseFailure);
+            isruReputation.AddValue("SignificantMultiplier", FPConfig.ISRU.Reputation.SignificantMultiplier);
+            isruReputation.AddValue("ExceptionalMultiplier", FPConfig.ISRU.Reputation.ExceptionalMultiplier);
+            isruReputation.AddValue("DeliveryMultiplier", FPConfig.ISRU.Reputation.DeliveryMultiplier);
+
             config.Save(ConfigFileName);
         }
 
@@ -781,6 +864,12 @@ namespace FinePrint
             ConfigNode stationFunds = stationNode.GetNode("Funds");
             ConfigNode stationScience = stationNode.GetNode("Science");
             ConfigNode stationReputation = stationNode.GetNode("Reputation");
+
+            ConfigNode isruNode = topNode.GetNode("ISRU");
+            ConfigNode isruExpire = isruNode.GetNode("Expiration");
+            ConfigNode isruFunds = isruNode.GetNode("Funds");
+            ConfigNode isruScience = isruNode.GetNode("Science");
+            ConfigNode isruReputation = isruNode.GetNode("Reputation");
 
             //It feeds it a reference of itself, which is modified if the function succeeds.
             //It also feeds itself in as a value, which it reverts to if it fails.
@@ -1045,6 +1134,35 @@ namespace FinePrint
             Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.CupolaMultiplier", ref FPConfig.Station.Reputation.CupolaMultiplier, FPConfig.Station.Reputation.CupolaMultiplier);
             Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.LabMultiplier", ref FPConfig.Station.Reputation.LabMultiplier, FPConfig.Station.Reputation.LabMultiplier);
             Util.LoadNode(stationReputation, "FPConfig", "Station.Reputation.AsteroidMultiplier", ref FPConfig.Station.Reputation.AsteroidMultiplier, FPConfig.Station.Reputation.AsteroidMultiplier);
+
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.MaximumExistent", ref FPConfig.ISRU.MaximumExistent, FPConfig.ISRU.MaximumExistent);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.TrivialExtractAmount", ref FPConfig.ISRU.TrivialExtractAmount, FPConfig.ISRU.TrivialExtractAmount);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.SignificantExtractAmount", ref FPConfig.ISRU.SignificantExtractAmount, FPConfig.ISRU.SignificantExtractAmount);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.ExceptionalExtractAmount", ref FPConfig.ISRU.ExceptionalExtractAmount, FPConfig.ISRU.ExceptionalExtractAmount);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.TrivialDeliveryChance", ref FPConfig.ISRU.TrivialDeliveryChance, FPConfig.ISRU.TrivialDeliveryChance);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.SignificantDeliveryChance", ref FPConfig.ISRU.SignificantDeliveryChance, FPConfig.ISRU.SignificantDeliveryChance);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.ExceptionalDeliveryChance", ref FPConfig.ISRU.ExceptionalDeliveryChance, FPConfig.ISRU.ExceptionalDeliveryChance);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.AllowableResources", ref FPConfig.ISRU.AllowableResources, FPConfig.ISRU.AllowableResources);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.TechnologyUnlocks", ref FPConfig.ISRU.TechnologyUnlocks, FPConfig.ISRU.TechnologyUnlocks);
+            Util.LoadNode(isruNode, "FPConfig", "ISRU.ForbiddenCelestials", ref FPConfig.ISRU.ForbiddenCelestials, FPConfig.ISRU.ForbiddenCelestials);
+            Util.LoadNode(isruExpire, "FPConfig", "ISRU.Expire.MinimumExpireDays", ref FPConfig.ISRU.Expire.MinimumExpireDays, FPConfig.ISRU.Expire.MinimumExpireDays);
+            Util.LoadNode(isruExpire, "FPConfig", "ISRU.Expire.MaximumExpireDays", ref FPConfig.ISRU.Expire.MaximumExpireDays, FPConfig.ISRU.Expire.MaximumExpireDays);
+            Util.LoadNode(isruExpire, "FPConfig", "ISRU.Expire.DeadlineDays", ref FPConfig.ISRU.Expire.DeadlineDays, FPConfig.ISRU.Expire.DeadlineDays);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.BaseAdvance", ref FPConfig.ISRU.Funds.BaseAdvance, FPConfig.ISRU.Funds.BaseAdvance);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.BaseReward", ref FPConfig.ISRU.Funds.BaseReward, FPConfig.ISRU.Funds.BaseReward);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.BaseFailure", ref FPConfig.ISRU.Funds.BaseFailure, FPConfig.ISRU.Funds.BaseFailure);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.SignificantMultiplier", ref FPConfig.ISRU.Funds.SignificantMultiplier, FPConfig.ISRU.Funds.SignificantMultiplier);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.ExceptionalMultiplier", ref FPConfig.ISRU.Funds.ExceptionalMultiplier, FPConfig.ISRU.Funds.ExceptionalMultiplier);
+            Util.LoadNode(isruFunds, "FPConfig", "ISRU.Funds.DeliveryMultiplier", ref FPConfig.ISRU.Funds.DeliveryMultiplier, FPConfig.ISRU.Funds.DeliveryMultiplier);
+            Util.LoadNode(isruScience, "FPConfig", "ISRU.Science.BaseReward", ref FPConfig.ISRU.Science.BaseReward, FPConfig.ISRU.Science.BaseReward);
+            Util.LoadNode(isruScience, "FPConfig", "ISRU.Science.SignificantMultiplier", ref FPConfig.ISRU.Science.SignificantMultiplier, FPConfig.ISRU.Science.SignificantMultiplier);
+            Util.LoadNode(isruScience, "FPConfig", "ISRU.Science.ExceptionalMultiplier", ref FPConfig.ISRU.Science.ExceptionalMultiplier, FPConfig.ISRU.Science.ExceptionalMultiplier);
+            Util.LoadNode(isruScience, "FPConfig", "ISRU.Science.DeliveryMultiplier", ref FPConfig.ISRU.Science.DeliveryMultiplier, FPConfig.ISRU.Science.DeliveryMultiplier);
+            Util.LoadNode(isruReputation, "FPConfig", "ISRU.Reputation.BaseReward", ref FPConfig.ISRU.Reputation.BaseReward, FPConfig.ISRU.Reputation.BaseReward);
+            Util.LoadNode(isruReputation, "FPConfig", "ISRU.Reputation.BaseFailure", ref FPConfig.ISRU.Reputation.BaseFailure, FPConfig.ISRU.Reputation.BaseFailure);
+            Util.LoadNode(isruReputation, "FPConfig", "ISRU.Reputation.SignificantMultiplier", ref FPConfig.ISRU.Reputation.SignificantMultiplier, FPConfig.ISRU.Reputation.SignificantMultiplier);
+            Util.LoadNode(isruReputation, "FPConfig", "ISRU.Reputation.ExceptionalMultiplier", ref FPConfig.ISRU.Reputation.ExceptionalMultiplier, FPConfig.ISRU.Reputation.ExceptionalMultiplier);
+            Util.LoadNode(isruReputation, "FPConfig", "ISRU.Reputation.DeliveryMultiplier", ref FPConfig.ISRU.Reputation.DeliveryMultiplier, FPConfig.ISRU.Reputation.DeliveryMultiplier);
         }
     }
 }
