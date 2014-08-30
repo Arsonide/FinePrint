@@ -221,7 +221,7 @@ namespace FinePrint
 
         public static bool haveTechnology(string tech)
 		{
-			tech.Replace('_', '.');
+			tech = tech.Replace('_', '.');
 			AvailablePart ap = PartLoader.getPartInfoByName(tech);
 
 			if (ap != null)
@@ -230,7 +230,7 @@ namespace FinePrint
 					return true;
 			}
 			else
-				Debug.LogWarning("Fine Print: Attempted to check for nonexistent technology.");
+				Debug.LogWarning("Fine Print: Attempted to check for nonexistent technology: \"" + tech + "\".");
 
 			return false;
 		}
@@ -854,6 +854,79 @@ namespace FinePrint
         public static string TitleCase(string str)
         {
             return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
+        }
+
+        public static CelestialBody RandomNeighbor(int seed, CelestialBody body, bool allowSun)
+        {
+            bool hasChildren = true;
+            bool hasParent = true;
+
+            System.Random generator = new System.Random(seed);
+
+            if (body.orbitingBodies.Count <= 0)
+                hasChildren = false;
+
+            if (body.referenceBody == Planetarium.fetch.Sun && !allowSun)
+                hasParent = false;
+
+            if (body == Planetarium.fetch.Sun)
+                hasParent = false;
+
+            if (hasParent && hasChildren)
+            {
+                if (generator.Next(0, 100) > 50)
+                    return body.orbitingBodies[generator.Next(0, body.orbitingBodies.Count)];
+                else
+                    return body.referenceBody;
+            }
+            else if (!hasParent && hasChildren)
+                return body.orbitingBodies[generator.Next(0, body.orbitingBodies.Count)];
+            else if (hasParent && !hasChildren)
+                return body.referenceBody;
+            else
+                return null;
+        }
+
+        public static bool IsGasGiant(CelestialBody body)
+        {
+            if (!body.atmosphere)
+                return false;
+
+            return (body.staticPressureASL > 400.0);
+        }
+
+        public static Vessel.Situations ApplicableSituation(int seed, CelestialBody body)
+        {
+            System.Random generator = new System.Random(seed);
+            List<Vessel.Situations> sitList = new List<Vessel.Situations>();
+
+            sitList.Add(Vessel.Situations.ORBITING);
+
+            if (body.ocean)
+                sitList.Add(Vessel.Situations.SPLASHED);
+
+            if (!IsGasGiant(body))
+                sitList.Add(Vessel.Situations.LANDED);
+
+            return sitList[generator.Next(0, sitList.Count)];
+        }
+
+        public static double ResourcesOnVessel(Vessel v, string resourceName)
+        {
+            double totalAmount = 0.0;
+
+            if (v != null)
+            {
+                foreach (Part part in v.Parts)
+                {
+                    if (part.Resources.Contains(resourceName))
+                    {
+                        totalAmount += part.Resources[resourceName].amount;
+                    }
+                }
+            }
+
+            return totalAmount;
         }
     }
 }
