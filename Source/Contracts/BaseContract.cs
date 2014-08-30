@@ -44,11 +44,11 @@ namespace FinePrint.Contracts
 
                 targetBody = bodies[generator.Next(0, bodies.Count)];
 
-                if (targetBody.GetName() == "Jool")
+                if (Util.IsGasGiant(targetBody))
                 {
-                    targetBody = Util.RandomJoolianMoon();
+                    targetBody = Util.RandomNeighbor(MissionSeed, targetBody, false);
 
-                    if (targetBody.GetName() == "Jool" || targetBody == null)
+                    if (Util.IsGasGiant(targetBody) || targetBody == null)
                         return false;
                 }
 
@@ -101,11 +101,11 @@ namespace FinePrint.Contracts
 
                 targetBody = bodies[generator.Next(0, bodies.Count)];
 
-                if (targetBody.GetName() == "Jool")
+                if (Util.IsGasGiant(targetBody))
                 {
-                    targetBody = Util.RandomJoolianMoon();
+                    targetBody = Util.RandomNeighbor(MissionSeed, targetBody, false);
 
-                    if (targetBody.GetName() == "Jool" || targetBody == null)
+                    if (Util.IsGasGiant(targetBody) || targetBody == null)
                         return false;
                 }
 
@@ -172,11 +172,11 @@ namespace FinePrint.Contracts
                     targetBody = bodies[generator.Next(0, bodies.Count)];
                 }
 
-                if (targetBody.GetName() == "Jool")
+                if (Util.IsGasGiant(targetBody))
                 {
-                    targetBody = Util.RandomJoolianMoon();
+                    targetBody = Util.RandomNeighbor(MissionSeed, targetBody, false);
 
-                    if (targetBody.GetName() == "Jool" || targetBody == null)
+                    if (Util.IsGasGiant(targetBody) || targetBody == null)
                         return false;
                 }
 

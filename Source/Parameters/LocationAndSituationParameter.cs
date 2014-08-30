@@ -72,8 +72,8 @@ namespace FinePrint.Contracts.Parameters
 
 		protected override string GetTitle()
 		{
-			if (targetBody == null)
-				return "Do something on the surface of the Sun";
+            if (targetBody == null)
+                return "Do something on the surface of " + Planetarium.fetch.Sun.theName;
 
 			switch (targetSituation)
 			{

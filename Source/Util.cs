@@ -344,44 +344,6 @@ namespace FinePrint
 			return roverFail[generator.Next(0, roverFail.Count)];
 		}
 
-		public static CelestialBody RandomJoolianMoon()
-		{
-            System.Random generator = new System.Random();
-
-			int randomMoon = generator.Next(0, 5);
-			string targetMoon = "Laythe";
-
-			switch (randomMoon)
-			{
-				case 0:
-					targetMoon = "Laythe";
-					break;
-				case 1:
-					targetMoon = "Vall";
-					break;
-				case 2:
-					targetMoon = "Tylo";
-					break;
-				case 3:
-					targetMoon = "Bop";
-					break;
-				case 4:
-					targetMoon = "Pol";
-					break;
-				default:
-					targetMoon = "Laythe";
-					break;
-			}
-
-			foreach (CelestialBody body in FlightGlobals.Bodies)
-			{
-				if (body.GetName() == targetMoon)
-					return body;
-			}
-
-			return null;
-		}
-
 		public static string integerToWord(int x)
 		{
 			string[] integerMap = new string[21] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty" };

@@ -183,7 +183,7 @@ namespace FinePrint.Contracts
                         case 1:
                             return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + ". Why? FOR SCIENCE!";
                         default:
-                            return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
+                            return "Mission control says low " + Planetarium.fetch.Home.GetName() + " orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
                     }
                 }
 			}
@@ -194,7 +194,7 @@ namespace FinePrint.Contracts
 					case 0:
                         return "Capture a new Class " + asteroidClass + " asteroid, then put it on an extrasolar trajectory. The less of these things orbiting the sun, the better.";
 					case 1:
-                        return "The last Class " + asteroidClass + " asteroid that passed Kerbin nearly wiped out our species, capture one and get rid of it.";
+                        return "The last Class " + asteroidClass + " asteroid that passed " + Planetarium.fetch.Home.GetName() + " nearly wiped out our species, capture one and get rid of it.";
 					default:
                         return "How do you feel about throwing a Class " + asteroidClass + " rock out of the solar system?";
 				}

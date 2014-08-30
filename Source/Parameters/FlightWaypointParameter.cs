@@ -179,8 +179,8 @@ namespace FinePrint.Contracts.Parameters
 
         protected override string GetNotes()
         {
-            if (targetBody.GetName() == "Jool")
-                return "Warning: an unmanned probe is recommended as this location is on Jool. A cheap one.";
+            if (Util.IsGasGiant(targetBody))
+                return "Warning: a cheap unmanned probe is recommended as " + targetBody.theName + " is a gas giant.";
             else
                 return null;
         }

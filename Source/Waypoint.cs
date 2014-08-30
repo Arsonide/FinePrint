@@ -46,16 +46,27 @@ namespace FinePrint
 
 		public void setName(bool uniqueSites = true)
 		{
+            CelestialBody myPlanet = null;
+
+            foreach (CelestialBody body in FlightGlobals.Bodies)
+            {
+                if (body.GetName() == celestialName)
+                    myPlanet = body;
+            }
+
+            if (myPlanet == null)
+                return;
+
 			if (uniqueSites)
 			{
-				if (celestialName == "Kerbin")
+				if (myPlanet == Planetarium.fetch.Home)
 					this.tooltip = Util.generateSiteName(seed + id, true);
 				else
 					this.tooltip = Util.generateSiteName(seed + id, false);
 			}
 			else
 			{
-				if (celestialName == "Kerbin")
+                if (myPlanet == Planetarium.fetch.Home)
 					this.tooltip = Util.generateSiteName(seed, true);
 				else
 					this.tooltip = Util.generateSiteName(seed, false);
