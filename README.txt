@@ -8,8 +8,10 @@ within Kerbal Space Program v0.24.
 New contract types include contracts to build space stations, contracts
 to build planetary bases, contracts to retrieve asteroids, contracts 
 to fly planes in atmospheric conditions, contracts to drive rovers 
-around the surface of a planet searching for things, and contracts to
-deploy purpose built satellites into very specific orbits.
+around the surface of a planet searching for things, contracts to
+deploy purpose built satellites into very specific orbits, and if you
+have resource extraction mods like Karbonite or Kethane, contracts to
+do those activities as well.
 
 For more information, or to submit bug reports, submit feature suggestions,
 or track changes, please go to the official forum thread for Fine Print:
@@ -52,7 +54,14 @@ Kerbal Space Program version 0.24.2
   Within it you will find keywords occasionally, look for the word "rescue" 
   for instance. If you would like to add your own flavor text for my contracts
   the keywords are: spacestation, groundbase, roversearch, surveyflight,
-  asteroidretrieval, and deploysatellite.
+  asteroidretrieval, deploysatellite, and ISRU.
+
+* There is a very extensive configuration file available in the mod's
+  directory that allows you to change any aspect of game behavior or 
+  balance. Feel free to tinker with that. If you find a setting that
+  you feel makes the mod better, feel free to tell me in the main
+  forum thread so that I can integrate it into the game as a default
+  setting!
 
 -- TROUBLESHOOTING --
 
@@ -72,6 +81,8 @@ Q: What technologies do I need to have to get the new contracts?
 
 A: Wheels, Probes, Wings, and for stations and bases some power generation, 
    docking ports, and antennae. Satellites also require power and antennae.
+   ARM contracts require the klaw, resource extraction contracts require 
+   whatever technology those use.
 
 Q: I'm at a waypoint and it isn't registering my visit!
 
