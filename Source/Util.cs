@@ -863,14 +863,14 @@ namespace FinePrint
             return (body.pqsController == null);
         }
 
-        public static Vessel.Situations ApplicableSituation(int seed, CelestialBody body)
+        public static Vessel.Situations ApplicableSituation(int seed, CelestialBody body, bool splashAllowed)
         {
             System.Random generator = new System.Random(seed);
             List<Vessel.Situations> sitList = new List<Vessel.Situations>();
 
             sitList.Add(Vessel.Situations.ORBITING);
 
-            if (body.ocean)
+            if (body.ocean && splashAllowed)
                 sitList.Add(Vessel.Situations.SPLASHED);
 
             if (!IsGasGiant(body))
@@ -895,6 +895,16 @@ namespace FinePrint
             }
 
             return totalAmount;
+        }
+
+        public static string PossessiveString(string thing)
+        {
+            if (thing.EndsWith("s"))
+                thing += "'";
+            else
+                thing += "'s";
+
+            return thing;
         }
     }
 }
