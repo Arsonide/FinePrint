@@ -177,14 +177,6 @@ namespace FinePrint.Contracts.Parameters
             }
         }
 
-        protected override string GetNotes()
-        {
-            if (Util.IsGasGiant(targetBody))
-                return "Warning: a cheap unmanned probe is recommended as " + targetBody.theName + " is a gas giant.";
-            else
-                return null;
-        }
-
         private double calculateMidAltitude()
         {
             return Math.Round((minAltitude + maxAltitude) / 2.0);

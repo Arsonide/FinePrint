@@ -19,6 +19,7 @@ namespace FinePrint.Contracts
 		double maxAltitude = 2000.0;
         double centerLatitude = 0.0;
         double centerLongitude = 0.0;
+        private bool isLowAltitude = false;
 
 		protected override bool Generate()
 		{
@@ -55,6 +56,7 @@ namespace FinePrint.Contracts
 
 			targetBody = atmosphereBodies[generator.Next(0, atmosphereBodies.Count)];
 
+            //TODO: Find some common ground to calculate these values automatically without specific names.
 			switch (targetBody.GetName())
 			{
 				case "Jool":
@@ -89,7 +91,6 @@ namespace FinePrint.Contracts
 					break;
 			}
 
-
             int waypointCount = 0;
             float fundsMultiplier = 1;
             float scienceMultiplier = 1;
@@ -111,10 +112,23 @@ namespace FinePrint.Contracts
 				    waypointCount += additionalWaypoints;
                     range = FPConfig.Aerial.TrivialRange;
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.TrivialLowAltitudeChance)
+                    if (Util.IsGasGiant(targetBody))
                     {
-                        minAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
-                        maxAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                        if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalLowAltitudeChance/2)
+                        {
+                            minAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
+                    }
+                    else
+                    {
+                        if (generator.Next(0, 100) < FPConfig.Aerial.TrivialLowAltitudeChance)
+                        {
+                            minAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
                     }
 
                     if (generator.Next(0, 100) < FPConfig.Aerial.TrivialHomeNearbyChance && targetBody == Planetarium.fetch.Home)
@@ -134,10 +148,23 @@ namespace FinePrint.Contracts
                     wpScienceMultiplier = FPConfig.Aerial.Science.WaypointSignificantMultiplier;
                     wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointSignificantMultiplier;
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.SignificantLowAltitudeChance)
+                    if (Util.IsGasGiant(targetBody))
                     {
-                        minAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
-                        maxAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                        if (generator.Next(0, 100) < FPConfig.Aerial.SignificantLowAltitudeChance/2)
+                        {
+                            minAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
+                    }
+                    else
+                    {
+                        if (generator.Next(0, 100) < FPConfig.Aerial.SignificantLowAltitudeChance)
+                        {
+                            minAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.SignificantLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
                     }
 
                     if (generator.Next(0, 100) < FPConfig.Aerial.SignificantHomeNearbyChance && targetBody == Planetarium.fetch.Home)
@@ -157,10 +184,23 @@ namespace FinePrint.Contracts
                     wpScienceMultiplier = FPConfig.Aerial.Science.WaypointExceptionalMultiplier;
                     wpReputationMultiplier = FPConfig.Aerial.Reputation.WaypointExceptionalMultiplier;
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalLowAltitudeChance)
+                    if (Util.IsGasGiant(targetBody))
                     {
-                        minAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
-                        maxAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                        if (generator.Next(0, 100) < FPConfig.Aerial.TrivialLowAltitudeChance/2)
+                        {
+                            minAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.TrivialLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
+                    }
+                    else
+                    {
+                        if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalLowAltitudeChance)
+                        {
+                            minAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                            maxAltitude *= FPConfig.Aerial.ExceptionalLowAltitudeMultiplier;
+                            isLowAltitude = true;
+                        }
                     }
 
                     if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalHomeNearbyChance && targetBody == Planetarium.fetch.Home)
@@ -225,6 +265,24 @@ namespace FinePrint.Contracts
             return "You have successfully performed aerial surveys at all of the points of interest on " + targetBody.theName + ".";
 		}
 
+        protected override string GetNotes()
+        {
+            string notes = "";
+
+            if (Util.IsGasGiant(targetBody) && !isLowAltitude)
+                notes += "Warning: this contract specifies flight in the atmosphere of a gas giant.";
+            else if (Util.IsGasGiant(targetBody) && isLowAltitude)
+                notes += "Warning: this is a low altitude flight contract for a gas giant. We recommend sending cheap unmanned probes on a one way trip.";
+            else
+                return null;
+
+            //In Gene's dialogue, the notes smush up against the parameters. Add one new line.
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+                notes += "\n";
+
+            return notes;
+        }
+
 		protected override void OnLoad(ConfigNode node)
 		{
             Util.CheckForPatchReset();
@@ -233,6 +291,7 @@ namespace FinePrint.Contracts
             Util.LoadNode(node, "AerialContract", "maxAltitude", ref maxAltitude, 10000);
             Util.LoadNode(node, "AerialContract", "centerLatitude", ref centerLatitude, 0.0);
             Util.LoadNode(node, "AerialContract", "centerLongitude", ref centerLongitude, 0.0);
+            Util.LoadNode(node, "AerialContract", "isLowAltitude", ref isLowAltitude, false);
 		}
 
 		protected override void OnSave(ConfigNode node)
@@ -243,6 +302,7 @@ namespace FinePrint.Contracts
 			node.AddValue("maxAltitude", maxAltitude);
             node.AddValue("centerLatitude", centerLatitude);
             node.AddValue("centerLongitude", centerLongitude);
+            node.AddValue("isLowAltitude", isLowAltitude);
 		}
 
 		public override bool MeetRequirements()
