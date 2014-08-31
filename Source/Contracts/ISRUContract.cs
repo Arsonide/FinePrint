@@ -129,9 +129,10 @@ namespace FinePrint.Contracts
 
             if (isDelivering)
             {
-                deliverySituation = Util.ApplicableSituation(MissionSeed, deliveryBody);
+                deliverySituation = Util.ApplicableSituation(MissionSeed, deliveryBody, false);
                 this.AddParameter(new ResourcePossessionParameter(targetResource, gatherGoal), null);
                 this.AddParameter(new LocationAndSituationParameter(deliveryBody, deliverySituation,targetResource), null);
+                this.AddParameter(new KillControlsParameter(10), null);
             }
 
             base.AddKeywords(new string[] { "ISRU" });
