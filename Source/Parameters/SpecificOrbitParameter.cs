@@ -211,7 +211,7 @@ namespace FinePrint.Contracts.Parameters
 
             if (HighLogic.LoadedSceneIsFlight)
             {
-                if (this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
+                if (this.Root.ContractState == Contract.State.Active)
                 {
                     if (!beenSetup)
                         setup();
@@ -460,8 +460,33 @@ namespace FinePrint.Contracts.Parameters
             // Argdifference was originally argument of periapsis, but on horizontal orbits, use longitude of periapsis instead.
             if ( horizontal )
             {
-                double vLP = (v.orbit.LAN + v.orbit.argumentOfPeriapsis) % 360;
-                double oLP = (orbitDriver.orbit.LAN + orbitDriver.orbit.argumentOfPeriapsis) % 360;
+                double vLP = 389;
+                double oLP = 32;
+
+                //Prograde, else retrograde.
+                if (Math.Abs(orbitDriver.orbit.inclination) % 360 < 1)
+                {
+                    vLP = (v.orbit.LAN + v.orbit.argumentOfPeriapsis);
+                    oLP = (orbitDriver.orbit.LAN + orbitDriver.orbit.argumentOfPeriapsis);
+                }
+                else
+                {
+                    vLP = (v.orbit.LAN - v.orbit.argumentOfPeriapsis);
+                    oLP = (orbitDriver.orbit.LAN - orbitDriver.orbit.argumentOfPeriapsis);
+                }
+
+                if (vLP > 360)
+                    vLP = vLP - 360;
+                else if (vLP < 0)
+                    vLP = vLP + 360;
+
+                if (oLP > 360)
+                    vLP = vLP - 360;
+                else if (oLP < 0)
+                    vLP = vLP + 360;
+
+                Debug.Log("V: " + vLP);
+                Debug.Log("O: " + oLP);
 
                 argDifference = (float)Math.Abs(vLP - oLP) % 360;
             }
@@ -499,6 +524,7 @@ namespace FinePrint.Contracts.Parameters
             else
                 LANMatch = true;
 
+            Debug.Log(APOMatch + "," + PERMatch + "," + INCMatch + "," + LANMatch + "," + ARGMatch);
             if (APOMatch && PERMatch && INCMatch && LANMatch && ARGMatch)
                 return true;
             else
