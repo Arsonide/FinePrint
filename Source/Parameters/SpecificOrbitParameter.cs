@@ -485,9 +485,6 @@ namespace FinePrint.Contracts.Parameters
                 else if (oLP < 0)
                     vLP = vLP + 360;
 
-                Debug.Log("V: " + vLP);
-                Debug.Log("O: " + oLP);
-
                 argDifference = (float)Math.Abs(vLP - oLP) % 360;
             }
             else
@@ -524,7 +521,6 @@ namespace FinePrint.Contracts.Parameters
             else
                 LANMatch = true;
 
-            Debug.Log(APOMatch + "," + PERMatch + "," + INCMatch + "," + LANMatch + "," + ARGMatch);
             if (APOMatch && PERMatch && INCMatch && LANMatch && ARGMatch)
                 return true;
             else
