@@ -136,7 +136,7 @@ namespace FinePrint.Contracts.Parameters
 
                                 if (deltaResource > 0 && (totalHarvested/goalHarvested) >= notifyLevel)
                                 {
-                                    ScreenMessages.PostScreenMessage("You have extracted " + Math.Round(notifyLevel*100) + "% of " + Root.Agent.Name + "'s " + resourceName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    ScreenMessages.PostScreenMessage("You have extracted " + Math.Round(notifyLevel*100) + "% of " + Util.PossessiveString(Root.Agent.Name) + " " + resourceName + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                     notifyLevel += 0.25f;
                                 }
 
