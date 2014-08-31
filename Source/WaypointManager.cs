@@ -502,6 +502,8 @@ namespace FinePrint
 
         public static void ChooseRandomPosition(out double latitude, out double longitude, string celestialName, bool waterAllowed = true, bool equatorial = false)
         {
+            System.Random generator = new System.Random();
+
             latitude = 0.0;
             longitude = 0.0;
             CelestialBody myPlanet = null;
@@ -522,14 +524,14 @@ namespace FinePrint
                         {
                             if (!equatorial)
                             {
-                                double rand = UnityEngine.Random.value;
+                                double rand = generator.NextDouble();
                                 rand = 1.0 - (rand * 2);
                                 latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                             }
                             else
                                 latitude = 0.0;
 
-                            longitude = UnityEngine.Random.value * 360 - 180;
+                            longitude = generator.NextDouble() * 360 - 180;
                             Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
                             double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
 
@@ -544,14 +546,68 @@ namespace FinePrint
                 {
                     if (!equatorial)
                     {
-                        double rand = UnityEngine.Random.value;
+                        double rand = generator.NextDouble();
                         rand = 1.0 - (rand * 2);
                         latitude = Math.Asin(rand) * UnityEngine.Mathf.Rad2Deg;
                     }
                     else
                         latitude = 0.0;
 
-                    longitude = UnityEngine.Random.value * 360 - 180;
+                    longitude = generator.NextDouble() * 360 - 180;
+                }
+            }
+        }
+
+        public static void ChooseRandomPositionNear(out double latitude, out double longitude, double centerLatitude, double centerLongitude, string celestialName, double searchRadius, bool waterAllowed = true)
+        {
+            latitude = 0.0;
+            longitude = 0.0;
+
+            CelestialBody myPlanet = null;
+            System.Random generator = new System.Random();
+
+            foreach (CelestialBody body in FlightGlobals.Bodies)
+            {
+                if (body.GetName() == celestialName)
+                {
+                    myPlanet = body;
+                }
+            }
+
+            if (myPlanet != null)
+            {
+                if (myPlanet.ocean && !waterAllowed)
+                {
+                    if (myPlanet.pqsController != null)
+                    {
+                        while (true)
+                        {
+                            double distancePerDegree = (myPlanet.Radius * 2 * UnityEngine.Mathf.PI) / 360.0;
+                            double lng_min = centerLongitude - searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
+                            double lng_max = centerLongitude + searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
+                            double lat_min = centerLatitude - (searchRadius / distancePerDegree);
+                            double lat_max = centerLatitude + (searchRadius / distancePerDegree);
+                            latitude = lat_min + generator.NextDouble() * (lat_max - lat_min);
+                            longitude = lng_min + generator.NextDouble() * (lng_max - lng_min);
+                            Vector3d pqsRadialVector = QuaternionD.AngleAxis(longitude, Vector3d.down) * QuaternionD.AngleAxis(latitude, Vector3d.forward) * Vector3d.right;
+                            double chosenHeight = myPlanet.pqsController.GetSurfaceHeight(pqsRadialVector) - myPlanet.pqsController.radius;
+
+                            if (chosenHeight < 0)
+                                continue;
+                            else
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    double distancePerDegree = (myPlanet.Radius * 2 * UnityEngine.Mathf.PI) / 360.0;
+                    double lng_min = centerLongitude - searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
+                    double lng_max = centerLongitude + searchRadius / UnityEngine.Mathf.Abs(UnityEngine.Mathf.Cos(UnityEngine.Mathf.Deg2Rad * (float)centerLatitude) * (float)distancePerDegree);
+                    double lat_min = centerLatitude - (searchRadius / distancePerDegree);
+                    double lat_max = centerLatitude + (searchRadius / distancePerDegree);
+                    latitude = lat_min + generator.NextDouble() * (lat_max - lat_min);
+                    longitude = lng_min + generator.NextDouble() * (lng_max - lng_min);
                 }
             }
         }

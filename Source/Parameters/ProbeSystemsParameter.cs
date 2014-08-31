@@ -15,6 +15,7 @@ namespace FinePrint.Contracts.Parameters
         private bool hasAntenna;
         private bool hasPowerGenerator;
         private int successCounter;
+        bool eventsAdded;
 
         public ProbeSystemsParameter()
         {
@@ -43,14 +44,22 @@ namespace FinePrint.Contracts.Parameters
             this.DisableOnStateChange = false;
             hasAntenna = false;
             hasPowerGenerator = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
         }
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
         }
 
         private void FlightReady()

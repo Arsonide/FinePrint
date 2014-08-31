@@ -34,7 +34,7 @@ namespace FinePrint.Contracts
                     activeContracts++;
             }
 
-            if (offeredContracts >= 2 || activeContracts >= 4)
+            if (offeredContracts >= FPConfig.Rover.MaximumAvailable || activeContracts >= FPConfig.Rover.MaximumActive)
                 return false;
 
 			System.Random generator = new System.Random(this.MissionSeed);
@@ -46,34 +46,78 @@ namespace FinePrint.Contracts
 
 			targetBody = bodies[generator.Next(0, bodies.Count)];
 
-			if (targetBody.GetName() == "Jool")
+            if (Util.IsGasGiant(targetBody))
 			{
-				targetBody = Util.RandomJoolianMoon();
+				targetBody = Util.RandomNeighbor(MissionSeed, targetBody, false);
 
-				if (targetBody.GetName() == "Jool" || targetBody == null)
+				if (Util.IsGasGiant(targetBody) || targetBody == null)
 					return false;
 			}
 
 			int waypointCount = 0;
+            float fundsMultiplier = 1;
+            float scienceMultiplier = 1;
+            float reputationMultiplier = 1;
+            float wpFundsMultiplier = 1;
+            float wpScienceMultiplier = 1;
+            float wpReputationMultiplier = 1;
 
-			if (this.prestige == Contract.ContractPrestige.Trivial)
-			{
-				waypointCount = 3;
-				range = 1000 + 1000 * targetBody.GeeASL;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Significant)
-			{
-				waypointCount = 5;
-				range = 2000 + 2000 * targetBody.GeeASL;
-			}
-			else if (this.prestige == Contract.ContractPrestige.Exceptional)
-			{
-				waypointCount = 7;
-				range = 3000 + 3000 * targetBody.GeeASL;
-			}
+			switch(this.prestige)
+            {
+                case ContractPrestige.Trivial:
+                    waypointCount = FPConfig.Rover.TrivialWaypoints;
+                    range = FPConfig.Rover.TrivialRange;
 
-			WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
-			int secret = UnityEngine.Random.Range(0, waypointCount);
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.TrivialHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.TrivialHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
+                    break;
+                case ContractPrestige.Significant:
+                    waypointCount = FPConfig.Rover.SignificantWaypoints;
+                    range = FPConfig.Rover.SignificantRange;
+                    fundsMultiplier = FPConfig.Rover.Funds.SignificantMultiplier;
+                    scienceMultiplier = FPConfig.Rover.Science.SignificantMultiplier;
+                    reputationMultiplier = FPConfig.Rover.Reputation.SignificantMultiplier;
+                    wpFundsMultiplier = FPConfig.Rover.Funds.WaypointSignificantMultiplier;
+                    wpScienceMultiplier = FPConfig.Rover.Science.WaypointSignificantMultiplier;
+                    wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointSignificantMultiplier;
+
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.SignificantHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.SignificantHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
+                    break;
+                case ContractPrestige.Exceptional:
+                    waypointCount = FPConfig.Rover.ExceptionalWaypoints;
+                    range = FPConfig.Rover.ExceptionalRange;
+                    fundsMultiplier = FPConfig.Rover.Funds.ExceptionalMultiplier;
+                    scienceMultiplier = FPConfig.Rover.Science.ExceptionalMultiplier;
+                    reputationMultiplier = FPConfig.Rover.Reputation.ExceptionalMultiplier;
+                    wpFundsMultiplier = FPConfig.Rover.Funds.WaypointExceptionalMultiplier;
+                    wpScienceMultiplier = FPConfig.Rover.Science.WaypointExceptionalMultiplier;
+                    wpReputationMultiplier = FPConfig.Rover.Reputation.WaypointExceptionalMultiplier;
+
+                    range /= 2;
+                    range = range + range * targetBody.GeeASL;
+
+                    if (generator.Next(0, 100) < FPConfig.Rover.ExceptionalHomeNearbyChance && targetBody == Planetarium.fetch.Home)
+                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Rover.ExceptionalHomeNearbyRange, false);
+                    else
+                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), false, false);
+
+                    break;
+            }
+
+            int secret = generator.Next(0, waypointCount);
 
 			for (int x = 0; x < waypointCount; x++)
 			{
@@ -84,16 +128,17 @@ namespace FinePrint.Contracts
 				else
 					newParameter = this.AddParameter(new RoverWaypointParameter(x, targetBody, centerLatitude, centerLongitude, range, false), null);
 
-				newParameter.SetFunds(5000.0f, targetBody);
-				newParameter.SetReputation(10.0f, targetBody);
-                newParameter.SetScience(10.0f, targetBody);
+				newParameter.SetFunds(Mathf.Round(FPConfig.Rover.Funds.WaypointBaseReward * wpFundsMultiplier), targetBody);
+                newParameter.SetScience(Mathf.Round(FPConfig.Rover.Science.WaypointBaseReward * wpScienceMultiplier), targetBody);
+                newParameter.SetReputation(Mathf.Round(FPConfig.Rover.Reputation.WaypointBaseReward * wpReputationMultiplier), targetBody);
 			}
 
 			base.AddKeywords(new string[] { "roversearch" });
-			base.SetExpiry();
-			base.SetDeadlineYears(5.0f, targetBody);
-			base.SetFunds(4000.0f, 17500.0f, targetBody);
-			base.SetReputation(50.0f, 25.0f, targetBody);
+            base.SetExpiry(FPConfig.Rover.Expire.MinimumExpireDays, FPConfig.Rover.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.Rover.Expire.DeadlineDays, targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.Rover.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.Rover.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.Rover.Funds.BaseFailure * fundsMultiplier), targetBody);
+            base.SetScience(Mathf.Round(FPConfig.Rover.Science.BaseReward * scienceMultiplier), targetBody);
+			base.SetReputation(Mathf.Round(FPConfig.Rover.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.Rover.Reputation.BaseFailure * reputationMultiplier), targetBody);
             return true;
 		}
 
@@ -135,6 +180,7 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
+            Util.CheckForPatchReset();
 			Util.LoadNode(node, "RoverContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
 			Util.LoadNode(node, "RoverContract", "centerLatitude", ref centerLatitude, 0.0);
 			Util.LoadNode(node, "RoverContract", "centerLongitude", ref centerLongitude, 0.0);

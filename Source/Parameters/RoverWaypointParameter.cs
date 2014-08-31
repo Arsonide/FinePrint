@@ -93,9 +93,9 @@ namespace FinePrint.Contracts.Parameters
             if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
             {
                 wp.celestialName = targetBody.GetName();
-                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                 wp.seed = Root.MissionSeed;
                 wp.id = waypointID;
+                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                 wp.setName(false);
                 wp.waypointType = WaypointType.ROVER;
                 wp.altitude = 0.0;
@@ -111,9 +111,9 @@ namespace FinePrint.Contracts.Parameters
                 if (this.Root.ContractState != Contract.State.Completed)
                 {
                     wp.celestialName = targetBody.GetName();
-                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                     wp.seed = Root.MissionSeed;
                     wp.id = waypointID;
+                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, false);
                     wp.setName(false);
                     wp.waypointType = WaypointType.ROVER;
                     wp.altitude = 0.0;
@@ -143,19 +143,19 @@ namespace FinePrint.Contracts.Parameters
                             {
                                 distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > 2000 && outerWarning)
+                                if (distanceToWP > FPConfig.Rover.TriggerRange * 2 && outerWarning)
                                 {
                                     outerWarning = false;
                                     ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP <= 2000 && !outerWarning)
+                                if (distanceToWP <= FPConfig.Rover.TriggerRange * 2 && !outerWarning)
                                 {
                                     outerWarning = true;
                                     ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP < 100)
+                                if (distanceToWP < FPConfig.Rover.TriggerRange)
                                 {
                                     if (Util.hasWheelsOnGround())
                                     {
@@ -163,11 +163,9 @@ namespace FinePrint.Contracts.Parameters
                                         {
                                             ScreenMessages.PostScreenMessage("This is the source of the anomalous data that we've been looking for in " + wp.tooltip + "!", 5.0f, ScreenMessageStyle.UPPER_LEFT);
 
-                                            base.SetComplete();
-
                                             foreach (RoverWaypointParameter parameter in Root.AllParameters)
                                             {
-                                                if (parameter != null)
+                                                if (parameter != null && parameter != this)
                                                 {
                                                     if (parameter.State != ParameterState.Complete)
                                                     {
@@ -175,10 +173,12 @@ namespace FinePrint.Contracts.Parameters
                                                         WaypointManager.deactivateNavPoint(wp);
                                                         WaypointManager.RemoveWaypoint(parameter.wp);
                                                         parameter.submittedWaypoint = false;
+                                                        parameter.SetComplete();
                                                     }
                                                 }
                                             }
 
+                                            base.SetComplete();
                                             Root.Complete();
                                         }
                                         else

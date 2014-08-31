@@ -17,9 +17,6 @@ public class NavWaypoint : MonoBehaviour
 {
 	private NavBall navBallBehaviour;
 	private GameObject indicator;
-
-    private Color color;
-    private string texture;
     private CelestialBody targetBody;
     public double latitude;
     public double longitude;

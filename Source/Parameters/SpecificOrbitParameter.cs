@@ -43,6 +43,13 @@ namespace FinePrint.Contracts.Parameters
         private double epoch;
         public CelestialBody targetBody;
         private const int numSpinners = 8;
+        bool eventsAdded;
+        bool horizontal = false;
+        bool APOMatch = false;
+        bool PERMatch = false;
+        bool INCMatch = false;
+        bool LANMatch = false;
+        bool ARGMatch = false;
 
         public SpecificOrbitParameter()
         {
@@ -92,23 +99,23 @@ namespace FinePrint.Contracts.Parameters
                 case OrbitType.POLAR:
                     return "Reach the designated polar orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.KOLNIYA:
-                    return "Reach the designated Kolniya orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                    return "Reach the designated " + Util.TitleCase(FPConfig.MolniyaName) + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.TUNDRA:
                     return "Reach the designated tundra orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.STATIONARY:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Reach keliostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.SunStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Reach keostationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.HomeStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach stationary orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach " + FPConfig.OtherStationaryName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 case OrbitType.SYNCHRONOUS:
                     if (targetBody == Planetarium.fetch.Sun)
-                        return "Reach the designated keliosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.SunSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else if (targetBody == Planetarium.fetch.Home)
-                        return "Reach the designated keosynchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.HomeSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                     else
-                        return "Reach the designated synchronous orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
+                        return "Reach the designated " + FPConfig.OtherSynchronousName.ToLower() + " orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
                 default:
                     return "Reach the designated orbit around " + targetBody.theName + " with a deviation of less than " + Math.Round(deviationWindow) + "%";
             }
@@ -125,23 +132,40 @@ namespace FinePrint.Contracts.Parameters
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
                 notes += "\n";
 
-            notes += "Orbit Specifics:\nApoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + " meters\nPeriapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + " meters\nInclination: " + Math.Round(inclination, 1) + " degrees\nLongitude of Ascending Node: " + Math.Round(lan, 1) + " degrees";
+            string lanString = "Undefined";
+            string argString = "Undefined";
+
+            if (Math.Abs(inclination) % 180 >= 1)
+                lanString = Math.Round(lan, 1).ToString() + " degrees";
+
+            if (eccentricity > 0.05)
+                argString = Math.Round(argumentOfPeriapsis, 1).ToString() + " degrees";
+
+            notes += "Orbit Specifics:\nApoapsis: " + Convert.ToDecimal(Math.Round(ApA)).ToString("#,###") + " meters\nPeriapsis: " + Convert.ToDecimal(Math.Round(PeA)).ToString("#,###") + " meters\nInclination: " + Math.Round(inclination, 1) + " degrees\nLongitude of Ascending Node: " + lanString + "\nArgument of Periapsis: " + argString;
 
             return notes;
         }
 
-        // Fuck. You. State. Bugs.
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
         }
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
+
             cleanup();
         }
 
@@ -187,7 +211,7 @@ namespace FinePrint.Contracts.Parameters
 
             if (HighLogic.LoadedSceneIsFlight)
             {
-                if (this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
+                if (this.Root.ContractState == Contract.State.Active)
                 {
                     if (!beenSetup)
                         setup();
@@ -385,10 +409,8 @@ namespace FinePrint.Contracts.Parameters
             orbitDriver.orbit.meanAnomalyAtEpoch = meanAnomalyAtEpoch;
             orbitDriver.orbit.epoch = epoch;
             orbitDriver.orbit.Init();
-            //These lines unfortunately cannot be saved. They must be run after every load, or the orbit normals will be inaccurate.
-            Vector3d pos = orbitDriver.orbit.getRelativePositionAtUT(0.0);
-            Vector3d vel = orbitDriver.orbit.getOrbitalVelocityAtUT(0.0);
-            orbitDriver.orbit.h = Vector3d.Cross(pos, vel);
+            //The orbit needs to be post processed in an appropriate scene, or it will be useless.
+            Util.PostProcessOrbit(ref orbitDriver.orbit);
 
             orbitDriver.orbitColor = WaypointManager.RandomColor(Root.MissionSeed);
 
@@ -425,15 +447,48 @@ namespace FinePrint.Contracts.Parameters
                 return false;
 
             //Apoapsis and periapsis account for eccentricity and semi major axis, but are more reliable.
-            bool APOMatch = withinDeviation(v.orbit.PeA, orbitDriver.orbit.PeA, deviationWindow);
-            bool PERMatch = withinDeviation(v.orbit.ApA, orbitDriver.orbit.ApA, deviationWindow);
+            PERMatch = withinDeviation(v.orbit.PeA, orbitDriver.orbit.PeA, deviationWindow);
+            APOMatch = withinDeviation(v.orbit.ApA, orbitDriver.orbit.ApA, deviationWindow);
             //Sometimes inclinations go negative in KSP.
-            bool INCMatch = Math.Abs(Math.Abs(v.orbit.inclination) - Math.Abs(orbitDriver.orbit.inclination)) <= (deviationWindow / 100) * 90;
-            bool horizontal = (Math.Abs(orbitDriver.orbit.inclination) % 180 < 1);
-            bool LANMatch = false;
-            bool ARGMatch = false;
+            INCMatch = Math.Abs(Math.Abs(v.orbit.inclination) - Math.Abs(orbitDriver.orbit.inclination)) <= (deviationWindow / 100) * 90;
+            horizontal = (Math.Abs(orbitDriver.orbit.inclination) % 180 < 1);
+            LANMatch = false;
+            ARGMatch = false;
 
-            float argDifference = (float)Math.Abs(v.orbit.argumentOfPeriapsis - orbitDriver.orbit.argumentOfPeriapsis) % 360;
+            float argDifference = 0f;
+            
+            // Argdifference was originally argument of periapsis, but on horizontal orbits, use longitude of periapsis instead.
+            if ( horizontal )
+            {
+                double vLP = 389;
+                double oLP = 32;
+
+                //Prograde, else retrograde.
+                if (Math.Abs(orbitDriver.orbit.inclination) % 360 < 1)
+                {
+                    vLP = (v.orbit.LAN + v.orbit.argumentOfPeriapsis);
+                    oLP = (orbitDriver.orbit.LAN + orbitDriver.orbit.argumentOfPeriapsis);
+                }
+                else
+                {
+                    vLP = (v.orbit.LAN - v.orbit.argumentOfPeriapsis);
+                    oLP = (orbitDriver.orbit.LAN - orbitDriver.orbit.argumentOfPeriapsis);
+                }
+
+                if (vLP > 360)
+                    vLP = vLP - 360;
+                else if (vLP < 0)
+                    vLP = vLP + 360;
+
+                if (oLP > 360)
+                    vLP = vLP - 360;
+                else if (oLP < 0)
+                    vLP = vLP + 360;
+
+                argDifference = (float)Math.Abs(vLP - oLP) % 360;
+            }
+            else
+                argDifference = (float)Math.Abs(v.orbit.argumentOfPeriapsis - orbitDriver.orbit.argumentOfPeriapsis) % 360;
 
             if (argDifference > 180)
                 argDifference = 360 - argDifference;

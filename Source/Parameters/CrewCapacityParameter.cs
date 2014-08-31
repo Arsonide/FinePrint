@@ -14,6 +14,7 @@ namespace FinePrint.Contracts.Parameters
 	{
 		private int targetCapacity;
         private int successCounter;
+        bool eventsAdded;
 
 		public CrewCapacityParameter()
 		{
@@ -37,18 +38,26 @@ namespace FinePrint.Contracts.Parameters
 			return "Have a facility supporting at least " + Util.integerToWord(targetCapacity) + " kerbals";
 		}
 
-        // Fuck. You. State. Bugs.
 		protected override void OnRegister()
 		{
 			this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+            eventsAdded = false;
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
 		}
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
         }
 
         private void FlightReady()

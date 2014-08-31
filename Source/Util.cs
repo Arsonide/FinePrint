@@ -9,13 +9,22 @@ using Contracts.Parameters;
 using KSP;
 using KSPAchievements;
 using FinePrint.Contracts.Parameters;
+using KSP.IO;
+using FinePrint.Contracts;
 
 namespace FinePrint
 {
-	class Util
+    public enum LoadResult
+    {
+        NULL,
+        NOVALUE,
+        INVALID,
+        SUCCESS
+    }
+
+	public class Util
     {
         public const int frameSuccessDelay = 5;
-        static public bool patchReset = false;
 
         #region Vessel Loops
 
@@ -212,7 +221,7 @@ namespace FinePrint
 
         public static bool haveTechnology(string tech)
 		{
-			tech.Replace('_', '.');
+			tech = tech.Replace('_', '.');
 			AvailablePart ap = PartLoader.getPartInfoByName(tech);
 
 			if (ap != null)
@@ -221,7 +230,7 @@ namespace FinePrint
 					return true;
 			}
 			else
-				Debug.LogWarning("Fine Print: Attempted to check for nonexistent technology.");
+				Debug.LogWarning("Fine Print: Attempted to check for nonexistent technology: \"" + tech + "\".");
 
 			return false;
 		}
@@ -261,14 +270,16 @@ namespace FinePrint
 		public static string generateSiteName(int seed, bool isAtHome)
 		{
 			List<string> prefix = new List<string> { "Jebediah's", "Bill's", "Bob's", "Wernher's", "Gene's", "Dinkelstein's", "Dawton's", "Eumon's", "Bobak's", "Kirrim's", "Kerman's", "Kerbin's", "Scientist's", "Engineer's", "Pilot's", "Kerbonaut's", "Kraken's", "Scott's", "Nerd's", "Manley's" };
-			List<string> suffix = new List<string> { "Folly", "Hope", "Legacy", "Doom", "Rock", "Gambit", "Bane", "End", "Drift", "Frontier", "Pride", "Retreat", "Escape", "Legend", "Sector", "Abyss", "Void", "Vision", "Wisdom", "Refuge", "Doubt", "Redemption", "Anomaly", "Trek", "Monolith", "Emitter", "Wonder", "Lament", "Hindsight", "Mistake", "Isolation", "Hole", "Jest", "Stretch", "Scar", "Surprise", "Whim", "Whimsy", "Target", "Insanity", "Goal", "Dirge", "Adventure", "Fate", "Point", "Decent", "Ascent", "Dawn", "Dusk" };
-			List<string> kerbinSuffix = new List<string> { "Backyard", "Bar and Grill", "Junkyard", "Lab", };
+			List<string> suffix = new List<string> { "Folly", "Hope", "Legacy", "Doom", "Rock", "Gambit", "Bane", "End", "Drift", "Frontier", "Pride", "Retreat", "Escape", "Legend", "Sector", "Abyss", "Void", "Vision", "Wisdom", "Refuge", "Doubt", "Redemption", "Anomaly", "Trek", "Monolith", "Emitter", "Wonder", "Lament", "Hindsight", "Mistake", "Isolation", "Hole", "Jest", "Stretch", "Scar", "Surprise", "Whim", "Whimsy", "Target", "Insanity", "Goal", "Dirge", "Adventure", "Fate", "Point", "Descent", "Ascent", "Dawn", "Dusk" };
+			List<string> kerbinSuffix = new List<string> { "Backyard", "Bar and Grill", "Junkyard", "Lab", "Testing Range", "Quarantine Zone", "Snack Pile", "Headquarters", "Discount Warehouse", };
 			List<string> alphaNumeric = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", };
-			List<string> developerNames = new List<string> { "Ayarza's", "Goya's", "Falanghe's", "Mora's", "Geelan's", "Salcedo's", "Jenkins'", "Rosas'", "Safi's", "Benjaminsen's", "Piña's", "Montaño's", "Holtzman's", "Everett's", "Guzzardo's", "Reyes'", "Dominguez'", "Gutiérrez'", "Demeneghi's", "Vázquez'", "Rosas'", "Maqueo's", "Silisko's", "Keeton's", "Kupperian's", "Chiarello's", "Zuev's", "Nelson's" };
+			List<string> developerNames = new List<string> { "Ayarza's", "Goya's", "Falanghe's", "Mora's", "Geelan's", "Salcedo's", "Jenkins'", "Rosas'", "Safi's", "Benjaminsen's", "Pina's", "Montano's", "Holtzman's", "Everett's", "Guzzardo's", "Reyes'", "Dominguez'", "Gutierrez'", "Demeneghi's", "Vazquez'", "Rosas'", "Maqueo's", "Silisko's", "Keeton's", "Kupperian's", "Chiarello's", "Zuev's", "Nelson's" };
 			System.Random generator = new System.Random(seed);
 			string siteName = "";
 
-			if (generator.Next(0, 101) > 75)
+            int namedChance = isAtHome ? 50 : 25;
+
+			if (generator.Next(0, 101) < namedChance)
 			{
 				if (isAtHome)
 					suffix.AddRange(kerbinSuffix);
@@ -333,42 +344,6 @@ namespace FinePrint
 			return roverFail[generator.Next(0, roverFail.Count)];
 		}
 
-		public static CelestialBody RandomJoolianMoon()
-		{
-			int randomMoon = UnityEngine.Random.Range(0, 5);
-			string targetMoon = "Laythe";
-
-			switch (randomMoon)
-			{
-				case 0:
-					targetMoon = "Laythe";
-					break;
-				case 1:
-					targetMoon = "Vall";
-					break;
-				case 2:
-					targetMoon = "Tylo";
-					break;
-				case 3:
-					targetMoon = "Bop";
-					break;
-				case 4:
-					targetMoon = "Pol";
-					break;
-				default:
-					targetMoon = "Laythe";
-					break;
-			}
-
-			foreach (CelestialBody body in FlightGlobals.Bodies)
-			{
-				if (body.GetName() == targetMoon)
-					return body;
-			}
-
-			return null;
-		}
-
 		public static string integerToWord(int x)
 		{
 			string[] integerMap = new string[21] { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty" };
@@ -386,225 +361,161 @@ namespace FinePrint
 			return greekMap[x];
 		}
 
-        #region LoadNode Overloads
-        // LoadNode does a variety of things. It fixes broken saves, for one. It keeps consistency and helps me root out bugs, for two.
-		// It could be implemented as a template, but then I'd need to do a bunch of reflection, so instead I have a lot of overloads.
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref double value, double defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = double.TryParse(node.GetValue(nameOfValue), out value);
-
-            if (!hasValue)
-                Debug.LogWarning("Fine Print" + nameOfClass + " does not have " + nameOfValue + "!");
-
-            if (!parsed)
-                Debug.LogWarning("Fine Print" + nameOfClass + " could not parse " + nameOfValue +"! String: " + node.GetValue(nameOfValue));
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-                resetBoard();
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref float value, float defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = float.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-                resetBoard();
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref int value, int defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = int.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-                resetBoard();
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref bool value, bool defaultValue)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-				parsed = bool.TryParse(node.GetValue(nameOfValue), out value);
-
-			if (!hasValue || !parsed)
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-                resetBoard();
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref string value, string defaultValue)
-		{
-			if (node.HasValue(nameOfValue))
-				value = node.GetValue(nameOfValue);
-			else
-			{
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultValue + "!");
-				value = defaultValue;
-                resetBoard();
-			}
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref CelestialBody body, CelestialBody defaultBody)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-			{
-				int bodyID = 0;
-				parsed = int.TryParse(node.GetValue(nameOfValue), out bodyID);
-
-				if (parsed)
-				{
-					foreach (var cb in FlightGlobals.Bodies)
-					{
-						if (cb.flightGlobalsIndex == bodyID)
-							body = cb;
-					}
-				}
-			}
-
-			if (!hasValue || !parsed)
-			{
-				body = Planetarium.fetch.Home;
-				Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of " + defaultBody.GetName() + "!");
-                resetBoard();
-            }
-		}
-
-		public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref Vessel.Situations situation, Vessel.Situations defaultSituation)
-		{
-			bool hasValue = node.HasValue(nameOfValue);
-			bool parsed = false;
-
-			if (hasValue)
-			{
-				int loadedSituationInteger = 0;
-				parsed = int.TryParse(node.GetValue(nameOfValue), out loadedSituationInteger);
-				situation = (Vessel.Situations)loadedSituationInteger;
-			}
-
-			if (!hasValue || !parsed)
-			{
-				switch (defaultSituation)
-				{
-					case Vessel.Situations.PRELAUNCH:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of PRELAUNCH!");
-						break;
-					case Vessel.Situations.SPLASHED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SPLASHED!");
-						break;
-					case Vessel.Situations.SUB_ORBITAL:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SUB_ORBITAL!");
-						break;
-					case Vessel.Situations.ORBITING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of ORBITING!");
-						break;
-					case Vessel.Situations.LANDED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of LANDED!");
-						break;
-					case Vessel.Situations.FLYING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of FLYING!");
-						break;
-					case Vessel.Situations.ESCAPING:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of ESCAPING!");
-						break;
-					case Vessel.Situations.DOCKED:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of DOCKED!");
-						break;
-					default:
-						Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
-						break;
-				}
-
-				situation = defaultSituation;
-                resetBoard();
-			}
+        private static string ShortName(string verbose)
+        {
+            //Aerial.Funds.BaseComplete => BaseComplete
+            return verbose.Substring(verbose.LastIndexOf(".") + 1);
         }
 
-        public static void LoadNode(ConfigNode node, string nameOfClass, string nameOfValue, ref OrbitType orbitType, OrbitType defaultOrbitType)
+        public static bool TryConvert<T>(string input, out T value, ref string error)
         {
-            bool hasValue = node.HasValue(nameOfValue);
-            bool parsed = false;
-
-            if (hasValue)
+            if (typeof(T).IsEnum)
             {
-                int loadedOrbitTypeInteger = 0;
-                parsed = int.TryParse(node.GetValue(nameOfValue), out loadedOrbitTypeInteger);
-                orbitType = (OrbitType)loadedOrbitTypeInteger;
+                try
+                {
+                    value = (T)Enum.Parse(typeof(T), input);
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    error = e.ToString();
+                    value = default(T);
+                    return false;
+                }
+            }
+            else
+            {
+                try
+                {
+                    value = (T)System.Convert.ChangeType(input, typeof(T));
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    error = e.ToString();
+                    value = default(T);
+                    return false;
+                }
+            }
+        }
+
+        public static void LoadNode<T>(ConfigNode node, string className, string valueName, ref T value, T defaultValue)
+        {
+            LoadResult result = LoadResult.NULL;
+            string error = "";
+
+            if (node == null)
+                result = LoadResult.NULL;
+            else
+            {
+                string shortName = ShortName(valueName);
+
+                if (node.HasValue(shortName))
+                {
+                    if (typeof(T) == typeof(CelestialBody))
+                    {
+                        int bodyIndex = 0;
+                        if (!TryConvert<int>(node.GetValue(shortName), out bodyIndex, ref error))
+                            result = LoadResult.INVALID;
+                        else
+                        {
+                            CelestialBody body = null;
+
+                            foreach (var cb in FlightGlobals.Bodies)
+                            {
+                                if (cb.flightGlobalsIndex == bodyIndex)
+                                    body = cb;
+                            }
+
+                            if (body == null)
+                            {
+                                error = "CelestialException: Celestial body is out of range.";
+                                result = LoadResult.INVALID;
+                            }
+                            else
+                            {
+                                value = (T)(object)body;
+                                result = LoadResult.SUCCESS;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!TryConvert<T>(node.GetValue(shortName), out value, ref error))
+                            result = LoadResult.INVALID;
+                        else
+                            result = LoadResult.SUCCESS;
+                    }
+                }
+                else
+                    result = LoadResult.NOVALUE;
             }
 
-            if (!hasValue || !parsed)
+            if (result != LoadResult.SUCCESS)
             {
-                switch (defaultOrbitType)
+                switch (result)
                 {
-                    case OrbitType.EQUATORIAL:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of EQUATORIAL!");
-						break;
-                    case OrbitType.POLAR:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of POLAR!");
-						break;
-                    case OrbitType.RANDOM:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of RANDOM!");
-						break;
-                    case OrbitType.STATIONARY:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of STATIONARY!");
-						break;
-                    case OrbitType.SYNCHRONOUS:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of SYNCHRONOUS!");
-						break;
-                    case OrbitType.KOLNIYA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of KOLNIYA!");
+                    case LoadResult.NULL:
+                        Debug.LogWarning("Fine Print: " + className + " cannot load " + valueName + " from a null node. Initializing with default of " + defaultValue + "!");
                         break;
-                    case OrbitType.TUNDRA:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of TUNDRA!");
+                    case LoadResult.NOVALUE:
+                        Debug.LogWarning("Fine Print: " + className + " cannot load " + valueName + ", it is not in the node. Initializing with default of " + defaultValue + "!");
                         break;
-                    default:
-                        Debug.LogWarning("Fine Print" + nameOfClass + " failed to load " + nameOfValue + ", initializing with default of UNKNOWN!");
+                    case LoadResult.INVALID:
+                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value from " + valueName + ". (" + error + "). Initializing with default of " + defaultValue + "!");
                         break;
                 }
 
-                orbitType = defaultOrbitType;
-                resetBoard();
+                value = defaultValue;
             }
         }
-        #endregion
 
-        public static void resetBoard()
+        public static void CheckForPatchReset()
         {
-            if (!patchReset)
+            if (FPConfig.PatchReset == false)
+                return;
+
+            FPConfig.PatchReset = false;
+
+            FPConfig.config.GetNode("FinePrint").SetValue("PatchReset", FPConfig.PatchReset.ToString());
+            FPConfig.config.Save(FPConfig.ConfigFileName);
+
+            Debug.LogError("Fine Print has been patched and will now reset all Fine Print contracts.");
+
+            foreach (AerialContract c in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
             {
-                Debug.LogError("Fine Print has detected save game incompatibilities and is resetting the contract board to fix them. This usually happens after a patch.");
-                ContractSystem.Instance.ClearContractsCurrent();
-                patchReset = true;
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (ARMContract c in ContractSystem.Instance.GetCurrentContracts<ARMContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (BaseContract c in ContractSystem.Instance.GetCurrentContracts<BaseContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (RoverContract c in ContractSystem.Instance.GetCurrentContracts<RoverContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (SatelliteContract c in ContractSystem.Instance.GetCurrentContracts<SatelliteContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
+            }
+
+            foreach (StationContract c in ContractSystem.Instance.GetCurrentContracts<StationContract>())
+            {
+                c.Unregister();
+                ContractSystem.Instance.Contracts.Remove(c);
             }
         }
 
@@ -783,7 +694,8 @@ namespace FinePrint
             System.Random generator = new System.Random(seed);
 
             //Initialize all the things.
-            double inc = (generator.NextDouble() * 90.0) * difficultyFactor;
+            //Default inclination needs to be greater than one, just...just trust me on this.
+            double inc = Math.Max(1, (generator.NextDouble() * 90.0) * difficultyFactor);
             double desiredPeriapsis = 0.0;
             double desiredApoapsis = 0.0;
             double pointA = 0.0;
@@ -792,6 +704,7 @@ namespace FinePrint
             double easeFactor = 1.0 - difficultyFactor;
             double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
             o.referenceBody = targetBody;
+            o.LAN = generator.NextDouble() * 360.0;
 
             //If it chooses the sun, the infinite SOI can cause NAN, so choose Eeloo's altitude instead.
             //Use 90% of the SOI to give a little leeway for error correction.
@@ -850,7 +763,11 @@ namespace FinePrint
             if (orbitType == OrbitType.POLAR)
                 inc = 90;
             else if (orbitType == OrbitType.EQUATORIAL || orbitType == OrbitType.STATIONARY)
+            {
                 inc = 0;
+                o.an = Vector3.zero;
+                o.LAN = 0.0;
+            }
 
             //Retrograde orbits are harder on Kerbin and the Sun, but otherwise, 50% chance.
             //Kolniya and Tundra have invalid inclinations until this point.
@@ -886,15 +803,108 @@ namespace FinePrint
             }
 
             o.inclination = inc;
-            o.LAN = generator.NextDouble() * 360.0;
             o.meanAnomalyAtEpoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
             o.epoch = (double)0.999f + generator.NextDouble() * (1.001 - 0.999);
             o.Init();
-            Vector3d pos = o.getRelativePositionAtUT(0.0);
-            Vector3d vel = o.getOrbitalVelocityAtUT(0.0);
-            o.h = Vector3d.Cross(pos, vel);
-
+            PostProcessOrbit(ref o);
             return o;
+        }
+
+        public static void PostProcessOrbit(ref Orbit o)
+        {
+            if (HighLogic.LoadedSceneHasPlanetarium)
+            {
+                //These values can only be set in an appropriate scene. Setting them when the contract is generated is meaningless and will cause bad things to happen.
+                o.UpdateFromStateVectors(o.getRelativePositionAtUT(0.0), o.getOrbitalVelocityAtUT(0.0), o.referenceBody, 0.0);
+            }
+        }
+
+        public static string TitleCase(string str)
+        {
+            return System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str);
+        }
+
+        public static CelestialBody RandomNeighbor(int seed, CelestialBody body, bool allowSun)
+        {
+            bool hasChildren = true;
+            bool hasParent = true;
+
+            System.Random generator = new System.Random(seed);
+
+            if (body.orbitingBodies.Count <= 0)
+                hasChildren = false;
+
+            if (body.referenceBody == Planetarium.fetch.Sun && !allowSun)
+                hasParent = false;
+
+            if (body == Planetarium.fetch.Sun)
+                hasParent = false;
+
+            if (hasParent && hasChildren)
+            {
+                if (generator.Next(0, 100) > 50)
+                    return body.orbitingBodies[generator.Next(0, body.orbitingBodies.Count)];
+                else
+                    return body.referenceBody;
+            }
+            else if (!hasParent && hasChildren)
+                return body.orbitingBodies[generator.Next(0, body.orbitingBodies.Count)];
+            else if (hasParent && !hasChildren)
+                return body.referenceBody;
+            else
+                return null;
+        }
+
+        public static bool IsGasGiant(CelestialBody body)
+        {
+            if (body == null)
+                return false;
+
+            return (body.pqsController == null);
+        }
+
+        public static Vessel.Situations ApplicableSituation(int seed, CelestialBody body, bool splashAllowed)
+        {
+            System.Random generator = new System.Random(seed);
+            List<Vessel.Situations> sitList = new List<Vessel.Situations>();
+
+            sitList.Add(Vessel.Situations.ORBITING);
+
+            if (body.ocean && splashAllowed)
+                sitList.Add(Vessel.Situations.SPLASHED);
+
+            if (!IsGasGiant(body))
+                sitList.Add(Vessel.Situations.LANDED);
+
+            return sitList[generator.Next(0, sitList.Count)];
+        }
+
+        public static double ResourcesOnVessel(Vessel v, string resourceName)
+        {
+            double totalAmount = 0.0;
+
+            if (v != null)
+            {
+                foreach (Part part in v.Parts)
+                {
+                    if (part.Resources.Contains(resourceName))
+                    {
+                        totalAmount += part.Resources[resourceName].amount;
+                    }
+                }
+            }
+
+            return totalAmount;
+        }
+
+        public static string PossessiveString(string thing)
+        {
+            if (thing.EndsWith("s"))
+                thing += "'";
+            else
+                thing += "'s";
+
+            return thing;
         }
     }
 }

@@ -17,6 +17,7 @@ namespace FinePrint.Contracts.Parameters
         private bool submittedWaypoint;
         private double longitude;
         private int successCounter;
+        bool eventsAdded;
 
         // Game freaks out without a default constructor. I never use it.
         public StationaryPointParameter()
@@ -55,14 +56,22 @@ namespace FinePrint.Contracts.Parameters
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
-            GameEvents.onFlightReady.Add(FlightReady);
-            GameEvents.onVesselChange.Add(VesselChange);
+
+            if (Root.ContractState == Contract.State.Active)
+            {
+                GameEvents.onFlightReady.Add(FlightReady);
+                GameEvents.onVesselChange.Add(VesselChange);
+                eventsAdded = true;
+            }
         }
 
         protected override void OnUnregister()
         {
-            GameEvents.onFlightReady.Remove(FlightReady);
-            GameEvents.onVesselChange.Remove(VesselChange);
+            if (eventsAdded)
+            {
+                GameEvents.onFlightReady.Remove(FlightReady);
+                GameEvents.onVesselChange.Remove(VesselChange);
+            }
 
             if (submittedWaypoint)
                 WaypointManager.RemoveWaypoint(wp);
@@ -90,7 +99,7 @@ namespace FinePrint.Contracts.Parameters
             Util.LoadNode(node, "FlightWaypointParameter", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "FlightWaypointParameter", "longitude", ref longitude, 0.0);
 
-            if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
+            if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active)
             {
                 wp.celestialName = targetBody.GetName();
                 wp.latitude = 0.0;
@@ -139,11 +148,7 @@ namespace FinePrint.Contracts.Parameters
 
                         if (submittedWaypoint && v.mainBody == targetBody)
                         {
-                            double anglediff = Math.Abs(v.longitude - longitude);
-
-                            if (anglediff >= 180)
-                                anglediff = 360 - anglediff;
-
+                            double anglediff = 180 - Math.Abs(Math.Abs(v.longitude - longitude) - 180); 
                             bool longitudeMatch = (anglediff <= 45);
 
                             if (this.State == ParameterState.Incomplete)

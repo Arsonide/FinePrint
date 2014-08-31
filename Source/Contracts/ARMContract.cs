@@ -27,8 +27,12 @@ namespace FinePrint.Contracts
 
             //ARM fails generation on duplicates, so we can't have many out at once.
             int totalContracts = ContractSystem.Instance.GetCurrentContracts<ARMContract>().Count();
-            if (totalContracts >= 2)
+            if (totalContracts >= FPConfig.ARM.MaximumExistent)
                 return false;
+
+            float fundsMultiplier = 1;
+            float scienceMultiplier = 1;
+            float reputationMultiplier = 1;
 
 			if (this.prestige == Contract.ContractPrestige.Trivial)
 			{
@@ -47,9 +51,13 @@ namespace FinePrint.Contracts
 				if (bodies.Count == 0)
 					return false;
 
-				targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+				targetBody = bodies[generator.Next(0, bodies.Count)];
 
-                if (generator.Next(0, 100) > 90)
+                fundsMultiplier = FPConfig.ARM.Funds.SignificantMultiplier;
+                scienceMultiplier = FPConfig.ARM.Science.SignificantMultiplier;
+                reputationMultiplier = FPConfig.ARM.Reputation.SignificantMultiplier;
+
+                if (generator.Next(0, 100) < FPConfig.ARM.SignificantSolarEjectionChance && FPConfig.ARM.AllowSolarEjections)
                     targetBody = Planetarium.fetch.Sun;
 			}
 			else if (this.prestige == Contract.ContractPrestige.Exceptional)
@@ -68,11 +76,15 @@ namespace FinePrint.Contracts
                     if (bodies.Count == 0)
                         return false;
 
-                    targetBody = bodies[UnityEngine.Random.Range(0, bodies.Count)];
+                    targetBody = bodies[generator.Next(0, bodies.Count)];
                 }
 
-                if (generator.Next(0, 100) > 70)
-    				targetBody = Planetarium.fetch.Sun;
+                fundsMultiplier = FPConfig.ARM.Funds.ExceptionalMultiplier;
+                scienceMultiplier = FPConfig.ARM.Science.ExceptionalMultiplier;
+                reputationMultiplier = FPConfig.ARM.Reputation.ExceptionalMultiplier;
+
+                if (generator.Next(0, 100) < FPConfig.ARM.ExceptionalSolarEjectionChance && FPConfig.ARM.AllowSolarEjections)
+                    targetBody = Planetarium.fetch.Sun;
 			}
 
             if (targetBody == null)
@@ -83,10 +95,13 @@ namespace FinePrint.Contracts
 			if (targetBody == Planetarium.fetch.Sun)
 			{
 				this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.ESCAPING, "vessel"), null);
+                fundsMultiplier *= FPConfig.ARM.Funds.SolarEjectionMultiplier;
+                scienceMultiplier *= FPConfig.ARM.Science.SolarEjectionMultiplier;
+                reputationMultiplier *= FPConfig.ARM.Reputation.SolarEjectionMultiplier;
 			}
 			else
 			{
-                if (targetBody == Planetarium.fetch.Home && generator.Next(0, 101) > 80)
+                if (targetBody == Planetarium.fetch.Home && generator.Next(0, 101) < FPConfig.ARM.HomeLandingChance && FPConfig.ARM.AllowHomeLandings)
                 {
                     isLanding = true;
                     this.AddParameter(new LocationAndSituationParameter(targetBody, Vessel.Situations.LANDED, "vessel"), null);
@@ -96,12 +111,12 @@ namespace FinePrint.Contracts
 			}
 
 			base.AddKeywords(new string[] { "asteroidretrieval" });
-			base.SetExpiry();
-			base.SetDeadlineYears(7.0f, targetBody);
+			base.SetExpiry(FPConfig.ARM.Expire.MinimumExpireDays, FPConfig.ARM.Expire.MaximumExpireDays);
+            base.SetDeadlineDays(FPConfig.ARM.Expire.DeadlineDays, targetBody);
 
-            base.SetFunds(15000f, 90000f, this.targetBody);
-            base.SetReputation(450f, 225f, this.targetBody);
-            base.SetScience(225f, this.targetBody);
+            base.SetFunds(Mathf.Round(FPConfig.ARM.Funds.BaseAdvance * fundsMultiplier), Mathf.Round(FPConfig.ARM.Funds.BaseReward * fundsMultiplier), Mathf.Round(FPConfig.ARM.Funds.BaseFailure * fundsMultiplier), this.targetBody);
+            base.SetScience(Mathf.Round(FPConfig.ARM.Science.BaseReward * scienceMultiplier), this.targetBody);
+            base.SetReputation(Mathf.Round(FPConfig.ARM.Reputation.BaseReward * reputationMultiplier), Mathf.Round(FPConfig.ARM.Reputation.BaseFailure * reputationMultiplier), this.targetBody);
 
             //Prevent duplicate contracts shortly before finishing up.
             foreach (ARMContract active in ContractSystem.Instance.GetCurrentContracts<ARMContract>())
@@ -151,6 +166,8 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
+            System.Random generator = new System.Random(MissionSeed);
+
 			if (targetBody != Planetarium.fetch.Sun)
             {
                 if (isLanding)
@@ -159,25 +176,25 @@ namespace FinePrint.Contracts
                 }
                 else
                 {
-                    switch (UnityEngine.Random.Range(0, 3))
+                    switch (generator.Next(0, 3))
                     {
                         case 0:
                             return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + " to test our capabilities.";
                         case 1:
                             return "Capture a new Class " + asteroidClass + " asteroid, then bring it into a stable orbit around " + targetBody.theName + ". Why? FOR SCIENCE!";
                         default:
-                            return "Mission control says low Kerbin orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
+                            return "Mission control says low " + Planetarium.fetch.Home.GetName() + " orbit is getting a bit crowded. Capture a new Class " + asteroidClass + " asteroid and take it into orbit around " + targetBody.theName + " instead.";
                     }
                 }
 			}
 			else
 			{
-				switch (UnityEngine.Random.Range(0, 3))
+				switch (generator.Next(0, 3))
 				{
 					case 0:
                         return "Capture a new Class " + asteroidClass + " asteroid, then put it on an extrasolar trajectory. The less of these things orbiting the sun, the better.";
 					case 1:
-                        return "The last Class " + asteroidClass + " asteroid that passed Kerbin nearly wiped out our species, capture one and get rid of it.";
+                        return "The last Class " + asteroidClass + " asteroid that passed " + Planetarium.fetch.Home.GetName() + " nearly wiped out our species, capture one and get rid of it.";
 					default:
                         return "How do you feel about throwing a Class " + asteroidClass + " rock out of the solar system?";
 				}
@@ -186,11 +203,13 @@ namespace FinePrint.Contracts
 
 		protected override string MessageCompleted()
 		{
+            System.Random generator = new System.Random(MissionSeed);
+
             if (targetBody != Planetarium.fetch.Sun)
                 return "You successfully captured an asteroid and brought it to " + targetBody.theName + ".";
 			else
 			{
-				switch (UnityEngine.Random.Range(0, 3))
+				switch (generator.Next(0, 3))
 				{
 					case 0:
 						return "You successfuly flung a rock out of the solar system.";
@@ -204,6 +223,7 @@ namespace FinePrint.Contracts
 
 		protected override void OnLoad(ConfigNode node)
 		{
+            Util.CheckForPatchReset();
 			Util.LoadNode(node, "ARMContract", "targetBody", ref targetBody, Planetarium.fetch.Home);
             Util.LoadNode(node, "ARMContract", "asteroidClass", ref asteroidClass, "A");
             Util.LoadNode(node, "ARMContract", "isLanding", ref isLanding, false);
@@ -224,6 +244,8 @@ namespace FinePrint.Contracts
 
 		protected static CelestialBody GetNextUnreachedTarget(int depth, bool removeSun, bool removeKerbin)
 		{
+            System.Random generator = new System.Random();
+
 			var bodies = Contract.GetBodies_NextUnreached(depth, null);
 			if (bodies != null)
 			{
@@ -234,7 +256,7 @@ namespace FinePrint.Contracts
 					bodies.Remove(Planetarium.fetch.Home);
 
 				if (bodies.Count > 0)
-					return bodies[UnityEngine.Random.Range(0, bodies.Count - 1)];
+					return bodies[generator.Next(0, bodies.Count - 1)];
 			}
 			return null;
 		}

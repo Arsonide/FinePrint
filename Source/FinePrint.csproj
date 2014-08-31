@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D7F3AF85-7394-457E-8BB0-474C53A60179}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>FinePrint</RootNamespace>
+    <AssemblyName>FinePrint</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\..\..\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\..\..\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Contracts\BaseContract.cs" />
+    <Compile Include="Contracts\ISRUContract.cs" />
+    <Compile Include="Contracts\StationContract.cs" />
+    <Compile Include="FPConfig.cs" />
+    <Compile Include="Contracts\AerialContract.cs" />
+    <Compile Include="Contracts\ARMContract.cs" />
+    <Compile Include="Contracts\SatelliteContract.cs" />
+    <Compile Include="Parameters\AsteroidParameter.cs" />
+    <Compile Include="Parameters\EVAParameter.cs" />
+    <Compile Include="Parameters\ResourceExtractionParameter.cs" />
+    <Compile Include="Parameters\ResourcePossessionParameter.cs" />
+    <Compile Include="Parameters\PartNameParameter.cs" />
+    <Compile Include="Parameters\FacilityLabParameter.cs" />
+    <Compile Include="Parameters\CrewCapacityParameter.cs" />
+    <Compile Include="Parameters\FlightWaypointParameter.cs" />
+    <Compile Include="HSBColor.cs" />
+    <Compile Include="Parameters\KillControlsParameter.cs" />
+    <Compile Include="Parameters\LocationAndSituationParameter.cs" />
+    <Compile Include="Parameters\MobileBaseParameter.cs" />
+    <Compile Include="NavWaypoint.cs" />
+    <Compile Include="Contracts\RoverContract.cs" />
+    <Compile Include="Parameters\ProbeSystemsParameter.cs" />
+    <Compile Include="Parameters\SpecificOrbitParameter.cs" />
+    <Compile Include="Parameters\StationaryPointParameter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Parameters\FacilitySystemsParameter.cs" />
+    <Compile Include="Parameters\RoverWaypointParameter.cs" />
+    <Compile Include="Util.cs" />
+    <Compile Include="Waypoint.cs" />
+    <Compile Include="WaypointManager.cs" />
+    <Compile Include="WorldProp.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" "D:\Steam\steamapps\common\Kerbal Space Program\GameData\FinePrint"
+copy "$(TargetPath)" "D:\FinePrint"
+"D:\Steam\steamapps\common\Kerbal Space Program\cmdow.exe" /run "D:\Steam\steamapps\common\Kerbal Space Program\KSP.exe"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

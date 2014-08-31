@@ -97,9 +97,9 @@ namespace FinePrint.Contracts.Parameters
             if (HighLogic.LoadedSceneIsFlight && this.Root.ContractState == Contract.State.Active && this.State == ParameterState.Incomplete)
             {
                 wp.celestialName = targetBody.GetName();
-                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
                 wp.seed = Root.MissionSeed;
                 wp.id = waypointID;
+                wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
                 wp.setName();
                 wp.waypointType = WaypointType.PLANE;
                 wp.altitude = calculateMidAltitude();
@@ -115,9 +115,9 @@ namespace FinePrint.Contracts.Parameters
                 if (this.Root.ContractState != Contract.State.Completed)
                 {
                     wp.celestialName = targetBody.GetName();
-                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
                     wp.seed = Root.MissionSeed;
                     wp.id = waypointID;
+                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
                     wp.setName();
                     wp.waypointType = WaypointType.PLANE;
                     wp.altitude = calculateMidAltitude();
@@ -146,13 +146,13 @@ namespace FinePrint.Contracts.Parameters
                             {
                                 distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > 30000 && outerWarning)
+                                if (distanceToWP > FPConfig.Aerial.TriggerRange * 2 && outerWarning)
                                 {
                                     outerWarning = false;
                                     ScreenMessages.PostScreenMessage("You are leaving the area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP <= 30000 && !outerWarning)
+                                if (distanceToWP <= FPConfig.Aerial.TriggerRange * 2 && !outerWarning)
                                 {
                                     outerWarning = true;
                                     ScreenMessages.PostScreenMessage("Approaching " + wp.tooltip + ", beginning aerial surveillance.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
@@ -160,7 +160,7 @@ namespace FinePrint.Contracts.Parameters
 
                                 if (v.altitude > minAltitude && v.altitude < maxAltitude)
                                 {
-                                    if (distanceToWP < 15000)
+                                    if (distanceToWP < FPConfig.Aerial.TriggerRange)
                                     {
                                         ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                         wp.isExplored = true;
@@ -175,14 +175,6 @@ namespace FinePrint.Contracts.Parameters
                     }
                 }
             }
-        }
-
-        protected override string GetNotes()
-        {
-            if (targetBody.GetName() == "Jool")
-                return "Warning: an unmanned probe is recommended as this location is on Jool. A cheap one.";
-            else
-                return null;
         }
 
         private double calculateMidAltitude()

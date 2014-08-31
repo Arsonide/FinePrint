@@ -10,25 +10,30 @@ using KSPAchievements;
 
 namespace FinePrint.Contracts.Parameters
 {
-    public class PartNameParameter : ContractParameter
+    public class ResourcePossessionParameter : ContractParameter
     {
         private int successCounter;
-        private string title;
-        private string partName;
+        private double currentResource;
+        public double goalResource;
+        public string resourceName;
         bool eventsAdded;
 
-        public PartNameParameter()
+        public ResourcePossessionParameter()
         {
             this.successCounter = 0;
-            this.title = "Have a potato";
-            this.partName = "potato";
+            this.currentResource = 0;
+            this.goalResource = 1000;
+            this.resourceName = "Karbonite";
+            this.eventsAdded = false;
         }
 
-        public PartNameParameter(string title, string partName)
+        public ResourcePossessionParameter(string resourceName, double goalResource)
         {
             this.successCounter = 0;
-            this.title = title;
-            this.partName = partName;
+            this.currentResource = 0;
+            this.goalResource = goalResource;
+            this.resourceName = resourceName;
+            this.eventsAdded = false;
         }
 
         protected override string GetHashString()
@@ -38,12 +43,13 @@ namespace FinePrint.Contracts.Parameters
 
         protected override string GetTitle()
         {
-            return title;
+            return "Have " + Mathf.Round((float)goalResource) + " " + resourceName + " in your vessel";
         }
 
         protected override void OnRegister()
         {
             this.DisableOnStateChange = false;
+            eventsAdded = false;
 
             if (Root.ContractState == Contract.State.Active)
             {
@@ -74,14 +80,14 @@ namespace FinePrint.Contracts.Parameters
 
         protected override void OnSave(ConfigNode node)
         {
-            node.AddValue("title", title);
-            node.AddValue("partName", partName);
+            node.AddValue("goalResource", goalResource);
+            node.AddValue("resourceName", resourceName);
         }
 
         protected override void OnLoad(ConfigNode node)
         {
-            Util.LoadNode(node, "PartNameParameter", "title", ref title, "Have a potato");
-            Util.LoadNode(node, "PartNameParameter", "partName", ref partName, "potato");
+            Util.LoadNode(node, "ResourcePossessionParameter", "goalResource", ref goalResource, 1000);
+            Util.LoadNode(node, "ResourcePossessionParameter", "resourceName", ref resourceName, "Karbonite");
         }
 
         protected override void OnUpdate()
@@ -92,11 +98,12 @@ namespace FinePrint.Contracts.Parameters
                 {
                     if (FlightGlobals.ready)
                     {
-                        bool hasPart = (Util.shipHasPartName(partName));
+                        currentResource = Util.ResourcesOnVessel(FlightGlobals.ActiveVessel, resourceName);
+                        bool haveEnough = (currentResource >= goalResource);
 
                         if (this.State == ParameterState.Incomplete)
                         {
-                            if (hasPart)
+                            if (haveEnough)
                                 successCounter++;
                             else
                                 successCounter = 0;
@@ -107,18 +114,12 @@ namespace FinePrint.Contracts.Parameters
 
                         if (this.State == ParameterState.Complete)
                         {
-                            if (!hasPart)
+                            if (!haveEnough)
                                 base.SetIncomplete();
                         }
                     }
                 }
             }
-        }
-
-        public static string PartName(ContractParameter parameter)
-        {
-            PartNameParameter Instance = (PartNameParameter)parameter;
-            return Instance.partName;
         }
     }
 }
