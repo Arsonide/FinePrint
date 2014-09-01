@@ -141,24 +141,59 @@ namespace FinePrint.Contracts.Parameters
                         {
                             if (WaypointManager.Instance() != null)
                             {
+                                // It's weird for a space program to explore our home planet. Do rover test drives there instead.
+
                                 distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > FPConfig.Rover.TriggerRange * 2 && outerWarning)
+                                double triggerRange = FPConfig.Rover.TriggerRange;
+
+                                if(targetBody == Planetarium.fetch.Home)
+                                {
+                                    triggerRange /= 2;
+                                }
+
+                                if (distanceToWP > triggerRange * 2 && outerWarning)
                                 {
                                     outerWarning = false;
-                                    ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    if(targetBody == Planetarium.fetch.Home)
+                                    {
+                                        ScreenMessages.PostScreenMessage("You are leaving the test drive area near " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
+                                    else
+                                    {
+                                        ScreenMessages.PostScreenMessage("You are leaving the target area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
                                 }
 
-                                if (distanceToWP <= FPConfig.Rover.TriggerRange * 2 && !outerWarning)
+                                if (distanceToWP <= triggerRange * 2 && !outerWarning)
                                 {
                                     outerWarning = true;
-                                    ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    if(targetBody == Planetarium.fetch.Home)
+                                    {
+                                        ScreenMessages.PostScreenMessage("Approaching test drive waypoint " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
+                                    else
+                                    {
+                                        ScreenMessages.PostScreenMessage("Approaching target area of " + wp.tooltip + ", checking for anomalous data.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
+                                    
                                 }
 
-                                if (distanceToWP < FPConfig.Rover.TriggerRange)
+                                if (distanceToWP < triggerRange)
                                 {
                                     if (Util.hasWheelsOnGround())
                                     {
+                                        if (targetBody == Planetarium.fetch.Home)
+                                        {
+                                            ScreenMessages.PostScreenMessage("Completed a rover test drive near " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                            wp.isExplored = true;
+                                            WaypointManager.deactivateNavPoint(wp);
+                                            WaypointManager.RemoveWaypoint(wp);
+                                            submittedWaypoint = false;
+                                            base.SetComplete();
+                                        }
+                                        else
+                                        {
                                         if (isSecret)
                                         {
                                             ScreenMessages.PostScreenMessage("This is the source of the anomalous data that we've been looking for in " + wp.tooltip + "!", 5.0f, ScreenMessageStyle.UPPER_LEFT);
@@ -189,6 +224,7 @@ namespace FinePrint.Contracts.Parameters
                                             WaypointManager.RemoveWaypoint(wp);
                                             submittedWaypoint = false;
                                             base.SetComplete();
+                                        }
                                         }
                                     }
                                 }

@@ -571,7 +571,8 @@ namespace FinePrint
 
         public static bool canBodyBeKolniya(CelestialBody body)
         {
-            if ((object)body == null)
+			// highly inclined orbits around the sun are extremely difficult, and unlikely tasks in reality
+            if (((object)body == null) || (body == Planetarium.fetch.Sun))
                 return false;
 
             double semiMajorAxis = kolniyaSMA(body);
@@ -586,7 +587,7 @@ namespace FinePrint
 
         public static bool canBodyBeTundra(CelestialBody body)
         {
-            if ((object)body == null)
+            if (((object)body == null) || (body == Planetarium.fetch.Sun))
                 return false;
 
             double semiMajorAxis = synchronousSMA(body);
@@ -601,7 +602,7 @@ namespace FinePrint
 
         public static bool canBodyBeSynchronous(CelestialBody body, double eccentricity)
         {
-            if ((object)body == null)
+            if (((object)body == null) || (body == Planetarium.fetch.Sun))
                 return false;
 
             double semiMajorAxis = synchronousSMA(body);
@@ -700,18 +701,77 @@ namespace FinePrint
             double desiredApoapsis = 0.0;
             double pointA = 0.0;
             double pointB = 0.0;
-            float maximumAltitude = 0f;
             double easeFactor = 1.0 - difficultyFactor;
-            double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
             o.referenceBody = targetBody;
             o.LAN = generator.NextDouble() * 360.0;
 
+			/*
+            float maximumAltitude = 0f;
+            double minimumAltitude = Util.getMinimumOrbitalAltitude(targetBody);
             //If it chooses the sun, the infinite SOI can cause NAN, so choose Eeloo's altitude instead.
             //Use 90% of the SOI to give a little leeway for error correction.
             if (targetBody == Planetarium.fetch.Sun)
                 maximumAltitude = 113549713200f;
             else
                 maximumAltitude = Math.Max((float)minimumAltitude, (float)targetBody.sphereOfInfluence * (float)difficultyFactor);
+			//*/
+            //*
+
+			// match altitudes more closely to the delta-v required to reach them
+
+            double minimumAltitude      = 0;
+            double maximumAltitude      = 0;
+            double lowestSafeAltitude   = Util.getMinimumOrbitalAltitude(targetBody);
+            double scienceSpaceBorder   = targetBody.Radius + (double) targetBody.scienceValues.spaceAltitudeThreshold;
+            double sphereOfInfluence    = (double) targetBody.sphereOfInfluence;
+            double maxLowOrbit          = lowestSafeAltitude + (scienceSpaceBorder - lowestSafeAltitude) / 2;
+            double maxHighOrbit         = scienceSpaceBorder + (sphereOfInfluence - scienceSpaceBorder) / 2;
+            double orbitMoho            = 5263138000;
+            double orbitEve             = 9832684000;
+            double orbitKerbin          = 13599840000;
+            double orbitDuna            = 20726155000;
+            double orbitEloo            = 113549713200;
+
+            
+            if (targetBody == Planetarium.fetch.Sun) {
+				inc *= 0.1;
+                if (difficultyFactor <= 0.2) {
+                    // near Kerbin
+                    maximumAltitude = orbitDuna;
+                    minimumAltitude = orbitEve;
+                } else if (difficultyFactor <= 0.4) {
+                    // far from sun
+                    maximumAltitude = orbitEloo;
+                    minimumAltitude = orbitDuna;
+                } else {
+                    // close to sun
+                    maximumAltitude = orbitEve;
+                    minimumAltitude = lowestSafeAltitude;
+                }
+            } else if (targetBody == Planetarium.fetch.Home) {
+                if (difficultyFactor <= 0.2) {
+                    minimumAltitude = lowestSafeAltitude;
+                    maximumAltitude = maxLowOrbit;
+                } else if (difficultyFactor <= 0.4) {
+                    minimumAltitude = maxLowOrbit;
+                    maximumAltitude = maxHighOrbit;
+                } else {
+                    minimumAltitude = maxHighOrbit;
+                    maximumAltitude = sphereOfInfluence * 0.9;
+                }
+            } else {
+                if (difficultyFactor <= 0.2) {
+                    maximumAltitude = sphereOfInfluence * 0.9;
+                    minimumAltitude = maxHighOrbit;
+                } else if (difficultyFactor <= 0.4) {
+                    maximumAltitude = maxHighOrbit;
+                    minimumAltitude = maxLowOrbit;
+                } else {
+                    maximumAltitude = maxLowOrbit;
+                    minimumAltitude = lowestSafeAltitude;
+                }
+            }
+            //*/
 
             if (orbitType == OrbitType.RANDOM || orbitType == OrbitType.POLAR || orbitType == OrbitType.EQUATORIAL)
             {
