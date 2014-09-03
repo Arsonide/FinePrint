@@ -222,8 +222,11 @@ namespace FinePrint.Contracts.Parameters
             {
                 if (this.Root.ContractState != Contract.State.Completed)
                 {
-                    if (!beenSetup)
-                        setup();
+                    if (this.Root.ContractState == Contract.State.Active || FPConfig.showOfferedTrackingWaypoints)
+                    {
+                        if (!beenSetup)
+                            setup();
+                    }
                 }
             }
         }

@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-	public class RoverContract : Contract
+    public class RoverContract : Contract, IFinePrintContract
 	{
 		CelestialBody targetBody = null;
 		double centerLatitude = 0.0;

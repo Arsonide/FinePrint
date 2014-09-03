@@ -246,31 +246,40 @@ namespace FinePrint
                     switch (wp.waypointType)
                     {
                         case WaypointType.PLANE:
-                            Graphics.DrawTexture(screenRect, mTexPlane, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showSurfaceWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexPlane, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.ROVER:
-                            Graphics.DrawTexture(screenRect, mTexRover, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showSurfaceWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexRover, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.ORBITAL:
-                            Graphics.DrawTexture(screenRect, mTexOrbit, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexOrbit, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.ASCENDINGNODE:
-                            Graphics.DrawTexture(screenRect, mTexAN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexAN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.DESCENDINGNODE:
-                            Graphics.DrawTexture(screenRect, mTexDN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexDN, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.PERIAPSIS:
-                            Graphics.DrawTexture(screenRect, mTexPE, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexPE, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.APOAPSIS:
-                            Graphics.DrawTexture(screenRect, mTexAP, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexAP, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         case WaypointType.DISH:
-                            Graphics.DrawTexture(screenRect, mTexDish, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showOrbitalWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexDish, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                         default:
-                            Graphics.DrawTexture(screenRect, mTexDefault, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
+                            if (FPConfig.showSurfaceWaypoints)
+                                Graphics.DrawTexture(screenRect, mTexDefault, new Rect(0, 0, 1f, 1f), 0, 0, 0, 0, RandomColor(wp.seed, alpha));
                             break;
                     }
 

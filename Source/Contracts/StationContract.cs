@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-    public class StationContract : Contract
+    public class StationContract : Contract, IFinePrintContract
     {
         CelestialBody targetBody = null;
         int capacity = 0;

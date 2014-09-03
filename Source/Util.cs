@@ -482,40 +482,45 @@ namespace FinePrint
 
             Debug.LogError("Fine Print has been patched and will now reset all Fine Print contracts.");
 
-            foreach (AerialContract c in ContractSystem.Instance.GetCurrentContracts<AerialContract>())
+            ManualBoardReset();
+        }
+
+        public static void ManualBoardReset()
+        {
+            List<int> seeds = new List<int>();
+            List<Contract.ContractPrestige> difficulties = new List<Contract.ContractPrestige>();
+            List<Type> types = new List<Type>();
+            List<Contract> killList = new List<Contract>();
+
+            foreach (Contract c in ContractSystem.Instance.Contracts)
             {
-                c.Unregister();
-                ContractSystem.Instance.Contracts.Remove(c);
+                Type contractType = c.GetType();
+
+                if (contractType is IFinePrintContract)
+                {
+                    seeds.Add(c.MissionSeed);
+                    difficulties.Add(c.Prestige);
+                    types.Add(contractType);
+
+                    if (c.ContractState == Contract.State.Active)
+                        c.Cancel();
+
+                    killList.Add(c);
+                }
             }
 
-            foreach (ARMContract c in ContractSystem.Instance.GetCurrentContracts<ARMContract>())
-            {
-                c.Unregister();
+            foreach (Contract c in killList)
                 ContractSystem.Instance.Contracts.Remove(c);
-            }
 
-            foreach (BaseContract c in ContractSystem.Instance.GetCurrentContracts<BaseContract>())
+            for (int c = 0; c < types.Count; c++)
             {
-                c.Unregister();
-                ContractSystem.Instance.Contracts.Remove(c);
-            }
+                Contract contract = ContractSystem.Instance.GenerateContract(seeds[c], difficulties[c], types[c]);
 
-            foreach (RoverContract c in ContractSystem.Instance.GetCurrentContracts<RoverContract>())
-            {
-                c.Unregister();
-                ContractSystem.Instance.Contracts.Remove(c);
-            }
-
-            foreach (SatelliteContract c in ContractSystem.Instance.GetCurrentContracts<SatelliteContract>())
-            {
-                c.Unregister();
-                ContractSystem.Instance.Contracts.Remove(c);
-            }
-
-            foreach (StationContract c in ContractSystem.Instance.GetCurrentContracts<StationContract>())
-            {
-                c.Unregister();
-                ContractSystem.Instance.Contracts.Remove(c);
+                if (contract != null)
+                {
+                    ContractSystem.Instance.Contracts.Add(contract);
+                    contract.Offer();
+                }
             }
         }
 
@@ -905,6 +910,19 @@ namespace FinePrint
                 thing += "'s";
 
             return thing;
+        }
+
+        public static float PlanetScienceRanking(CelestialBody body)
+        {
+            float maxRank = 0;
+
+            foreach (CelestialBody cb in FlightGlobals.Bodies)
+            {
+                if (cb.scienceValues.RecoveryValue > maxRank)
+                    maxRank = cb.scienceValues.RecoveryValue;
+            }
+
+            return body.scienceValues.RecoveryValue/maxRank;
         }
     }
 }

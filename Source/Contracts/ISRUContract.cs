@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-    public class ISRUContract : Contract
+    public class ISRUContract : Contract, IFinePrintContract
     {
         public CelestialBody targetBody = null;
         private CelestialBody deliveryBody = null;

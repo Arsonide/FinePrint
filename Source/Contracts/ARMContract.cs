@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-	public class ARMContract : Contract
+    public class ARMContract : Contract, IFinePrintContract
 	{
 		CelestialBody targetBody = null;
         string asteroidClass = "A";

@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-	public class AerialContract : Contract
+    public class AerialContract : Contract, IFinePrintContract
 	{
 		CelestialBody targetBody = null;
 		double minAltitude = 0.0;
@@ -56,41 +56,12 @@ namespace FinePrint.Contracts
 
 			targetBody = atmosphereBodies[generator.Next(0, atmosphereBodies.Count)];
 
-            //TODO: Find some common ground to calculate these values automatically without specific names.
-			switch (targetBody.GetName())
-			{
-				case "Jool":
-					additionalWaypoints = 0;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Duna":
-					additionalWaypoints = 1;
-					minAltitude = 8000.0;
-					maxAltitude = 16000.0;
-					break;
-				case "Laythe":
-					additionalWaypoints = 1;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Eve":
-					additionalWaypoints = 1;
-					minAltitude = 20000.0;
-					maxAltitude = 40000.0;
-					break;
-				case "Kerbin":
-					additionalWaypoints = 2;
-					minAltitude = 12500.0;
-					maxAltitude = 25000.0;
-					break;
-				default:
-					additionalWaypoints = 0;
-					minAltitude = 0.0;
-					maxAltitude = 10000.0;
-					break;
-			}
-
+            //Use science values for this stuff, maintains compatibility with custom celestials.
+            double targetHeight = targetBody.scienceValues.flyingAltitudeThreshold;
+            minAltitude = targetHeight - (targetHeight / 2);
+            maxAltitude = targetHeight + (targetHeight / 2);
+            additionalWaypoints = (int)Mathf.Round(2 - (Util.PlanetScienceRanking(targetBody) * 2));
+            
             int waypointCount = 0;
             float fundsMultiplier = 1;
             float scienceMultiplier = 1;

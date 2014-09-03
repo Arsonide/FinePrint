@@ -12,7 +12,7 @@ using FinePrint.Contracts.Parameters;
 
 namespace FinePrint.Contracts
 {
-    public class SatelliteContract : Contract
+    public class SatelliteContract : Contract, IFinePrintContract
     {
         CelestialBody targetBody = null;
         double deviation = 10;

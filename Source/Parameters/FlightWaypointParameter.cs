@@ -114,17 +114,20 @@ namespace FinePrint.Contracts.Parameters
             {
                 if (this.Root.ContractState != Contract.State.Completed)
                 {
-                    wp.celestialName = targetBody.GetName();
-                    wp.seed = Root.MissionSeed;
-                    wp.id = waypointID;
-                    wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
-                    wp.setName();
-                    wp.waypointType = WaypointType.PLANE;
-                    wp.altitude = calculateMidAltitude();
-                    wp.isOnSurface = true;
-                    wp.isNavigatable = false;
-                    WaypointManager.AddWaypoint(wp);
-                    submittedWaypoint = true;
+                    if (this.Root.ContractState == Contract.State.Active || FPConfig.showOfferedTrackingWaypoints)
+                    {
+                        wp.celestialName = targetBody.GetName();
+                        wp.seed = Root.MissionSeed;
+                        wp.id = waypointID;
+                        wp.RandomizeNear(centerLatitude, centerLongitude, targetBody.GetName(), range, true);
+                        wp.setName();
+                        wp.waypointType = WaypointType.PLANE;
+                        wp.altitude = calculateMidAltitude();
+                        wp.isOnSurface = true;
+                        wp.isNavigatable = false;
+                        WaypointManager.AddWaypoint(wp);
+                        submittedWaypoint = true;
+                    }
                 }
             }
         }

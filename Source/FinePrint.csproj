@@ -38,6 +38,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\..\..\..\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,6 +59,11 @@
     <Compile Include="Contracts\AerialContract.cs" />
     <Compile Include="Contracts\ARMContract.cs" />
     <Compile Include="Contracts\SatelliteContract.cs" />
+    <Compile Include="KSPPluginFramework\ConfigNodeStorage.cs" />
+    <Compile Include="KSPPluginFramework\ExtensionsUnity.cs" />
+    <Compile Include="KSPPluginFramework\MonoBehaviourExtended.cs" />
+    <Compile Include="KSPPluginFramework\MonoBehaviourWindow.cs" />
+    <Compile Include="KSPPluginFramework\SkinsLibrary.cs" />
     <Compile Include="Parameters\AsteroidParameter.cs" />
     <Compile Include="Parameters\EVAParameter.cs" />
     <Compile Include="Parameters\ResourceExtractionParameter.cs" />

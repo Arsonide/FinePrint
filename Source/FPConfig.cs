@@ -10,9 +10,15 @@ using KSP;
 using KSPAchievements;
 using FinePrint.Contracts.Parameters;
 using KSP.IO;
+using KSPPluginFramework;
 
 namespace FinePrint
 {
+    //Marker interface for contracts.
+    interface IFinePrintContract
+    {
+    }
+
     //Real programmers turn away from this dark and desolate place.
     //It is important that the mod has default values to fall back on for config creation and error recovery.
     //There are a lot of configurable values, and most of these values are hand picked, so a loop wouldn't work.
@@ -25,11 +31,17 @@ namespace FinePrint
     //If load fails, it stays at default, if not, it changes to what is on disk.
 
     [KSPAddon(KSPAddon.Startup.SpaceCentre, true)]
-    public class FPConfig : MonoBehaviour
+    public class FPConfig : MonoBehaviourWindow
     {
         public static ConfigNode config;
 
         private static FPConfig instance;
+
+        ApplicationLauncherButton appButton = null;
+        Vector2 scroll;
+        public static bool showOfferedTrackingWaypoints = true;
+        public static bool showSurfaceWaypoints = true;
+        public static bool showOrbitalWaypoints = true;
 
         public static bool PatchReset = true;
         public static string SunStationaryName = "keliostationary";
@@ -55,15 +67,107 @@ namespace FinePrint
         {
             instance = this;
             DontDestroyOnLoad(this);
+            LoadConfig();
+        }
 
-            if (System.IO.File.Exists(ConfigFileName))
+        internal override void Awake()
+        {
+            System.Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            string major = version.Major.ToString();
+            string minor = version.Minor.ToString();
+
+            WindowCaption = "Fine Print v" + major + "." + minor;
+            WindowRect = new Rect(0, 0, 250, 50);
+            Visible = false;
+            DragEnabled = true;
+            ClampToScreen = true;
+            TooltipsEnabled = true;
+            TooltipDisplayForSecs = 4;
+            TooltipMaxWidth = 200;
+
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherDestroyed.Add(OnGUIAppLauncherDestroyed);
+            GameEvents.onLevelWasLoaded.Add(EnteringScene);
+        }
+
+        internal override void OnDestroy()
+        {
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherDestroyed);
+            GameEvents.onLevelWasLoaded.Remove(EnteringScene);
+
+            if (appButton != null)
+                ApplicationLauncher.Instance.RemoveModApplication(appButton);
+        }
+
+        void OnGUIAppLauncherReady()
+        {
+            if (ApplicationLauncher.Ready && appButton == null)
             {
-                config = ConfigNode.Load(ConfigFileName);
-                LoadConfig();
+                appButton = ApplicationLauncher.Instance.AddModApplication (
+                    onAppLaunchToggleOn, 
+                    onAppLaunchToggleOff, 
+                    onAppLaunchHoverOn, 
+                    onAppLaunchHoverOff, 
+                    onAppLaunchEnable, 
+                    onAppLaunchDisable,
+                    ApplicationLauncher.AppScenes.ALWAYS,
+                    Util.LoadTexture("app",32,32)
+                );
             }
+        }
 
-            if (config == null)
-                CreateDefaultConfig();
+        void OnGUIAppLauncherDestroyed()
+        {
+            appButton = null;
+        }
+
+        void EnteringScene(GameScenes scene)
+        {
+            if ( appButton != null )
+                appButton.SetFalse();
+        }
+
+        void onAppLaunchToggleOn() { Visible = true; }
+        void onAppLaunchToggleOff() { Visible = false; }
+        void onAppLaunchHoverOn() { /*Your code goes in here to show display on*/ }
+        void onAppLaunchHoverOff() { /*Your code goes in here to show display off*/ }
+        void onAppLaunchEnable() { /*Your code goes in here for if it gets enabled*/  }
+        void onAppLaunchDisable() { /*Your code goes in here for if it gets disabled*/  }
+
+        internal override void DrawWindow(int id)
+        {
+            //GUILayout.BeginVertical();
+            //GUILayout.Space(8);
+            //scroll = GUILayout.BeginScrollView(scroll);
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(new GUIContent("Surface Waypoints:", "Display waypoints locked to a planetary surface"), GUILayout.ExpandWidth(true));
+            GUILayout.FlexibleSpace();
+            showSurfaceWaypoints = GUILayout.Toggle(showSurfaceWaypoints, "");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(new GUIContent("Orbital Waypoints:", "Display the icons and lines associated with orbital waypoints"), GUILayout.ExpandWidth(true));
+            GUILayout.FlexibleSpace();
+            showOrbitalWaypoints = GUILayout.Toggle(showOrbitalWaypoints, "");
+            GUILayout.EndHorizontal();
+
+            GUILayout.BeginHorizontal();
+            GUILayout.Label(new GUIContent("Tracking Station Waypoints:", "Display inactive offered contract waypoints in the Tracking Station"), GUILayout.ExpandWidth(true));
+            GUILayout.FlexibleSpace();
+            showOfferedTrackingWaypoints = GUILayout.Toggle(showOfferedTrackingWaypoints, "");
+            GUILayout.EndHorizontal();
+
+            if (GUILayout.Button(new GUIContent("Reload Configuration", "Manually reload the configuration file")))
+                LoadConfig();
+
+            if (GUILayout.Button(new GUIContent("Refresh Contracts", "Manually refresh all offered Fine Print contracts")))
+                Util.ManualBoardReset();
+
+            //GUILayout.EndScrollView();
+            //GUILayout.Space(18);
+            //GUILayout.EndVertical();
         }
 
         public static class Aerial
@@ -826,6 +930,18 @@ namespace FinePrint
         }
 
         private static void LoadConfig()
+        {
+            if (System.IO.File.Exists(ConfigFileName))
+            {
+                config = ConfigNode.Load(ConfigFileName);
+                ProcessConfig();
+            }
+
+            if (config == null)
+                CreateDefaultConfig();
+        }
+
+        private static void ProcessConfig()
         {
             ConfigNode topNode = config.GetNode("FinePrint");
 
