@@ -378,7 +378,7 @@ namespace FinePrint
                 }
                 catch (Exception e)
                 {
-                    error = e.ToString();
+                    error = e.Message;
                     value = default(T);
                     return false;
                 }
@@ -392,7 +392,7 @@ namespace FinePrint
                 }
                 catch (Exception e)
                 {
-                    error = e.ToString();
+                    error = e.Message;
                     value = default(T);
                     return false;
                 }
@@ -403,12 +403,13 @@ namespace FinePrint
         {
             LoadResult result = LoadResult.NULL;
             string error = "";
+            string shortName = "";
 
             if (node == null)
                 result = LoadResult.NULL;
             else
             {
-                string shortName = ShortName(valueName);
+                shortName = ShortName(valueName);
 
                 if (node.HasValue(shortName))
                 {
@@ -429,7 +430,7 @@ namespace FinePrint
 
                             if (body == null)
                             {
-                                error = "CelestialException: Celestial body is out of range.";
+                                error = "Celestial body index is out of range";
                                 result = LoadResult.INVALID;
                             }
                             else
@@ -462,7 +463,7 @@ namespace FinePrint
                         Debug.LogWarning("Fine Print: " + className + " cannot load " + valueName + ", it is not in the node. Initializing with default of " + defaultValue + "!");
                         break;
                     case LoadResult.INVALID:
-                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value from " + valueName + ". (" + error + "). Initializing with default of " + defaultValue + "!");
+                        Debug.LogWarning("Fine Print: " + className + " parsed an invalid value \"" + node.GetValue(shortName) + "\" from " + valueName + ". (" + error + "). Initializing with default of " + defaultValue + "!");
                         break;
                 }
 
