@@ -42,6 +42,7 @@ namespace FinePrint
         public static bool showOfferedTrackingWaypoints = true;
         public static bool showSurfaceWaypoints = true;
         public static bool showOrbitalWaypoints = true;
+        bool firstClick = true;
 
         public static bool PatchReset = true;
         public static string SunStationaryName = "keliostationary";
@@ -77,7 +78,7 @@ namespace FinePrint
             string minor = version.Minor.ToString();
 
             WindowCaption = "Fine Print v" + major + "." + minor;
-            WindowRect = new Rect(0, 0, 250, 50);
+            WindowRect = new Rect(0, 75, 250, 50);
             Visible = false;
             DragEnabled = true;
             ClampToScreen = true;
@@ -104,15 +105,15 @@ namespace FinePrint
         {
             if (ApplicationLauncher.Ready && appButton == null)
             {
-                appButton = ApplicationLauncher.Instance.AddModApplication (
-                    onAppLaunchToggleOn, 
-                    onAppLaunchToggleOff, 
-                    onAppLaunchHoverOn, 
-                    onAppLaunchHoverOff, 
-                    onAppLaunchEnable, 
+                appButton = ApplicationLauncher.Instance.AddModApplication(
+                    onAppLaunchToggleOn,
+                    onAppLaunchToggleOff,
+                    onAppLaunchHoverOn,
+                    onAppLaunchHoverOff,
+                    onAppLaunchEnable,
                     onAppLaunchDisable,
                     ApplicationLauncher.AppScenes.ALWAYS,
-                    Util.LoadTexture("app",32,32)
+                    Util.LoadTexture("app", 32, 32)
                 );
             }
         }
@@ -124,11 +125,20 @@ namespace FinePrint
 
         void EnteringScene(GameScenes scene)
         {
-            if ( appButton != null )
+            if (appButton != null)
                 appButton.SetFalse();
         }
 
-        void onAppLaunchToggleOn() { Visible = true; }
+        void onAppLaunchToggleOn()
+        {
+            Visible = true;
+
+            if (firstClick)
+            {
+                firstClick = false;
+                WindowRect = new Rect(Mouse.screenPos.x - 125, 75, 250, 50);
+            }
+        }
         void onAppLaunchToggleOff() { Visible = false; }
         void onAppLaunchHoverOn() { /*Your code goes in here to show display on*/ }
         void onAppLaunchHoverOff() { /*Your code goes in here to show display off*/ }
