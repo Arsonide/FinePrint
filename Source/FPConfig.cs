@@ -479,6 +479,47 @@ namespace FinePrint
             }
         }
 
+        public static class Evacuate
+        {
+            public static int MaximumAvailable = 1;
+            public static int MaximumActive = 4;
+            public static bool allowDestroy = false;
+            public static int destroyChance = 50;
+
+            public static class Expire
+            {
+                public static int MinimumExpireDays = 1;
+                public static int MaximumExpireDays = 1;
+                public static int DeadlineDays = 2982;
+            }
+
+            public static class Funds
+            {
+                public static float BaseAdvance = 10000;
+                public static float BaseReward = 30000;
+                public static float BaseFailure = 30000;
+                public static float CrewMultiplier = 1.15f;
+                public static float ReliefMultiplier = 2.0f;
+                public static float TroubleMultiplier = 2.0f;
+                public static float ExplodeMultiplier = 2.0f;
+            }
+
+            public static class Science
+            {
+                public static float BaseReward = 0;
+            }
+
+            public static class Reputation
+            {
+                public static float BaseReward = 50;
+                public static float BaseFailure = 100;
+                public static float CrewMultiplier = 1.15f;
+                public static float ReliefMultiplier = 0.5f;
+                public static float ExplodeMultiplier = 1.0f;
+                public static float TroubleMultiplier = 1.0f;
+            }
+        }
+
         public static String ConfigFileName
         {
             get { return KSPUtil.ApplicationRootPath + "/GameData/FinePrint/FinePrint.cfg"; }
@@ -532,6 +573,12 @@ namespace FinePrint
             ConfigNode isruFunds = isruNode.AddNode(new ConfigNode("Funds"));
             ConfigNode isruScience = isruNode.AddNode(new ConfigNode("Science"));
             ConfigNode isruReputation = isruNode.AddNode(new ConfigNode("Reputation"));
+
+            ConfigNode evacuateNode = topNode.AddNode(new ConfigNode("Evacuate"));
+            ConfigNode evacuateExpire = evacuateNode.AddNode(new ConfigNode("Expiration"));
+            ConfigNode evacuateFunds = evacuateNode.AddNode(new ConfigNode("Funds"));
+            ConfigNode evacuateScience = evacuateNode.AddNode(new ConfigNode("Science"));
+            ConfigNode evacuateReputation = evacuateNode.AddNode(new ConfigNode("Reputation"));
 
             topNode.AddValue("PatchReset", FPConfig.PatchReset);
             topNode.AddValue("SunStationaryName", FPConfig.SunStationaryName);
@@ -821,6 +868,24 @@ namespace FinePrint
             isruReputation.AddValue("SignificantMultiplier", FPConfig.ISRU.Reputation.SignificantMultiplier);
             isruReputation.AddValue("ExceptionalMultiplier", FPConfig.ISRU.Reputation.ExceptionalMultiplier);
             isruReputation.AddValue("DeliveryMultiplier", FPConfig.ISRU.Reputation.DeliveryMultiplier);
+
+            evacuateNode.AddValue("MaximumAvailable", FPConfig.Evacuate.MaximumAvailable);
+            evacuateNode.AddValue("MaximumActive", FPConfig.Evacuate.MaximumActive);
+            evacuateExpire.AddValue("MinimumExpireDays", FPConfig.Evacuate.Expire.MinimumExpireDays);
+            evacuateExpire.AddValue("MaximumExpireDays", FPConfig.Evacuate.Expire.MaximumExpireDays);
+            evacuateExpire.AddValue("DeadlineDays", FPConfig.Evacuate.Expire.DeadlineDays);
+            evacuateFunds.AddValue("BaseAdvance", FPConfig.Evacuate.Funds.BaseAdvance);
+            evacuateFunds.AddValue("BaseReward", FPConfig.Evacuate.Funds.BaseReward);
+            evacuateFunds.AddValue("BaseFailure", FPConfig.Evacuate.Funds.BaseFailure);
+            evacuateFunds.AddValue("CrewMultiplier", FPConfig.Evacuate.Funds.CrewMultiplier);
+            evacuateFunds.AddValue("ReliefMultiplier", FPConfig.Evacuate.Funds.ReliefMultiplier);
+            evacuateFunds.AddValue("ExplodeMultiplier", FPConfig.Evacuate.Funds.ExplodeMultiplier);
+            evacuateScience.AddValue("BaseReward", FPConfig.Evacuate.Science.BaseReward);
+            evacuateReputation.AddValue("BaseReward", FPConfig.Evacuate.Reputation.BaseReward);
+            evacuateReputation.AddValue("BaseFailure", FPConfig.Evacuate.Reputation.BaseFailure);
+            evacuateReputation.AddValue("CrewMultiplier", FPConfig.Evacuate.Reputation.CrewMultiplier);
+            evacuateReputation.AddValue("ReliefMultiplier", FPConfig.Evacuate.Reputation.ReliefMultiplier);
+            evacuateReputation.AddValue("ExplodeMultiplier", FPConfig.Evacuate.Reputation.ExplodeMultiplier);
 
             config.Save(ConfigFileName);
         }

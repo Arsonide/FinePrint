@@ -361,6 +361,55 @@ namespace FinePrint
 			return greekMap[x];
 		}
 
+        public static string vesselTypeString(VesselType vt)
+        {
+            switch (vt)
+            {
+            case VesselType.Debris:
+                return "debris";
+            case VesselType.Probe:
+                return "probe";
+            case VesselType.Rover:
+                return "rover";
+            case VesselType.Lander:
+                return "lander";
+            case VesselType.Ship:
+                return "ship";
+            case VesselType.Station:
+                return "station";
+            case VesselType.Base:
+                return "base";
+            default:
+                return "object";
+            }
+        }
+
+        //vessel.name +" is "+ vesselSituationString(vessel.situation) +" "+vessel.mainBody.name
+        public static string vesselSituationString(Vessel.Situations situation)
+        {
+            switch (situation)
+            {
+            case Vessel.Situations.DOCKED:
+                return "docked near";
+            case Vessel.Situations.ESCAPING:
+                return "on escape trajectory from";
+            case Vessel.Situations.FLYING:
+                return "flying at";
+            case Vessel.Situations.LANDED:
+                return "landed on";
+            case Vessel.Situations.ORBITING:
+                return "orbiting";
+            case Vessel.Situations.PRELAUNCH:
+                return "ready to launch from";
+            case Vessel.Situations.SPLASHED:
+                return "splashed down on";
+            case Vessel.Situations.SUB_ORBITAL:
+                return "on a crash course for";
+            default:
+                return "near";
+            }
+        }
+
         private static string ShortName(string verbose)
         {
             //Aerial.Funds.BaseComplete => BaseComplete
