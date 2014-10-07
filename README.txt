@@ -1,9 +1,9 @@
-Fine Print v0.58b
+Fine Print v0.59
 
 -- SUMMARY --
 
 Fine Print is a mod that more than doubles the original number of contracts
-within Kerbal Space Program v0.24.
+within Kerbal Space Program v0.25.
 
 New contract types include contracts to build space stations, contracts
 to build planetary bases, contracts to retrieve asteroids, contracts 
@@ -19,7 +19,7 @@ or track changes, please go to the official forum thread for Fine Print:
 
 -- REQUIREMENTS --
 
-Kerbal Space Program version 0.24.2
+Kerbal Space Program version 0.25
 
 -- INSTALLATION --
 
