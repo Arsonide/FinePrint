@@ -159,6 +159,10 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
+			// It's weird for a space program to explore our home planet. Do rover test drives there instead.
+			if (targetBody == Planetarium.fetch.Home) {
+				return "Test drive a rover near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ".";
+			}
 			return "Chart source of data anomaly near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + " with a rover.";
 		}
 
@@ -170,11 +174,17 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
+			if (targetBody == Planetarium.fetch.Home) {
+				return "Test drive a rover in the area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ".";
+			}
             return "We've noticed an interesting anomaly in the general area of " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ". It's a wide area, so you will need a rover to find it.";
 		}
 
 		protected override string MessageCompleted()
 		{
+			if (targetBody == Planetarium.fetch.Home) {
+				return "You completed a rover experiment near " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ".";
+			}
             return "You have successfully found the source of the data anomaly in " + Util.generateSiteName(MissionSeed, (targetBody == Planetarium.fetch.Home)) + " on " + targetBody.theName + ".";
 		}
 

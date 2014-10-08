@@ -143,26 +143,49 @@ namespace FinePrint.Contracts.Parameters
                         if (submittedWaypoint && v.mainBody == targetBody)
                         {
                             if (WaypointManager.Instance() != null)
-                            {
+							{
+								// It's weird for a space program to explore our home planet. Do test flights there instead.
                                 distanceToWP = WaypointManager.Instance().LateralDistanceToVessel(wp);
 
-                                if (distanceToWP > FPConfig.Aerial.TriggerRange * 2 && outerWarning)
+                                double triggerRange = FPConfig.Rover.TriggerRange;
+
+                                if (targetBody == Planetarium.fetch.Home)
+                                {
+                                    triggerRange /= 2;
+                                }
+
+                                if (distanceToWP > triggerRange * 2 && outerWarning)
                                 {
                                     outerWarning = false;
                                     ScreenMessages.PostScreenMessage("You are leaving the area of " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
                                 }
 
-                                if (distanceToWP <= FPConfig.Aerial.TriggerRange * 2 && !outerWarning)
-                                {
+                                if (distanceToWP <= triggerRange * 2 && !outerWarning)
+								{
                                     outerWarning = true;
-                                    ScreenMessages.PostScreenMessage("Approaching " + wp.tooltip + ", beginning aerial surveillance.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    if (targetBody == Planetarium.fetch.Home)
+									{
+										// Test flights are more realistic for a space agency's home base
+                                        ScreenMessages.PostScreenMessage("Approaching test flight waypoint " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
+                                    else
+                                    {
+                                        ScreenMessages.PostScreenMessage("Approaching " + wp.tooltip + ", beginning aerial surveillance.", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                    }
                                 }
 
                                 if (v.altitude > minAltitude && v.altitude < maxAltitude)
                                 {
-                                    if (distanceToWP < FPConfig.Aerial.TriggerRange)
+                                    if (distanceToWP < triggerRange)
                                     {
-                                        ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                        if (targetBody == Planetarium.fetch.Home)
+                                        { 
+                                            ScreenMessages.PostScreenMessage("Transmitting experimental flight data near " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT); 
+                                        }
+                                        else
+                                        {
+                                            ScreenMessages.PostScreenMessage("Transmitting aerial surveillance data on " + wp.tooltip + ".", 5.0f, ScreenMessageStyle.UPPER_LEFT);
+                                        }
                                         wp.isExplored = true;
                                         WaypointManager.deactivateNavPoint();
                                         WaypointManager.RemoveWaypoint(wp);

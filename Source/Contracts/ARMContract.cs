@@ -44,16 +44,27 @@ namespace FinePrint.Contracts
                 if (generator.Next(0, 101) > 50)
                     asteroidClass = "B";
                 else
-                    asteroidClass = "C";
+					asteroidClass = "C";
 
-				List<CelestialBody> bodies = GetBodies_Reached(true, false);
+				// only choose celestial bodies with gravity high enough to reasonably put an asteroid in orbit
 
-				if (bodies.Count == 0)
+				List<CelestialBody> reached = GetBodies_Reached(true, false);
+				List<CelestialBody> potentials = new List<CelestialBody>();
+
+				foreach (CelestialBody body in reached)
+				{
+					if (body.referenceBody == Planetarium.fetch.Sun)
+					{
+						potentials.Add(body);
+					}
+				}
+
+				if (potentials.Count == 0)
 					return false;
 
-				targetBody = bodies[generator.Next(0, bodies.Count)];
-
-                fundsMultiplier = FPConfig.ARM.Funds.SignificantMultiplier;
+				targetBody = potentials[generator.Next(0, potentials.Count)]; 
+				
+				fundsMultiplier = FPConfig.ARM.Funds.SignificantMultiplier;
                 scienceMultiplier = FPConfig.ARM.Science.SignificantMultiplier;
                 reputationMultiplier = FPConfig.ARM.Reputation.SignificantMultiplier;
 
@@ -67,17 +78,24 @@ namespace FinePrint.Contracts
                 else
                     asteroidClass = "E";
 
-                targetBody = GetNextUnreachedTarget(1, true, true);
 
-                if (targetBody == null)
-                {
-                    List<CelestialBody> bodies = GetBodies_Reached(true, false);
+				// only choose celestial bodies with gravity high enough to reasonably put an asteroid in orbit
 
-                    if (bodies.Count == 0)
-                        return false;
+				List<CelestialBody> reached = GetBodies_Reached(true, false);
+				List<CelestialBody> potentials = new List<CelestialBody>();
 
-                    targetBody = bodies[generator.Next(0, bodies.Count)];
-                }
+				foreach (CelestialBody body in reached)
+				{
+					if (body.referenceBody == Planetarium.fetch.Sun)
+					{
+						potentials.Add(body);
+					}
+				}
+
+				if (potentials.Count == 0)
+					return false;
+
+				targetBody = potentials[generator.Next(0, potentials.Count)]; 
 
                 fundsMultiplier = FPConfig.ARM.Funds.ExceptionalMultiplier;
                 scienceMultiplier = FPConfig.ARM.Science.ExceptionalMultiplier;

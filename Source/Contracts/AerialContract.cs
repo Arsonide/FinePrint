@@ -41,7 +41,7 @@ namespace FinePrint.Contracts
 
             double range = 10000.0;
 			System.Random generator = new System.Random(this.MissionSeed);
-			int additionalWaypoints = 0;
+			int additionalWaypoints = 1;
 			List<CelestialBody> allBodies = GetBodies_Reached(true, false);
 			List<CelestialBody> atmosphereBodies = new List<CelestialBody>();
 
@@ -56,40 +56,18 @@ namespace FinePrint.Contracts
 
 			targetBody = atmosphereBodies[generator.Next(0, atmosphereBodies.Count)];
 
-            //TODO: Find some common ground to calculate these values automatically without specific names.
-			switch (targetBody.GetName())
-			{
-				case "Jool":
-					additionalWaypoints = 0;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Duna":
-					additionalWaypoints = 1;
-					minAltitude = 8000.0;
-					maxAltitude = 16000.0;
-					break;
-				case "Laythe":
-					additionalWaypoints = 1;
-					minAltitude = 15000.0;
-					maxAltitude = 30000.0;
-					break;
-				case "Eve":
-					additionalWaypoints = 1;
-					minAltitude = 20000.0;
-					maxAltitude = 40000.0;
-					break;
-				case "Kerbin":
-					additionalWaypoints = 2;
-					minAltitude = 12500.0;
-					maxAltitude = 25000.0;
-					break;
-				default:
-					additionalWaypoints = 0;
-					minAltitude = 0.0;
-					maxAltitude = 10000.0;
-					break;
-			}
+            maxAltitude = targetBody.maxAtmosphereAltitude * 0.33;
+            minAltitude = maxAltitude * 0.5;
+
+            if (Util.IsGasGiant(targetBody))
+            {
+                additionalWaypoints -= 1;
+            }
+            if (targetBody == Planetarium.fetch.Home)
+            {
+                additionalWaypoints += 1;
+            }
+
 
             int waypointCount = 0;
             float fundsMultiplier = 1;
@@ -98,6 +76,12 @@ namespace FinePrint.Contracts
             float wpFundsMultiplier = 1;
             float wpScienceMultiplier = 1;
             float wpReputationMultiplier = 1;
+
+			// Center flights on interesting landmarks instead of flat featureless land or water
+			float homeNearbyChance = 0;
+			double homeNearbyRange = 0;
+			double landmarkLatitude = 0;
+			double landmarkLongitude = 0;
             
             double altitudeHalfQuarterRange = Math.Abs(maxAltitude - minAltitude) * 0.125;
 			double upperMidAltitude = ((maxAltitude + minAltitude) / 2.0) + altitudeHalfQuarterRange;
@@ -111,6 +95,9 @@ namespace FinePrint.Contracts
 				    waypointCount = FPConfig.Aerial.TrivialWaypoints;
 				    waypointCount += additionalWaypoints;
                     range = FPConfig.Aerial.TrivialRange;
+					homeNearbyChance = FPConfig.Aerial.TrivialHomeNearbyChance;
+					homeNearbyRange = FPConfig.Aerial.TrivialHomeNearbyRange;
+
 
                     if (Util.IsGasGiant(targetBody))
                     {
@@ -131,10 +118,24 @@ namespace FinePrint.Contracts
                         }
                     }
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.TrivialHomeNearbyChance && targetBody == Planetarium.fetch.Home)
-                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.TrivialHomeNearbyRange, true);
-                    else
-                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+					if (targetBody.GetName() == "Kerbin")
+					{
+						// Old Airfield island flights
+						landmarkLatitude = -2;
+						landmarkLongitude = -72.5;
+					}
+					else if (targetBody.GetName() == "Earth")
+					{
+						// TODO: Center on a Real Solar System landmark
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
+					else
+					{
+						// Unknown landmarks
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
 
                     break;
                 case ContractPrestige.Significant:
@@ -167,10 +168,24 @@ namespace FinePrint.Contracts
                         }
                     }
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.SignificantHomeNearbyChance && targetBody == Planetarium.fetch.Home)
-                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.SignificantHomeNearbyRange, true);
-                    else
-                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+					if (targetBody.GetName() == "Kerbin")
+					{
+						// Mountain flights
+						landmarkLatitude = 1;
+						landmarkLongitude = -79;
+					}
+					else if (targetBody.GetName() == "Earth")
+					{
+						// TODO: Center on a Real Solar System landmark
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
+					else
+					{
+						// Unknown landmarks
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
 
                     break;
                 case ContractPrestige.Exceptional:
@@ -203,13 +218,32 @@ namespace FinePrint.Contracts
                         }
                     }
 
-                    if (generator.Next(0, 100) < FPConfig.Aerial.ExceptionalHomeNearbyChance && targetBody == Planetarium.fetch.Home)
-                        WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, SpaceCenter.Instance.Latitude, SpaceCenter.Instance.Longitude, targetBody.GetName(), FPConfig.Aerial.ExceptionalHomeNearbyRange, true);
-                    else
-                        WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
+					if (targetBody.GetName() == "Kerbin")
+					{
+						// Southern peninsula flights
+						landmarkLatitude = -3.5;
+						landmarkLongitude = -85.5;
+					}
+					else if (targetBody.GetName() == "Earth")
+					{
+						// TODO: Center on a Real Solar System landmark
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
+					else
+					{
+						// Unknown landmarks
+						landmarkLatitude = SpaceCenter.Instance.Latitude;
+						landmarkLongitude = SpaceCenter.Instance.Longitude;
+					}
 
                     break;
-            }
+			}
+
+			if (generator.Next(0, 100) < homeNearbyChance && targetBody == Planetarium.fetch.Home)
+				WaypointManager.ChooseRandomPositionNear(out centerLatitude, out centerLongitude, landmarkLatitude, landmarkLongitude, targetBody.GetName(), homeNearbyRange, true);
+			else
+				WaypointManager.ChooseRandomPosition(out centerLatitude, out centerLongitude, targetBody.GetName(), true, false);
 
 			for (int x = 0; x < waypointCount; x++)
 			{
@@ -246,7 +280,8 @@ namespace FinePrint.Contracts
 
 		protected override string GetTitle()
 		{
-            return "Perform aerial surveys of " + targetBody.theName + " at an altitude of " + (int)minAltitude + " to " + (int)maxAltitude + ".";
+			// It's weird for a space program to explore our home planet. Do test flights there instead.
+            return "Perform atmospheric test flights over " + targetBody.theName + " at an altitude of " + (int)minAltitude + " to " + (int)maxAltitude + ".";
 		}
 
 		protected override string GetDescription()
@@ -257,12 +292,15 @@ namespace FinePrint.Contracts
 
 		protected override string GetSynopsys()
 		{
-            return "There are places on " + targetBody.theName + " that we don't know much about, fly over them and see what you can see.";
+			if (targetBody == Planetarium.fetch.Home) {
+				return "Pilot a jet to these locations to collect flight data for commercial aircraft engineering.";
+			}
+            return "Fly through the atmosphere of " + targetBody.theName + " to test extraplanetary aircraft designs.";
 		}
 
 		protected override string MessageCompleted()
 		{
-            return "You have successfully performed aerial surveys at all of the points of interest on " + targetBody.theName + ".";
+            return "You gathered valuable test flight data from " + targetBody.theName + ".";
 		}
 
         protected override string GetNotes()
